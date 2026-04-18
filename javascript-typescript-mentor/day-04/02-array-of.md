@@ -1,40 +1,38 @@
 # Array.of
 
-## TL;DR
-Array.of creates an array from the arguments you pass exactly as written. Its most important job is avoiding the confusing single-number behavior of the Array constructor. This makes array creation more explicit and interview-friendly.
+## T — TL;DR
+**Array.of** is easiest when you know three things: what goes in, what comes out, and whether the original array changes.
 
-## Key Concepts
-- Array.of creates an array from its arguments exactly as given.
-- Its big advantage is that Array.of(3) produces [3], while Array(3) creates an empty array with length 3.
-- Use it when you want array creation to be explicit and free from constructor quirks.
-- It is about construction, not mapping or iteration.
+## K — Key Concepts
+- Know exactly what **Array.of** returns.
+- Check whether it creates a new value or changes an existing one.
+- Look for the edge case: empty input, missing value, sparse data, or type coercion.
 
-## Why It Matters
-This matters in day-to-day engineering because Array.of affects how readable, predictable, and maintainable your code feels under change. Once you know the mental model, you can choose the feature on purpose instead of copying patterns blindly.
+## W — Why it matters
+Small data operations like **Array.of** show up everywhere. Getting them right reduces bugs and makes everyday code easier to read in code review.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for Array.of?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with Array.of?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Using **Array.of** without checking the return value. — **Fix:** say the exact return type before you run the code.
+- Forgetting edge cases like empty input or missing values. — **Fix:** test one happy path and one awkward path.
+
+## K — Coding challenge with solution
+**Challenge:** Predict what the example returns, then change one input to expose an edge case in **Array.of**.
+
+**Solution:**
 ```js
 Array.of(3) // [3]
 Array(3) // [ <3 empty items> ]
 ```
 
-## Common Pitfalls
-- Picking a nearby method with a different return shape.
-- Forgetting whether the operation is shallow or whether it returns a new value.
-- Ignoring edge cases such as empty arrays, missing keys, or whitespace details.
+**Why it works:** This works because the example makes the input and output of **Array.of** obvious enough to reason about before you run it.
+## Next topic
+[Array.isArray](03-array-is-array.md)
 
-## Interview Angle
-- **Q:** What is Array.of?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use Array.of in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand Array.of.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [Array.from](01-array-from.md)
-- Next: [Array.isArray](03-array-is-array.md)
+## One tiny action
+Type the example for **Array.of** once and say the return value out loud before you run it.

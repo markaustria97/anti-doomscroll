@@ -1,18 +1,30 @@
 # Turborepo basics
 
-## TL;DR
-Turborepo basics is part of the JavaScript or TypeScript platform and workflow story. Learn what it is responsible for, what it is not responsible for, and the small set of defaults you need to be productive. Good tooling and platform choices remove friction long before you notice them.
+## T — TL;DR
+**Turborepo basics** turns isolated syntax knowledge into a small engineering decision. Focus on boundaries, names, and failure paths.
 
-## Key Concepts
-- Turborepo basics belongs to the platform or tooling layer rather than your application domain logic.
-- Start with the default setup and only add configuration you can explain.
-- Know whether the topic affects runtime behavior, development experience, or both.
-- Healthy tooling reduces accidental complexity and keeps teams aligned.
+## K — Key Concepts
+- Treat **Turborepo basics** like a small system, not an isolated syntax drill.
+- Define boundaries and data shapes before polishing implementation details.
+- A clear failure path usually matters more than a clever happy path.
 
-## Why It Matters
-Turborepo basics matters because setup and platform decisions quietly shape every other lesson in the stack. Good defaults reduce friction, make teams more consistent, and help you spend more time on application logic than on environment drift.
+## W — Why it matters
+Capstone topics matter because they combine many smaller lessons into one realistic task. **Turborepo basics** is where you practice making trade-offs instead of repeating syntax facts.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** How would you approach Turborepo basics in a real system?  
+  **A:** Start by naming the boundary, the data shape, and one failure path before writing much code.
+- **Q:** What makes a strong answer for Turborepo basics?  
+  **A:** A strong answer shows trade-offs, not just syntax or one happy-path implementation.
+
+## C — Common pitfalls with fix
+- Jumping into implementation before defining boundaries. — **Fix:** write the input, output, and failure cases first.
+- Optimizing too early. — **Fix:** make the happy path clear before you scale the design.
+
+## K — Coding challenge with solution
+**Challenge:** Name the boundary, data shape, or failure path shown in this tiny **Turborepo basics** example.
+
+**Solution:**
 ```json
 {
   "tasks": {
@@ -21,23 +33,9 @@ Turborepo basics matters because setup and platform decisions quietly shape ever
 }
 ```
 
-## Common Pitfalls
-- Over-configuring early instead of learning the default workflow first.
-- Assuming the tool can fix unclear architecture or weak tests on its own.
-- Letting local setup drift across teammates or CI environments.
+**Why it works:** This works because the example stays tiny while still showing one real design decision inside **Turborepo basics**.
+## Next topic
+[Nx basics](11-nx-basics.md)
 
-## Interview Angle
-- **Q:** What role does Turborepo basics play in a JS/TS project?  
-  **A:** Name the problem it solves, where it fits in the workflow, and what it does not replace.
-- **Q:** What is a safe default for Turborepo basics?  
-  **A:** Choose the smallest setup that gives consistency without needless configuration.
-
-## Mini Challenge
-Create the smallest setup example or command sequence that shows how Turborepo basics helps your workflow.
-
-## Mini Challenge Solution
-A correct solution uses the tool for one concrete job and briefly states what feedback or outcome you expect.
-
-## Related Topics
-- Previous: [monorepo tooling basics](09-monorepo-tooling-basics.md)
-- Next: [Nx basics](11-nx-basics.md)
+## One tiny action
+Write one boundary for **Turborepo basics** before thinking about a full implementation.

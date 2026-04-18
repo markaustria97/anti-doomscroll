@@ -1,39 +1,37 @@
 # using keyword
 
-## TL;DR
-Using keyword is a production-oriented practice for keeping systems easier to extend, test, and review. The important question is when it buys clarity and when it becomes extra abstraction that the team has to maintain.
+## T — TL;DR
+**using keyword** is about making data flow and error flow easier to reason about. Start with the smallest useful example.
 
-## Key Concepts
-- Using keyword is a design tool for managing change over time, not just passing an interview.
-- Good production patterns improve testability, readability, and failure isolation.
-- Team consistency matters as much as the pattern itself.
-- Use abstraction to simplify decisions, not to make simple code look advanced.
+## K — Key Concepts
+- Use **using keyword** to make flow, transformation, or failure handling more explicit.
+- Start with plain data and tiny functions before adding a library abstraction.
+- If the idea makes simple code harder to read, scale it back.
 
-## Why It Matters
-Production systems change under pressure from new requirements, failures, and team growth. Using keyword gives you vocabulary and structure for making those changes without turning every feature into a rewrite.
+## W — Why it matters
+Functional ideas like **using keyword** matter when state, data flow, or error flow starts getting messy. They give you a calmer way to reason about change.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** Why would a team use using keyword?  
+  **A:** Because it can make transformation or error flow easier to follow and test.
+- **Q:** When does using keyword become a bad fit?  
+  **A:** When it adds ceremony without reducing confusion or duplication.
+
+## C — Common pitfalls with fix
+- Turning a simple function into a style exercise. — **Fix:** keep the first version plain and tiny.
+- Forgetting the runtime cost of extra indirection. — **Fix:** use the pattern where it clearly improves clarity or safety.
+
+## K — Coding challenge with solution
+**Challenge:** Follow the data or error flow in the example for **using keyword** and explain why it stays predictable.
+
+**Solution:**
 ```ts
 using file = await openTempFile()
 ```
 
-## Common Pitfalls
-- Applying the pattern because the name sounds impressive instead of because the problem needs it.
-- Adding abstraction before the change pressure is real.
-- Hiding important domain rules behind too many layers.
+**Why it works:** This works because the example keeps the transformation or error path linear, which is the main benefit behind **using keyword**.
+## Next topic
+[explicit resource management](17-explicit-resource-management.md)
 
-## Interview Angle
-- **Q:** What problem does using keyword solve?  
-  **A:** Answer with a change-management problem, not only a definition.
-- **Q:** When would you avoid using keyword?  
-  **A:** Avoid it when the abstraction cost is higher than the coordination or testability benefit.
-
-## Mini Challenge
-Name one small feature where using keyword would make the code easier to extend or test.
-
-## Mini Challenge Solution
-A good solution identifies the changing part, the stable part, and why the pattern keeps them separate.
-
-## Related Topics
-- Previous: [bridging TS types to runtime](15-bridging-ts-types-to-runtime.md)
-- Next: [explicit resource management](17-explicit-resource-management.md)
+## One tiny action
+Trace the data through the example for **using keyword** with your finger or cursor once.

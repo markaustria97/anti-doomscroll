@@ -1,6 +1,17 @@
 # Full Curriculum Overview — JavaScript & TypeScript Mentor
 
-A progress-friendly set of beginner-to-intermediate lessons that moves from JavaScript foundations to advanced TypeScript, production patterns, and interview prep.
+This curriculum is built for short anti-doomscroll learning sessions. Each lesson is meant to be a small, structured step you can start in **5 to 15 minutes**.
+
+Every lesson now uses the **T-KWICK** format:
+
+- **T — TL;DR**
+- **K — Key Concepts**
+- **W — Why it matters**
+- **I — Interview questions with answers**
+- **C — Common pitfalls with fix**
+- **K — Coding challenge with solution**
+
+If you feel resistance, do not try to finish a whole day. Open the next lesson, read the TL;DR, and do the **one tiny action** at the end. That is enough to keep momentum.
 
 - [ ] Day 1 — Environment & JS Foundations
   - [ ] [Node.js LTS](day-01/01-nodejs-lts.md)

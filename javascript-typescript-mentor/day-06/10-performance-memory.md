@@ -1,39 +1,37 @@
 # performance.memory
 
-## TL;DR
-performance.memory helps you reason about how JavaScript values stay alive, get collected, or show up in debugging tools. The mental model matters more than memorizing engine internals: know what keeps references reachable and what tools help you inspect leaks. That knowledge is essential for production debugging.
+## T — TL;DR
+**performance.memory** matters because leaks and retained objects stay invisible until the app feels slow or unstable.
 
-## Key Concepts
-- performance.memory is mostly about reachability: values stay alive while something reachable still references them.
-- Garbage collection is automatic, but leak prevention is still a programming responsibility.
-- Weak references are niche tools and should not be used as normal ownership models.
-- Debugging memory issues usually means verifying retention paths, not guessing.
+## K — Key Concepts
+- Ask what **performance.memory** keeps alive and when those references can disappear.
+- Memory problems usually come from retention, not from one large allocation.
+- Use tools to confirm your guess instead of trusting a vague hunch.
 
-## Why It Matters
-Memory issues are expensive because they usually show up after a feature already works. Knowing performance.memory helps you keep long-running sessions stable, investigate leaks methodically, and avoid premature fixes that only hide symptoms.
+## W — Why it matters
+Memory issues are expensive to debug when you wait too long. **performance.memory** gives you a smaller checklist for spotting leaks before they become user-facing.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for performance.memory?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with performance.memory?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Guessing at leaks without measuring. — **Fix:** capture a snapshot, profile, or log the retention path.
+- Keeping references around 'just in case'. — **Fix:** shorten object lifetimes and release caches or listeners.
+
+## K — Coding challenge with solution
+**Challenge:** Name what stays referenced in the example for **performance.memory** and what would let it be cleaned up.
+
+**Solution:**
 ```js
 console.log(performance.memory?.usedJSHeapSize)
 ```
 
-## Common Pitfalls
-- Blaming the garbage collector when the real issue is a lingering reference you still own.
-- Using WeakRef or FinalizationRegistry as normal app logic instead of niche tools.
-- Trying to fix leaks without first reproducing and measuring them.
+**Why it works:** This works because it keeps object lifetime small enough to talk about what stays reachable in **performance.memory**.
+## Next topic
+[Chrome DevTools memory profiling workflow](11-chrome-dev-tools-memory-profiling-workflow.md)
 
-## Interview Angle
-- **Q:** What is performance.memory?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use performance.memory in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand performance.memory.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [FinalizationRegistry](09-finalization-registry.md)
-- Next: [Chrome DevTools memory profiling workflow](11-chrome-dev-tools-memory-profiling-workflow.md)
+## One tiny action
+Point at one reference in the example for **performance.memory** and ask, 'What keeps this alive?'

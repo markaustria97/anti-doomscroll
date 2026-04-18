@@ -1,41 +1,39 @@
 # unknown vs any vs never
 
-## TL;DR
-Unknown vs any vs never compares similar ideas that behave differently in practice. Learn the safer default, the key difference in behavior, and the common bug that appears when people treat them as interchangeable. This is the kind of distinction interviewers love to probe.
+## T — TL;DR
+**unknown vs any vs never** is a choice lesson: learn the safe default, the behavior difference that actually matters, and one exception worth remembering.
 
-## Key Concepts
-- Unknown vs any vs never puts similar-looking concepts side by side so you can separate syntax from behavior.
-- Look for the one behavior difference that changes correctness, readability, or compatibility.
-- Interviews often ask for the default choice and the edge case where another option is better.
-- When in doubt, choose the option with the most explicit and least surprising behavior.
+## K — Key Concepts
+- Start with the default choice in **unknown vs any vs never**, then learn the single case that changes your answer.
+- Compare behavior, not just syntax or popularity.
+- A 3-line example is usually enough to make the distinction stick.
 
-## Why It Matters
-Unknown vs any vs never matters because similar-looking options often fail in different ways. The faster you can explain the behavior difference, the easier it is to choose the safe default and debug edge cases under pressure.
+## W — Why it matters
+Questions about **unknown vs any vs never** are common because they reveal whether you understand behavior or only memorized names.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What is the main behavior difference in unknown vs any vs never?  
+  **A:** State the default choice first, then name the edge case that would make you choose the other option.
+- **Q:** How would you explain unknown vs any vs never quickly in an interview?  
+  **A:** Use one sentence for the rule and one tiny example for proof.
+
+## C — Common pitfalls with fix
+- Memorizing slogans instead of behavior. — **Fix:** compare the outputs or side effects of one tiny example.
+- Choosing by familiarity instead of by requirement. — **Fix:** say what default you prefer and why.
+
+## K — Coding challenge with solution
+**Challenge:** Use the example for **unknown vs any vs never** to explain the rule in your own words.
+
+**Solution:**
 ```ts
 let safe: unknown
 let escapeHatch: any
 function fail(): never { throw new Error("boom") }
 ```
 
-## Common Pitfalls
-- Remembering the syntax but not the behavior difference that actually matters.
-- Choosing the shorter form even when the more explicit form is safer.
-- Answering interview questions with rules of thumb but no example.
+**Why it works:** This works because the example is small enough to explain without guessing.
+## Next topic
+[conditional types](../day-10/01-conditional-types.md)
 
-## Interview Angle
-- **Q:** What is the practical difference in unknown vs any vs never?  
-  **A:** Explain the behavior difference, then state the safer default and one case where the alternative is useful.
-- **Q:** Which option in unknown vs any vs never would you choose by default?  
-  **A:** Pick the option with the least surprising behavior and justify it with a small example.
-
-## Mini Challenge
-Write two tiny examples that demonstrate the difference in unknown vs any vs never.
-
-## Mini Challenge Solution
-A correct solution shows different outputs or behaviors, then states the safer default in one sentence.
-
-## Related Topics
-- Previous: [type guards](18-type-guards.md)
-- Next: [conditional types](../day-10/01-conditional-types.md)
+## One tiny action
+Spend two minutes turning **unknown vs any vs never** into one tiny runnable example.

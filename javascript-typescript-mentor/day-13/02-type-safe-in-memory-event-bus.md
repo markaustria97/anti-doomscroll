@@ -1,39 +1,37 @@
 # type-safe in-memory event bus
 
-## TL;DR
-Type-safe in-memory event bus pulls together multiple JavaScript and TypeScript ideas into a system-level skill. Use it to practice design trade-offs, naming, boundaries, and failure handling instead of isolated syntax tricks.
+## T — TL;DR
+**type-safe in-memory event bus** turns isolated syntax knowledge into a small engineering decision. Focus on boundaries, names, and failure paths.
 
-## Key Concepts
-- Type-safe in-memory event bus combines language features, typing, and system design choices.
-- Focus on boundaries, error handling, and naming before polishing implementation details.
-- A strong answer explains trade-offs, not just one possible implementation.
-- This is where interview prep starts looking like real engineering work.
+## K — Key Concepts
+- Treat **type-safe in-memory event bus** like a small system, not an isolated syntax drill.
+- Define boundaries and data shapes before polishing implementation details.
+- A clear failure path usually matters more than a clever happy path.
 
-## Why It Matters
-This topic matters because interview prep is strongest when it resembles actual system design work. Type-safe in-memory event bus forces you to balance correctness, maintainability, and communication instead of only writing syntax-level answers.
+## W — Why it matters
+Capstone topics matter because they combine many smaller lessons into one realistic task. **type-safe in-memory event bus** is where you practice making trade-offs instead of repeating syntax facts.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** How would you approach type-safe in-memory event bus in a real system?  
+  **A:** Start by naming the boundary, the data shape, and one failure path before writing much code.
+- **Q:** What makes a strong answer for type-safe in-memory event bus?  
+  **A:** A strong answer shows trade-offs, not just syntax or one happy-path implementation.
+
+## C — Common pitfalls with fix
+- Jumping into implementation before defining boundaries. — **Fix:** write the input, output, and failure cases first.
+- Optimizing too early. — **Fix:** make the happy path clear before you scale the design.
+
+## K — Coding challenge with solution
+**Challenge:** Name the boundary, data shape, or failure path shown in this tiny **type-safe in-memory event bus** example.
+
+**Solution:**
 ```ts
 type Events = { userCreated: { id: string } }
 ```
 
-## Common Pitfalls
-- Memorizing the surface syntax without learning the underlying mental model.
-- Using the feature everywhere instead of when it clearly improves the code.
-- Skipping edge cases such as empty inputs, nullish values, or failed async work.
+**Why it works:** This works because the example stays tiny while still showing one real design decision inside **type-safe in-memory event bus**.
+## Next topic
+[typed CLI task runner](03-typed-cli-task-runner.md)
 
-## Interview Angle
-- **Q:** What is type-safe in-memory event bus?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use type-safe in-memory event bus in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand type-safe in-memory event bus.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [capstone overview](01-capstone-overview.md)
-- Next: [typed CLI task runner](03-typed-cli-task-runner.md)
+## One tiny action
+Write one boundary for **type-safe in-memory event bus** before thinking about a full implementation.

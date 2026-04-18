@@ -1,39 +1,37 @@
 # padEnd
 
-## TL;DR
-padEnd is a small string API that solves a very specific formatting or parsing job. Once you know its return value and edge cases, you can replace a lot of noisy manual slicing and concatenation. These methods come up constantly in input handling and interview exercises.
+## T — TL;DR
+**padEnd** becomes easy once you know what text it returns and which edge cases change the result.
 
-## Key Concepts
-- padEnd solves a narrow string manipulation task and is easiest to learn with before/after examples.
-- String methods return new strings because strings are immutable in JavaScript.
-- Off-by-one errors and missed whitespace rules are the most common bugs.
-- Favor the built-in method over custom slicing logic when it already matches your intent.
+## K — Key Concepts
+- Know exactly what **padEnd** returns.
+- Check whether it creates a new value or changes an existing one.
+- Look for the edge case: empty input, missing value, sparse data, or type coercion.
 
-## Why It Matters
-This matters in day-to-day engineering because padEnd affects how readable, predictable, and maintainable your code feels under change. Once you know the mental model, you can choose the feature on purpose instead of copying patterns blindly.
+## W — Why it matters
+Small data operations like **padEnd** show up everywhere. Getting them right reduces bugs and makes everyday code easier to read in code review.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for padEnd?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with padEnd?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Using **padEnd** without checking the return value. — **Fix:** say the exact return type before you run the code.
+- Forgetting edge cases like empty input or missing values. — **Fix:** test one happy path and one awkward path.
+
+## K — Coding challenge with solution
+**Challenge:** Predict what the example returns, then change one input to expose an edge case in **padEnd**.
+
+**Solution:**
 ```js
 "7".padEnd(3, ".") // "7.."
 ```
 
-## Common Pitfalls
-- Picking a nearby method with a different return shape.
-- Forgetting whether the operation is shallow or whether it returns a new value.
-- Ignoring edge cases such as empty arrays, missing keys, or whitespace details.
+**Why it works:** This works because the example makes the input and output of **padEnd** obvious enough to reason about before you run it.
+## Next topic
+[Number.isNaN](22-number-is-nan.md)
 
-## Interview Angle
-- **Q:** What is padEnd?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use padEnd in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand padEnd.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [padStart](20-pad-start.md)
-- Next: [Number.isNaN](22-number-is-nan.md)
+## One tiny action
+Type the example for **padEnd** once and say the return value out loud before you run it.

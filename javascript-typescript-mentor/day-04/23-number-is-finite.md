@@ -1,40 +1,38 @@
 # Number.isFinite
 
-## TL;DR
-Number.isFinite answers a precise numeric question that the global helpers often answer poorly. The main idea is to use the explicit Number API so your intent is obvious and corner cases are handled correctly. That keeps validation logic safe and readable.
+## T — TL;DR
+**Number.isFinite** is a small built-in with one job. Learn the input, the return value, and the bug it helps you avoid.
 
-## Key Concepts
-- Number.isFinite answers one specific validation question instead of doing broad coercive checks.
-- Prefer Number helpers over older global functions when you want predictable behavior.
-- Be clear about special values such as NaN, Infinity, and decimal numbers.
-- Validation code is safer when the rule is explicit at the call site.
+## K — Key Concepts
+- Know exactly what **Number.isFinite** returns.
+- Check whether it creates a new value or changes an existing one.
+- Look for the edge case: empty input, missing value, sparse data, or type coercion.
 
-## Why It Matters
-This matters in day-to-day engineering because Number.isFinite affects how readable, predictable, and maintainable your code feels under change. Once you know the mental model, you can choose the feature on purpose instead of copying patterns blindly.
+## W — Why it matters
+Small data operations like **Number.isFinite** show up everywhere. Getting them right reduces bugs and makes everyday code easier to read in code review.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for Number.isFinite?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with Number.isFinite?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Using **Number.isFinite** without checking the return value. — **Fix:** say the exact return type before you run the code.
+- Forgetting edge cases like empty input or missing values. — **Fix:** test one happy path and one awkward path.
+
+## K — Coding challenge with solution
+**Challenge:** Predict what the example returns, then change one input to expose an edge case in **Number.isFinite**.
+
+**Solution:**
 ```js
 Number.isFinite(10) // true
 Number.isFinite(Infinity) // false
 ```
 
-## Common Pitfalls
-- Picking a nearby method with a different return shape.
-- Forgetting whether the operation is shallow or whether it returns a new value.
-- Ignoring edge cases such as empty arrays, missing keys, or whitespace details.
+**Why it works:** This works because the example makes the input and output of **Number.isFinite** obvious enough to reason about before you run it.
+## Next topic
+[Number.isInteger](24-number-is-integer.md)
 
-## Interview Angle
-- **Q:** What is Number.isFinite?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use Number.isFinite in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand Number.isFinite.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [Number.isNaN](22-number-is-nan.md)
-- Next: [Number.isInteger](24-number-is-integer.md)
+## One tiny action
+Type the example for **Number.isFinite** once and say the return value out loud before you run it.

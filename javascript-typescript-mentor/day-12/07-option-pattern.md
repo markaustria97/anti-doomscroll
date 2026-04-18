@@ -1,39 +1,37 @@
 # Option pattern
 
-## TL;DR
-Option pattern is a production-oriented practice for keeping systems easier to extend, test, and review. The important question is when it buys clarity and when it becomes extra abstraction that the team has to maintain.
+## T — TL;DR
+**Option pattern** is about making data flow and error flow easier to reason about. Start with the smallest useful example.
 
-## Key Concepts
-- Option pattern is a design tool for managing change over time, not just passing an interview.
-- Good production patterns improve testability, readability, and failure isolation.
-- Team consistency matters as much as the pattern itself.
-- Use abstraction to simplify decisions, not to make simple code look advanced.
+## K — Key Concepts
+- Use **Option pattern** to make flow, transformation, or failure handling more explicit.
+- Start with plain data and tiny functions before adding a library abstraction.
+- If the idea makes simple code harder to read, scale it back.
 
-## Why It Matters
-Production systems change under pressure from new requirements, failures, and team growth. Option pattern gives you vocabulary and structure for making those changes without turning every feature into a rewrite.
+## W — Why it matters
+Functional ideas like **Option pattern** matter when state, data flow, or error flow starts getting messy. They give you a calmer way to reason about change.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** Why would a team use Option pattern?  
+  **A:** Because it can make transformation or error flow easier to follow and test.
+- **Q:** When does Option pattern become a bad fit?  
+  **A:** When it adds ceremony without reducing confusion or duplication.
+
+## C — Common pitfalls with fix
+- Turning a simple function into a style exercise. — **Fix:** keep the first version plain and tiny.
+- Forgetting the runtime cost of extra indirection. — **Fix:** use the pattern where it clearly improves clarity or safety.
+
+## K — Coding challenge with solution
+**Challenge:** Follow the data or error flow in the example for **Option pattern** and explain why it stays predictable.
+
+**Solution:**
 ```ts
 type Option<T> = { kind: "some"; value: T } | { kind: "none" }
 ```
 
-## Common Pitfalls
-- Applying the pattern because the name sounds impressive instead of because the problem needs it.
-- Adding abstraction before the change pressure is real.
-- Hiding important domain rules behind too many layers.
+**Why it works:** This works because the example keeps the transformation or error path linear, which is the main benefit behind **Option pattern**.
+## Next topic
+[never throw philosophy](08-never-throw-philosophy.md)
 
-## Interview Angle
-- **Q:** What problem does Option pattern solve?  
-  **A:** Answer with a change-management problem, not only a definition.
-- **Q:** When would you avoid Option pattern?  
-  **A:** Avoid it when the abstraction cost is higher than the coordination or testability benefit.
-
-## Mini Challenge
-Name one small feature where Option pattern would make the code easier to extend or test.
-
-## Mini Challenge Solution
-A good solution identifies the changing part, the stable part, and why the pattern keeps them separate.
-
-## Related Topics
-- Previous: [Result pattern](06-result-pattern.md)
-- Next: [never throw philosophy](08-never-throw-philosophy.md)
+## One tiny action
+Trace the data through the example for **Option pattern** with your finger or cursor once.

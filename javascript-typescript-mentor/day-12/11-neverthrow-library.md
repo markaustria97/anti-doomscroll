@@ -1,40 +1,38 @@
 # neverthrow library
 
-## TL;DR
-neverthrow library is part of the JavaScript or TypeScript platform and workflow story. Learn what it is responsible for, what it is not responsible for, and the small set of defaults you need to be productive. Good tooling and platform choices remove friction long before you notice them.
+## T — TL;DR
+**neverthrow library** is about making data flow and error flow easier to reason about. Start with the smallest useful example.
 
-## Key Concepts
-- neverthrow library belongs to the platform or tooling layer rather than your application domain logic.
-- Start with the default setup and only add configuration you can explain.
-- Know whether the topic affects runtime behavior, development experience, or both.
-- Healthy tooling reduces accidental complexity and keeps teams aligned.
+## K — Key Concepts
+- Use **neverthrow library** to make flow, transformation, or failure handling more explicit.
+- Start with plain data and tiny functions before adding a library abstraction.
+- If the idea makes simple code harder to read, scale it back.
 
-## Why It Matters
-neverthrow library matters because setup and platform decisions quietly shape every other lesson in the stack. Good defaults reduce friction, make teams more consistent, and help you spend more time on application logic than on environment drift.
+## W — Why it matters
+Functional ideas like **neverthrow library** matter when state, data flow, or error flow starts getting messy. They give you a calmer way to reason about change.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** Why would a team use neverthrow library?  
+  **A:** Because it can make transformation or error flow easier to follow and test.
+- **Q:** When does neverthrow library become a bad fit?  
+  **A:** When it adds ceremony without reducing confusion or duplication.
+
+## C — Common pitfalls with fix
+- Turning a simple function into a style exercise. — **Fix:** keep the first version plain and tiny.
+- Forgetting the runtime cost of extra indirection. — **Fix:** use the pattern where it clearly improves clarity or safety.
+
+## K — Coding challenge with solution
+**Challenge:** Follow the data or error flow in the example for **neverthrow library** and explain why it stays predictable.
+
+**Solution:**
 ```ts
 import { ok, err } from "neverthrow"
 const value = ok(1)
 ```
 
-## Common Pitfalls
-- Over-configuring early instead of learning the default workflow first.
-- Assuming the tool can fix unclear architecture or weak tests on its own.
-- Letting local setup drift across teammates or CI environments.
+**Why it works:** This works because the example keeps the transformation or error path linear, which is the main benefit behind **neverthrow library**.
+## Next topic
+[custom error classes](12-custom-error-classes.md)
 
-## Interview Angle
-- **Q:** What role does neverthrow library play in a JS/TS project?  
-  **A:** Name the problem it solves, where it fits in the workflow, and what it does not replace.
-- **Q:** What is a safe default for neverthrow library?  
-  **A:** Choose the smallest setup that gives consistency without needless configuration.
-
-## Mini Challenge
-Create the smallest setup example or command sequence that shows how neverthrow library helps your workflow.
-
-## Mini Challenge Solution
-A correct solution uses the tool for one concrete job and briefly states what feedback or outcome you expect.
-
-## Related Topics
-- Previous: [Promise integration with Result](10-promise-integration-with-result.md)
-- Next: [custom error classes](12-custom-error-classes.md)
+## One tiny action
+Trace the data through the example for **neverthrow library** with your finger or cursor once.

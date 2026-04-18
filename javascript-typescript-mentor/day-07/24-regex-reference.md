@@ -1,39 +1,37 @@
 # regex reference
 
-## TL;DR
-regex reference is part of the JavaScript or TypeScript platform and workflow story. Learn what it is responsible for, what it is not responsible for, and the small set of defaults you need to be productive. Good tooling and platform choices remove friction long before you notice them.
+## T — TL;DR
+**regex reference** is a modern JavaScript feature worth learning through behavior, not hype. Aim for one clear mental picture.
 
-## Key Concepts
-- regex reference belongs to the platform or tooling layer rather than your application domain logic.
-- Start with the default setup and only add configuration you can explain.
-- Know whether the topic affects runtime behavior, development experience, or both.
-- Healthy tooling reduces accidental complexity and keeps teams aligned.
+## K — Key Concepts
+- Name the runtime rule behind **regex reference** before you memorize syntax.
+- Predict the result first, then run the example to verify your model.
+- When behavior surprises you, reduce the code until only the rule remains.
 
-## Why It Matters
-regex reference matters because setup and platform decisions quietly shape every other lesson in the stack. Good defaults reduce friction, make teams more consistent, and help you spend more time on application logic than on environment drift.
+## W — Why it matters
+You will keep seeing **regex reference** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for regex reference?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with regex reference?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
+- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+
+## K — Coding challenge with solution
+**Challenge:** Use the example for **regex reference** to explain the rule in your own words.
+
+**Solution:**
 ```js
 /^[a-z0-9_-]+$/i.test("mentor_01") // true
 ```
 
-## Common Pitfalls
-- Over-configuring early instead of learning the default workflow first.
-- Assuming the tool can fix unclear architecture or weak tests on its own.
-- Letting local setup drift across teammates or CI environments.
+**Why it works:** This works because the example is small enough to explain without guessing.
+## Next topic
+[why TypeScript](../day-08/01-why-type-script.md)
 
-## Interview Angle
-- **Q:** What role does regex reference play in a JS/TS project?  
-  **A:** Name the problem it solves, where it fits in the workflow, and what it does not replace.
-- **Q:** What is a safe default for regex reference?  
-  **A:** Choose the smallest setup that gives consistency without needless configuration.
-
-## Mini Challenge
-Create the smallest setup example or command sequence that shows how regex reference helps your workflow.
-
-## Mini Challenge Solution
-A correct solution uses the tool for one concrete job and briefly states what feedback or outcome you expect.
-
-## Related Topics
-- Previous: [using / explicit resource management](23-using-explicit-resource-management.md)
-- Next: [why TypeScript](../day-08/01-why-type-script.md)
+## One tiny action
+Spend two minutes turning **regex reference** into one tiny runnable example.

@@ -1,18 +1,30 @@
 # event loop
 
-## TL;DR
-Event loop is part of JavaScript's async execution model. Start with the mental model of when work gets queued and resumed, then map the API or concept onto that model. Once the model is clear, the syntax becomes much easier to trust.
+## T — TL;DR
+**event loop** makes more sense when you picture a timeline: start work, queue work, resume work, then handle success or failure.
 
-## Key Concepts
-- Event loop only makes sense when you place it on the event-loop timeline.
-- JavaScript runs your current call stack to completion before picking more queued work.
-- Microtasks run before the engine moves to the next macrotask turn.
-- Most async bugs are ordering bugs, cancellation bugs, or unhandled rejection bugs.
+## K — Key Concepts
+- Put **event loop** on a timeline: when does work start, pause, resume, or fail?
+- Most async bugs are ordering bugs, forgotten error paths, or missing cancellation.
+- The smaller the example, the easier it is to see the queueing rule.
 
-## Why It Matters
-Async behavior is where many otherwise solid codebases become unpredictable. Knowing event loop helps you debug ordering issues, choose the right API, and explain why code that 'looks sequential' still resumes later.
+## W — Why it matters
+A lot of production bugs come from misunderstanding timing. **event loop** helps you explain why code that looks simple can still behave later, fail later, or race.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** How would you explain event loop without starting with syntax?  
+  **A:** Describe the timeline first: when work begins, when it waits, and when it resumes or fails.
+- **Q:** What bug usually appears when people misunderstand event loop?  
+  **A:** Ordering bugs, missed errors, and forgotten cancellation paths are the common ones.
+
+## C — Common pitfalls with fix
+- Reading async code as if it runs top to bottom without pausing. — **Fix:** draw a quick timeline of start, wait, resume, and error.
+- Ignoring rejection or cancellation paths. — **Fix:** include one failure case in every small example.
+
+## K — Coding challenge with solution
+**Challenge:** Trace the example for **event loop** and explain where execution waits, resumes, or can fail.
+
+**Solution:**
 ```js
 console.log("start")
 setTimeout(() => console.log("timer"), 0)
@@ -20,23 +32,9 @@ Promise.resolve().then(() => console.log("microtask"))
 console.log("end")
 ```
 
-## Common Pitfalls
-- Assuming async code runs immediately in source order; always think about queueing.
-- Forgetting to handle rejections or cancellation paths.
-- Using the wrong promise combinator for your failure policy.
+**Why it works:** This works because it exposes the timing rule behind **event loop** instead of hiding it inside a large async flow.
+## Next topic
+[call stack](02-call-stack.md)
 
-## Interview Angle
-- **Q:** How would you explain event loop without code?  
-  **A:** Start with the event-loop mental model, then map the API or keyword onto that timeline.
-- **Q:** What bug does misunderstanding event loop usually create?  
-  **A:** Ordering bugs, missed error handling, or cancellation bugs are the common ones.
-
-## Mini Challenge
-Create a tiny example that shows the ordering behavior behind event loop.
-
-## Mini Challenge Solution
-A correct solution prints or returns values in an order that matches the event-loop rule behind event loop, then briefly explains why.
-
-## Related Topics
-- Previous: [when to prefer Map/Set](../day-04/40-when-to-prefer-map-set.md)
-- Next: [call stack](02-call-stack.md)
+## One tiny action
+Draw a 3-step timeline for **event loop**: start, wait, resume.

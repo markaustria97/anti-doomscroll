@@ -1,18 +1,30 @@
 # tsconfig.json
 
-## TL;DR
-tsconfig.json is part of the JavaScript or TypeScript platform and workflow story. Learn what it is responsible for, what it is not responsible for, and the small set of defaults you need to be productive. Good tooling and platform choices remove friction long before you notice them.
+## T — TL;DR
+**tsconfig.json** helps TypeScript describe what values are allowed before runtime. Use it to make assumptions explicit, not magical.
 
-## Key Concepts
-- tsconfig.json belongs to the platform or tooling layer rather than your application domain logic.
-- Start with the default setup and only add configuration you can explain.
-- Know whether the topic affects runtime behavior, development experience, or both.
-- Healthy tooling reduces accidental complexity and keeps teams aligned.
+## K — Key Concepts
+- Keep **tsconfig.json** aligned with runtime truth.
+- Prefer readable types over clever ones that teammates cannot explain.
+- If data comes from outside your code, pair types with runtime validation.
 
-## Why It Matters
-tsconfig.json matters because setup and platform decisions quietly shape every other lesson in the stack. Good defaults reduce friction, make teams more consistent, and help you spend more time on application logic than on environment drift.
+## W — Why it matters
+TypeScript is most useful when it prevents bad assumptions early. **tsconfig.json** helps you move mistakes into the editor instead of discovering them through runtime bugs.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** When is tsconfig.json actually helpful?  
+  **A:** When it makes an invariant clearer and reduces unsafe assumptions in real code.
+- **Q:** What is the danger of overusing tsconfig.json?  
+  **A:** You can create types that look impressive but hide runtime uncertainty or confuse the team.
+
+## C — Common pitfalls with fix
+- Using types to hide uncertainty instead of model it. — **Fix:** keep unknown data unknown until you validate or narrow it.
+- Making **tsconfig.json** too clever. — **Fix:** choose the simpler type that your future self can explain quickly.
+
+## K — Coding challenge with solution
+**Challenge:** Read the example for **tsconfig.json** and say which unsafe assumption became explicit.
+
+**Solution:**
 ```json
 {
   "compilerOptions": {
@@ -23,23 +35,9 @@ tsconfig.json matters because setup and platform decisions quietly shape every o
 }
 ```
 
-## Common Pitfalls
-- Over-configuring early instead of learning the default workflow first.
-- Assuming the tool can fix unclear architecture or weak tests on its own.
-- Letting local setup drift across teammates or CI environments.
+**Why it works:** This works because **tsconfig.json** is easiest to trust when the type rule and the runtime story match.
+## Next topic
+[strict mode](03-strict-mode.md)
 
-## Interview Angle
-- **Q:** What role does tsconfig.json play in a JS/TS project?  
-  **A:** Name the problem it solves, where it fits in the workflow, and what it does not replace.
-- **Q:** What is a safe default for tsconfig.json?  
-  **A:** Choose the smallest setup that gives consistency without needless configuration.
-
-## Mini Challenge
-Create the smallest setup example or command sequence that shows how tsconfig.json helps your workflow.
-
-## Mini Challenge Solution
-A correct solution uses the tool for one concrete job and briefly states what feedback or outcome you expect.
-
-## Related Topics
-- Previous: [why TypeScript](01-why-type-script.md)
-- Next: [strict mode](03-strict-mode.md)
+## One tiny action
+Read the example for **tsconfig.json** and name the exact value or shape that became safer.

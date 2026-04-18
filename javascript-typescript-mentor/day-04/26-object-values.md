@@ -1,39 +1,37 @@
 # Object.values
 
-## TL;DR
-Object.values is one of the core object APIs for inspection, copying, or behavior control. You should understand whether it reads keys, creates a new object, mutates something, or changes mutability guarantees. That helps you reason about state updates and bugs more confidently.
+## T — TL;DR
+**Object.values** is a small built-in with one job. Learn the input, the return value, and the bug it helps you avoid.
 
-## Key Concepts
-- Object.values operates on object structure, identity, or mutability rather than class-style inheritance alone.
-- Understand whether it is shallow or deep, and whether it affects the original object.
-- Property enumerability and ownership often matter with object helpers.
-- Use the method that matches your real goal instead of treating all object helpers as interchangeable.
+## K — Key Concepts
+- Know exactly what **Object.values** returns.
+- Check whether it creates a new value or changes an existing one.
+- Look for the edge case: empty input, missing value, sparse data, or type coercion.
 
-## Why It Matters
-This matters in day-to-day engineering because Object.values affects how readable, predictable, and maintainable your code feels under change. Once you know the mental model, you can choose the feature on purpose instead of copying patterns blindly.
+## W — Why it matters
+Small data operations like **Object.values** show up everywhere. Getting them right reduces bugs and makes everyday code easier to read in code review.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for Object.values?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with Object.values?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Using **Object.values** without checking the return value. — **Fix:** say the exact return type before you run the code.
+- Forgetting edge cases like empty input or missing values. — **Fix:** test one happy path and one awkward path.
+
+## K — Coding challenge with solution
+**Challenge:** Predict what the example returns, then change one input to expose an edge case in **Object.values**.
+
+**Solution:**
 ```js
 Object.values({ a: 1, b: 2 }) // [1, 2]
 ```
 
-## Common Pitfalls
-- Picking a nearby method with a different return shape.
-- Forgetting whether the operation is shallow or whether it returns a new value.
-- Ignoring edge cases such as empty arrays, missing keys, or whitespace details.
+**Why it works:** This works because the example makes the input and output of **Object.values** obvious enough to reason about before you run it.
+## Next topic
+[Object.entries](27-object-entries.md)
 
-## Interview Angle
-- **Q:** What is Object.values?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use Object.values in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand Object.values.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [Object.keys](25-object-keys.md)
-- Next: [Object.entries](27-object-entries.md)
+## One tiny action
+Type the example for **Object.values** once and say the return value out loud before you run it.

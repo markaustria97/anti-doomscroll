@@ -1,39 +1,37 @@
 # Prettier
 
-## TL;DR
-Prettier is part of the JavaScript or TypeScript platform and workflow story. Learn what it is responsible for, what it is not responsible for, and the small set of defaults you need to be productive. Good tooling and platform choices remove friction long before you notice them.
+## T — TL;DR
+**Prettier** should make daily work smoother, not more complicated. Learn the smallest setup that gives you a clear benefit right away.
 
-## Key Concepts
-- Prettier belongs to the platform or tooling layer rather than your application domain logic.
-- Start with the default setup and only add configuration you can explain.
-- Know whether the topic affects runtime behavior, development experience, or both.
-- Healthy tooling reduces accidental complexity and keeps teams aligned.
+## K — Key Concepts
+- Use **Prettier** for one concrete job before adding extra configuration.
+- Keep the setup small enough that you can explain every line.
+- Good tooling removes friction; it does not replace testing or design.
 
-## Why It Matters
-Prettier matters because setup and platform decisions quietly shape every other lesson in the stack. Good defaults reduce friction, make teams more consistent, and help you spend more time on application logic than on environment drift.
+## W — Why it matters
+When **Prettier** is set up well, it quietly saves attention every day. That is valuable when you only have a short learning window.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What problem does Prettier solve?  
+  **A:** Answer with one concrete workflow problem, not a marketing description.
+- **Q:** What is a good default setup for Prettier?  
+  **A:** Choose the smallest configuration that produces visible value and is easy to maintain.
+
+## C — Common pitfalls with fix
+- Adding too much configuration too early. — **Fix:** start with the smallest working setup.
+- Expecting tooling to fix architecture or tests. — **Fix:** use the tool for its specific job only.
+
+## K — Coding challenge with solution
+**Challenge:** Write the smallest setup or command that proves **Prettier** is working for you.
+
+**Solution:**
 ```bash
 pnpm prettier --write src/**/*.ts
 ```
 
-## Common Pitfalls
-- Over-configuring early instead of learning the default workflow first.
-- Assuming the tool can fix unclear architecture or weak tests on its own.
-- Letting local setup drift across teammates or CI environments.
+**Why it works:** This works because it shows the smallest visible payoff from **Prettier** without hiding the setup behind extra tooling decisions.
+## Next topic
+[var / let / const](05-var-let-const.md)
 
-## Interview Angle
-- **Q:** What role does Prettier play in a JS/TS project?  
-  **A:** Name the problem it solves, where it fits in the workflow, and what it does not replace.
-- **Q:** What is a safe default for Prettier?  
-  **A:** Choose the smallest setup that gives consistency without needless configuration.
-
-## Mini Challenge
-Create the smallest setup example or command sequence that shows how Prettier helps your workflow.
-
-## Mini Challenge Solution
-A correct solution uses the tool for one concrete job and briefly states what feedback or outcome you expect.
-
-## Related Topics
-- Previous: [ESLint](03-eslint.md)
-- Next: [var / let / const](05-var-let-const.md)
+## One tiny action
+Open a scratch note and write one sentence: 'I use **Prettier** to ___.'

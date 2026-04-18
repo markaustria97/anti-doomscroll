@@ -1,39 +1,37 @@
 # array grouping
 
-## TL;DR
-Array grouping is a modern JavaScript capability that improves expressiveness, interoperability, or platform reach. Focus on what protocol or runtime behavior it participates in, because that is what makes the feature useful beyond the syntax itself.
+## T — TL;DR
+**array grouping** is a modern JavaScript feature worth learning through behavior, not hype. Aim for one clear mental picture.
 
-## Key Concepts
-- Array grouping plugs into a language protocol, platform feature, or module system rule.
-- Modern JavaScript features often compose well because they follow shared protocols like iteration or promises.
-- Support level matters: some features are stable, some are new, and some are still proposals.
-- Understand both the practical use case and the compatibility story.
+## K — Key Concepts
+- Name the runtime rule behind **array grouping** before you memorize syntax.
+- Predict the result first, then run the example to verify your model.
+- When behavior surprises you, reduce the code until only the rule remains.
 
-## Why It Matters
-This matters in day-to-day engineering because array grouping affects how readable, predictable, and maintainable your code feels under change. Once you know the mental model, you can choose the feature on purpose instead of copying patterns blindly.
+## W — Why it matters
+You will keep seeing **array grouping** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for array grouping?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with array grouping?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
+- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+
+## K — Coding challenge with solution
+**Challenge:** Use the example for **array grouping** to explain the rule in your own words.
+
+**Solution:**
 ```js
 Object.groupBy([1, 2, 3, 4], (n) => (n % 2 ? "odd" : "even"))
 ```
 
-## Common Pitfalls
-- Memorizing the surface syntax without learning the underlying mental model.
-- Using the feature everywhere instead of when it clearly improves the code.
-- Skipping edge cases such as empty inputs, nullish values, or failed async work.
+**Why it works:** This works because the example is small enough to explain without guessing.
+## Next topic
+[Promise.withResolvers](21-promise-with-resolvers.md)
 
-## Interview Angle
-- **Q:** What is array grouping?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use array grouping in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand array grouping.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [Intl.Collator](19-intl-collator.md)
-- Next: [Promise.withResolvers](21-promise-with-resolvers.md)
+## One tiny action
+Spend two minutes turning **array grouping** into one tiny runnable example.

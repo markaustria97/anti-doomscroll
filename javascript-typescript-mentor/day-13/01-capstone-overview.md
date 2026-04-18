@@ -1,39 +1,37 @@
 # capstone overview
 
-## TL;DR
-Capstone overview pulls together multiple JavaScript and TypeScript ideas into a system-level skill. Use it to practice design trade-offs, naming, boundaries, and failure handling instead of isolated syntax tricks.
+## T — TL;DR
+**capstone overview** turns isolated syntax knowledge into a small engineering decision. Focus on boundaries, names, and failure paths.
 
-## Key Concepts
-- Capstone overview combines language features, typing, and system design choices.
-- Focus on boundaries, error handling, and naming before polishing implementation details.
-- A strong answer explains trade-offs, not just one possible implementation.
-- This is where interview prep starts looking like real engineering work.
+## K — Key Concepts
+- Treat **capstone overview** like a small system, not an isolated syntax drill.
+- Define boundaries and data shapes before polishing implementation details.
+- A clear failure path usually matters more than a clever happy path.
 
-## Why It Matters
-This topic matters because interview prep is strongest when it resembles actual system design work. Capstone overview forces you to balance correctness, maintainability, and communication instead of only writing syntax-level answers.
+## W — Why it matters
+Capstone topics matter because they combine many smaller lessons into one realistic task. **capstone overview** is where you practice making trade-offs instead of repeating syntax facts.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** How would you approach capstone overview in a real system?  
+  **A:** Start by naming the boundary, the data shape, and one failure path before writing much code.
+- **Q:** What makes a strong answer for capstone overview?  
+  **A:** A strong answer shows trade-offs, not just syntax or one happy-path implementation.
+
+## C — Common pitfalls with fix
+- Jumping into implementation before defining boundaries. — **Fix:** write the input, output, and failure cases first.
+- Optimizing too early. — **Fix:** make the happy path clear before you scale the design.
+
+## K — Coding challenge with solution
+**Challenge:** Name the boundary, data shape, or failure path shown in this tiny **capstone overview** example.
+
+**Solution:**
 ```txt
 Goal: combine types, async flows, boundaries, and error handling in one small project.
 ```
 
-## Common Pitfalls
-- Memorizing the surface syntax without learning the underlying mental model.
-- Using the feature everywhere instead of when it clearly improves the code.
-- Skipping edge cases such as empty inputs, nullish values, or failed async work.
+**Why it works:** This works because the example stays tiny while still showing one real design decision inside **capstone overview**.
+## Next topic
+[type-safe in-memory event bus](02-type-safe-in-memory-event-bus.md)
 
-## Interview Angle
-- **Q:** What is capstone overview?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use capstone overview in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand capstone overview.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [explicit resource management](../day-12/17-explicit-resource-management.md)
-- Next: [type-safe in-memory event bus](02-type-safe-in-memory-event-bus.md)
+## One tiny action
+Write one boundary for **capstone overview** before thinking about a full implementation.

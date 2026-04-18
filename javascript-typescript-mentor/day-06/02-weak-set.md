@@ -1,40 +1,38 @@
 # WeakSet
 
-## TL;DR
-WeakSet helps you reason about how JavaScript values stay alive, get collected, or show up in debugging tools. The mental model matters more than memorizing engine internals: know what keeps references reachable and what tools help you inspect leaks. That knowledge is essential for production debugging.
+## T — TL;DR
+**WeakSet** matters because leaks and retained objects stay invisible until the app feels slow or unstable.
 
-## Key Concepts
-- WeakSet is mostly about reachability: values stay alive while something reachable still references them.
-- Garbage collection is automatic, but leak prevention is still a programming responsibility.
-- Weak references are niche tools and should not be used as normal ownership models.
-- Debugging memory issues usually means verifying retention paths, not guessing.
+## K — Key Concepts
+- Ask what **WeakSet** keeps alive and when those references can disappear.
+- Memory problems usually come from retention, not from one large allocation.
+- Use tools to confirm your guess instead of trusting a vague hunch.
 
-## Why It Matters
-Memory issues are expensive because they usually show up after a feature already works. Knowing WeakSet helps you keep long-running sessions stable, investigate leaks methodically, and avoid premature fixes that only hide symptoms.
+## W — Why it matters
+Memory issues are expensive to debug when you wait too long. **WeakSet** gives you a smaller checklist for spotting leaks before they become user-facing.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for WeakSet?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with WeakSet?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Guessing at leaks without measuring. — **Fix:** capture a snapshot, profile, or log the retention path.
+- Keeping references around 'just in case'. — **Fix:** shorten object lifetimes and release caches or listeners.
+
+## K — Coding challenge with solution
+**Challenge:** Name what stays referenced in the example for **WeakSet** and what would let it be cleaned up.
+
+**Solution:**
 ```js
 const visited = new WeakSet()
 visited.add(node)
 ```
 
-## Common Pitfalls
-- Blaming the garbage collector when the real issue is a lingering reference you still own.
-- Using WeakRef or FinalizationRegistry as normal app logic instead of niche tools.
-- Trying to fix leaks without first reproducing and measuring them.
+**Why it works:** This works because it keeps object lifetime small enough to talk about what stays reachable in **WeakSet**.
+## Next topic
+[memory management](03-memory-management.md)
 
-## Interview Angle
-- **Q:** What is WeakSet?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use WeakSet in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand WeakSet.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [WeakMap](01-weak-map.md)
-- Next: [memory management](03-memory-management.md)
+## One tiny action
+Point at one reference in the example for **WeakSet** and ask, 'What keeps this alive?'

@@ -1,18 +1,30 @@
 # primitives vs objects
 
-## TL;DR
-Primitives vs objects compares similar ideas that behave differently in practice. Learn the safer default, the key difference in behavior, and the common bug that appears when people treat them as interchangeable. This is the kind of distinction interviewers love to probe.
+## T — TL;DR
+**primitives vs objects** is a choice lesson: learn the safe default, the behavior difference that actually matters, and one exception worth remembering.
 
-## Key Concepts
-- Primitives vs objects puts similar-looking concepts side by side so you can separate syntax from behavior.
-- Look for the one behavior difference that changes correctness, readability, or compatibility.
-- Interviews often ask for the default choice and the edge case where another option is better.
-- When in doubt, choose the option with the most explicit and least surprising behavior.
+## K — Key Concepts
+- Start with the default choice in **primitives vs objects**, then learn the single case that changes your answer.
+- Compare behavior, not just syntax or popularity.
+- A 3-line example is usually enough to make the distinction stick.
 
-## Why It Matters
-Primitives vs objects matters because similar-looking options often fail in different ways. The faster you can explain the behavior difference, the easier it is to choose the safe default and debug edge cases under pressure.
+## W — Why it matters
+Questions about **primitives vs objects** are common because they reveal whether you understand behavior or only memorized names.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What is the main behavior difference in primitives vs objects?  
+  **A:** State the default choice first, then name the edge case that would make you choose the other option.
+- **Q:** How would you explain primitives vs objects quickly in an interview?  
+  **A:** Use one sentence for the rule and one tiny example for proof.
+
+## C — Common pitfalls with fix
+- Memorizing slogans instead of behavior. — **Fix:** compare the outputs or side effects of one tiny example.
+- Choosing by familiarity instead of by requirement. — **Fix:** say what default you prefer and why.
+
+## K — Coding challenge with solution
+**Challenge:** Use the example for **primitives vs objects** to explain the rule in your own words.
+
+**Solution:**
 ```js
 let a = 1
 let b = a
@@ -24,23 +36,9 @@ copy.name = "Grace"
 console.log(user.name) // "Grace"
 ```
 
-## Common Pitfalls
-- Remembering the syntax but not the behavior difference that actually matters.
-- Choosing the shorter form even when the more explicit form is safer.
-- Answering interview questions with rules of thumb but no example.
+**Why it works:** This works because the example is small enough to explain without guessing.
+## Next topic
+[type coercion](07-type-coercion.md)
 
-## Interview Angle
-- **Q:** What is the practical difference in primitives vs objects?  
-  **A:** Explain the behavior difference, then state the safer default and one case where the alternative is useful.
-- **Q:** Which option in primitives vs objects would you choose by default?  
-  **A:** Pick the option with the least surprising behavior and justify it with a small example.
-
-## Mini Challenge
-Write two tiny examples that demonstrate the difference in primitives vs objects.
-
-## Mini Challenge Solution
-A correct solution shows different outputs or behaviors, then states the safer default in one sentence.
-
-## Related Topics
-- Previous: [var / let / const](05-var-let-const.md)
-- Next: [type coercion](07-type-coercion.md)
+## One tiny action
+Spend two minutes turning **primitives vs objects** into one tiny runnable example.

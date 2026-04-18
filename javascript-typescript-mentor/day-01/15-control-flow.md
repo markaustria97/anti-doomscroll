@@ -1,18 +1,30 @@
 # control flow
 
-## TL;DR
-Control flow is a core JavaScript idea worth learning as a mental model first and a syntax feature second. Once you know what the language or runtime is doing, it becomes much easier to write deliberate code and explain your decisions.
+## T — TL;DR
+**control flow** is easier when you tie it to one concrete rule instead of memorizing isolated syntax.
 
-## Key Concepts
-- Control flow is best understood through behavior, not memorized definitions.
-- Start with the runtime or type-system mental model.
-- Use the most explicit form that matches your intent.
-- Watch the edge cases that show up in interviews and production bugs.
+## K — Key Concepts
+- Name the runtime rule behind **control flow** before you memorize syntax.
+- Predict the result first, then run the example to verify your model.
+- When behavior surprises you, reduce the code until only the rule remains.
 
-## Why It Matters
-This matters in day-to-day engineering because control flow affects how readable, predictable, and maintainable your code feels under change. Once you know the mental model, you can choose the feature on purpose instead of copying patterns blindly.
+## W — Why it matters
+You will keep seeing **control flow** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for control flow?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with control flow?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
+- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+
+## K — Coding challenge with solution
+**Challenge:** Use the example for **control flow** to explain the rule in your own words.
+
+**Solution:**
 ```js
 for (const item of items) {
   if (!item.active) continue
@@ -20,23 +32,9 @@ for (const item of items) {
 }
 ```
 
-## Common Pitfalls
-- Memorizing the surface syntax without learning the underlying mental model.
-- Using the feature everywhere instead of when it clearly improves the code.
-- Skipping edge cases such as empty inputs, nullish values, or failed async work.
+**Why it works:** This works because the example is small enough to explain without guessing.
+## Next topic
+[try / catch / finally](16-try-catch-finally.md)
 
-## Interview Angle
-- **Q:** What is control flow?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use control flow in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand control flow.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [void operator](14-void-operator.md)
-- Next: [try / catch / finally](16-try-catch-finally.md)
+## One tiny action
+Spend two minutes turning **control flow** into one tiny runnable example.

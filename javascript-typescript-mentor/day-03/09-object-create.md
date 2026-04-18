@@ -1,41 +1,39 @@
 # Object.create
 
-## TL;DR
-Object.create is one of the core object APIs for inspection, copying, or behavior control. You should understand whether it reads keys, creates a new object, mutates something, or changes mutability guarantees. That helps you reason about state updates and bugs more confidently.
+## T — TL;DR
+**Object.create** lives in JavaScript's object model. Focus on what gets looked up, delegated, or intercepted at runtime.
 
-## Key Concepts
-- Object.create operates on object structure, identity, or mutability rather than class-style inheritance alone.
-- Understand whether it is shallow or deep, and whether it affects the original object.
-- Property enumerability and ownership often matter with object helpers.
-- Use the method that matches your real goal instead of treating all object helpers as interchangeable.
+## K — Key Concepts
+- Name the runtime rule behind **Object.create** before you memorize syntax.
+- Predict the result first, then run the example to verify your model.
+- When behavior surprises you, reduce the code until only the rule remains.
 
-## Why It Matters
-This matters in day-to-day engineering because Object.create affects how readable, predictable, and maintainable your code feels under change. Once you know the mental model, you can choose the feature on purpose instead of copying patterns blindly.
+## W — Why it matters
+You will keep seeing **Object.create** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for Object.create?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with Object.create?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
+- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+
+## K — Coding challenge with solution
+**Challenge:** Use the example for **Object.create** to explain the rule in your own words.
+
+**Solution:**
 ```js
 const base = { role: "reader" }
 const user = Object.create(base)
 user.name = "Ada"
 ```
 
-## Common Pitfalls
-- Picking a nearby method with a different return shape.
-- Forgetting whether the operation is shallow or whether it returns a new value.
-- Ignoring edge cases such as empty arrays, missing keys, or whitespace details.
+**Why it works:** This works because the example is small enough to explain without guessing.
+## Next topic
+[Proxy](10-proxy.md)
 
-## Interview Angle
-- **Q:** What is Object.create?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use Object.create in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand Object.create.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [inheritance](08-inheritance.md)
-- Next: [Proxy](10-proxy.md)
+## One tiny action
+Spend two minutes turning **Object.create** into one tiny runnable example.

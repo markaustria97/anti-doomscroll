@@ -1,41 +1,39 @@
 # rest parameters
 
-## TL;DR
-Rest parameters sits at the heart of how JavaScript functions execute and how names are resolved. Once you understand the underlying scope and function rules, a lot of confusing runtime behavior becomes predictable.
+## T — TL;DR
+**rest parameters** is about how JavaScript creates, scopes, and calls functions. Get the mental model first, then the syntax feels small.
 
-## Key Concepts
-- Rest parameters depends on how JavaScript creates function objects and scope records.
-- A variable name only makes sense relative to the scope where it is looked up.
-- Hoisting changes availability rules, but not always initialization timing.
-- Closures are not magic storage; they are just functions retaining access to outer bindings.
+## K — Key Concepts
+- Name the runtime rule behind **rest parameters** before you memorize syntax.
+- Predict the result first, then run the example to verify your model.
+- When behavior surprises you, reduce the code until only the rule remains.
 
-## Why It Matters
-This matters in day-to-day engineering because rest parameters affects how readable, predictable, and maintainable your code feels under change. Once you know the mental model, you can choose the feature on purpose instead of copying patterns blindly.
+## W — Why it matters
+You will keep seeing **rest parameters** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for rest parameters?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with rest parameters?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
+- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+
+## K — Coding challenge with solution
+**Challenge:** Use the example for **rest parameters** to explain the rule in your own words.
+
+**Solution:**
 ```js
 function sum(...values) {
   return values.reduce((total, value) => total + value, 0)
 }
 ```
 
-## Common Pitfalls
-- Memorizing the surface syntax without learning the underlying mental model.
-- Using the feature everywhere instead of when it clearly improves the code.
-- Skipping edge cases such as empty inputs, nullish values, or failed async work.
+**Why it works:** This works because the example is small enough to explain without guessing.
+## Next topic
+[arguments object](04-arguments-object.md)
 
-## Interview Angle
-- **Q:** What is rest parameters?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use rest parameters in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand rest parameters.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [default parameters](02-default-parameters.md)
-- Next: [arguments object](04-arguments-object.md)
+## One tiny action
+Spend two minutes turning **rest parameters** into one tiny runnable example.

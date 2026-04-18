@@ -1,40 +1,38 @@
 # Array.isArray
 
-## TL;DR
-Array.isArray is the reliable built-in way to answer one question: is this value really an array? It avoids typeof pitfalls and works better than instanceof across realms. That makes it the right check at API and validation boundaries.
+## T — TL;DR
+**Array.isArray** is easiest when you know three things: what goes in, what comes out, and whether the original array changes.
 
-## Key Concepts
-- Array.isArray performs a reliable array check and returns a boolean.
-- Prefer it over typeof because arrays are objects and typeof [] is "object".
-- It works correctly across realms where instanceof Array can fail.
-- Use it at input boundaries before you call array methods.
+## K — Key Concepts
+- Know exactly what **Array.isArray** returns.
+- Check whether it creates a new value or changes an existing one.
+- Look for the edge case: empty input, missing value, sparse data, or type coercion.
 
-## Why It Matters
-This matters in day-to-day engineering because Array.isArray affects how readable, predictable, and maintainable your code feels under change. Once you know the mental model, you can choose the feature on purpose instead of copying patterns blindly.
+## W — Why it matters
+Small data operations like **Array.isArray** show up everywhere. Getting them right reduces bugs and makes everyday code easier to read in code review.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for Array.isArray?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with Array.isArray?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Using **Array.isArray** without checking the return value. — **Fix:** say the exact return type before you run the code.
+- Forgetting edge cases like empty input or missing values. — **Fix:** test one happy path and one awkward path.
+
+## K — Coding challenge with solution
+**Challenge:** Predict what the example returns, then change one input to expose an edge case in **Array.isArray**.
+
+**Solution:**
 ```js
 Array.isArray([]) // true
 Array.isArray({ length: 0 }) // false
 ```
 
-## Common Pitfalls
-- Picking a nearby method with a different return shape.
-- Forgetting whether the operation is shallow or whether it returns a new value.
-- Ignoring edge cases such as empty arrays, missing keys, or whitespace details.
+**Why it works:** This works because the example makes the input and output of **Array.isArray** obvious enough to reason about before you run it.
+## Next topic
+[map](04-map.md)
 
-## Interview Angle
-- **Q:** What is Array.isArray?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use Array.isArray in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand Array.isArray.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [Array.of](02-array-of.md)
-- Next: [map](04-map.md)
+## One tiny action
+Type the example for **Array.isArray** once and say the return value out loud before you run it.

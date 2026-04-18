@@ -1,40 +1,38 @@
 # pipeline operator proposal
 
-## TL;DR
-Pipeline operator proposal is a modern JavaScript capability that improves expressiveness, interoperability, or platform reach. Focus on what protocol or runtime behavior it participates in, because that is what makes the feature useful beyond the syntax itself.
+## T — TL;DR
+**pipeline operator proposal** is a modern JavaScript feature worth learning through behavior, not hype. Aim for one clear mental picture.
 
-## Key Concepts
-- Pipeline operator proposal plugs into a language protocol, platform feature, or module system rule.
-- Modern JavaScript features often compose well because they follow shared protocols like iteration or promises.
-- Support level matters: some features are stable, some are new, and some are still proposals.
-- Understand both the practical use case and the compatibility story.
+## K — Key Concepts
+- Name the runtime rule behind **pipeline operator proposal** before you memorize syntax.
+- Predict the result first, then run the example to verify your model.
+- When behavior surprises you, reduce the code until only the rule remains.
 
-## Why It Matters
-This matters in day-to-day engineering because pipeline operator proposal affects how readable, predictable, and maintainable your code feels under change. Once you know the mental model, you can choose the feature on purpose instead of copying patterns blindly.
+## W — Why it matters
+You will keep seeing **pipeline operator proposal** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for pipeline operator proposal?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with pipeline operator proposal?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
+- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+
+## K — Coding challenge with solution
+**Challenge:** Use the example for **pipeline operator proposal** to explain the rule in your own words.
+
+**Solution:**
 ```js
 // proposal syntax varies by stage and tooling
 // value |> double |> square
 ```
 
-## Common Pitfalls
-- Memorizing the surface syntax without learning the underlying mental model.
-- Using the feature everywhere instead of when it clearly improves the code.
-- Skipping edge cases such as empty inputs, nullish values, or failed async work.
+**Why it works:** This works because the example is small enough to explain without guessing.
+## Next topic
+[using / explicit resource management](23-using-explicit-resource-management.md)
 
-## Interview Angle
-- **Q:** What is pipeline operator proposal?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use pipeline operator proposal in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand pipeline operator proposal.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [Promise.withResolvers](21-promise-with-resolvers.md)
-- Next: [using / explicit resource management](23-using-explicit-resource-management.md)
+## One tiny action
+Spend two minutes turning **pipeline operator proposal** into one tiny runnable example.

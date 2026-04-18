@@ -1,18 +1,30 @@
 # Error.cause
 
-## TL;DR
-Error.cause is a core JavaScript idea worth learning as a mental model first and a syntax feature second. Once you know what the language or runtime is doing, it becomes much easier to write deliberate code and explain your decisions.
+## T — TL;DR
+**Error.cause** is easier when you tie it to one concrete rule instead of memorizing isolated syntax.
 
-## Key Concepts
-- Error.cause is best understood through behavior, not memorized definitions.
-- Start with the runtime or type-system mental model.
-- Use the most explicit form that matches your intent.
-- Watch the edge cases that show up in interviews and production bugs.
+## K — Key Concepts
+- Name the runtime rule behind **Error.cause** before you memorize syntax.
+- Predict the result first, then run the example to verify your model.
+- When behavior surprises you, reduce the code until only the rule remains.
 
-## Why It Matters
-This matters in day-to-day engineering because Error.cause affects how readable, predictable, and maintainable your code feels under change. Once you know the mental model, you can choose the feature on purpose instead of copying patterns blindly.
+## W — Why it matters
+You will keep seeing **Error.cause** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for Error.cause?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with Error.cause?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
+- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+
+## K — Coding challenge with solution
+**Challenge:** Use the example for **Error.cause** to explain the rule in your own words.
+
+**Solution:**
 ```js
 try {
   loadConfig()
@@ -21,23 +33,9 @@ try {
 }
 ```
 
-## Common Pitfalls
-- Memorizing the surface syntax without learning the underlying mental model.
-- Using the feature everywhere instead of when it clearly improves the code.
-- Skipping edge cases such as empty inputs, nullish values, or failed async work.
+**Why it works:** This works because the example is small enough to explain without guessing.
+## Next topic
+[throw](19-throw.md)
 
-## Interview Angle
-- **Q:** What is Error.cause?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use Error.cause in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand Error.cause.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [built-in Error types](17-built-in-error-types.md)
-- Next: [throw](19-throw.md)
+## One tiny action
+Spend two minutes turning **Error.cause** into one tiny runnable example.

@@ -1,18 +1,30 @@
 # tagged template literals
 
-## TL;DR
-Tagged template literals is part of the everyday toolkit for shaping data, unpacking values, and iterating clearly. Focus on what it returns, whether it copies or mutates, and what kind of input it expects. Small data APIs like this pay off constantly in production code.
+## T — TL;DR
+**tagged template literals** becomes easy once you know what text it returns and which edge cases change the result.
 
-## Key Concepts
-- Tagged template literals helps you shape values, iterate data, or preserve structure with less manual code.
-- Know whether it copies data, keeps references, or changes how values are unpacked.
-- Small data helpers compound into much cleaner business logic.
-- A precise built-in is usually safer than ad hoc transformation code.
+## K — Key Concepts
+- Know exactly what **tagged template literals** returns.
+- Check whether it creates a new value or changes an existing one.
+- Look for the edge case: empty input, missing value, sparse data, or type coercion.
 
-## Why It Matters
-Data-heavy code is easier to maintain when each transformation is obvious. Tagged template literals helps you express common object, array, string, or iteration work with less manual bookkeeping and fewer off-by-one mistakes.
+## W — Why it matters
+Small data operations like **tagged template literals** show up everywhere. Getting them right reduces bugs and makes everyday code easier to read in code review.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for tagged template literals?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with tagged template literals?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Using **tagged template literals** without checking the return value. — **Fix:** say the exact return type before you run the code.
+- Forgetting edge cases like empty input or missing values. — **Fix:** test one happy path and one awkward path.
+
+## K — Coding challenge with solution
+**Challenge:** Predict what the example returns, then change one input to expose an edge case in **tagged template literals**.
+
+**Solution:**
 ```js
 function upper(strings, value) {
   return `${strings[0]}${String(value).toUpperCase()}`
@@ -20,23 +32,9 @@ function upper(strings, value) {
 upper`hello ${"team"}`
 ```
 
-## Common Pitfalls
-- Memorizing the surface syntax without learning the underlying mental model.
-- Using the feature everywhere instead of when it clearly improves the code.
-- Skipping edge cases such as empty inputs, nullish values, or failed async work.
+**Why it works:** This works because the example makes the input and output of **tagged template literals** obvious enough to reason about before you run it.
+## Next topic
+[structuredClone vs JSON stringify/parse](36-structured-clone-vs-json-stringify-parse.md)
 
-## Interview Angle
-- **Q:** What is tagged template literals?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use tagged template literals in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand tagged template literals.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [spread/rest](34-spread-rest.md)
-- Next: [structuredClone vs JSON stringify/parse](36-structured-clone-vs-json-stringify-parse.md)
+## One tiny action
+Type the example for **tagged template literals** once and say the return value out loud before you run it.

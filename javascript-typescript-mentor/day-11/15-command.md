@@ -1,39 +1,37 @@
 # Command
 
-## TL;DR
-The Command gives a repeatable way to organize responsibilities so code stays easier to extend and test. The real skill is not memorizing the name, but recognizing the problem shape it solves and the trade-offs it introduces. Patterns are most useful when they remove complexity rather than add ceremony.
+## T — TL;DR
+**Command** is a design tool for keeping change local. Use it only when it makes the next edit, test, or review easier.
 
-## Key Concepts
-- The Command names a recurring solution shape, not a rule you must always apply.
-- Each pattern has a clear intent, a small set of collaborators, and a trade-off in complexity.
-- Patterns help most when they isolate change or make testing simpler.
-- If the abstraction hides more than it clarifies, the pattern is probably premature.
+## K — Key Concepts
+- Use **Command** to separate a changing part from a stable part.
+- Every abstraction should remove a real source of friction.
+- Good names matter as much as the pattern itself.
 
-## Why It Matters
-Teams reach for the Command when they need code that can grow without spreading conditionals everywhere. Used well, it localizes change and testing. Used badly, it adds layers no one asked for.
+## W — Why it matters
+Architecture topics like **Command** matter when code has to survive change. A small amount of structure can make future edits cheaper and safer.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What problem does Command solve?  
+  **A:** Explain the change or testing problem it reduces, not only the definition.
+- **Q:** When would you avoid Command?  
+  **A:** Avoid it when the abstraction cost is higher than the clarity or testability benefit.
+
+## C — Common pitfalls with fix
+- Adding the pattern because it sounds advanced. — **Fix:** point to the exact pain it removes first.
+- Hiding simple logic behind too many layers. — **Fix:** keep the abstraction small and named by purpose.
+
+## K — Coding challenge with solution
+**Challenge:** Point to the boundary in the example for **Command** and explain why that split helps change or testing.
+
+**Solution:**
 ```ts
 interface Command { execute(): void }
 ```
 
-## Common Pitfalls
-- Applying the pattern because the name sounds impressive instead of because the problem needs it.
-- Adding abstraction before the change pressure is real.
-- Hiding important domain rules behind too many layers.
+**Why it works:** This works because the example keeps the abstraction small enough to see what responsibility **Command** is separating.
+## Next topic
+[functional programming in TypeScript](../day-12/01-functional-programming-in-type-script.md)
 
-## Interview Angle
-- **Q:** What problem does Command solve?  
-  **A:** Answer with a change-management problem, not only a definition.
-- **Q:** When would you avoid Command?  
-  **A:** Avoid it when the abstraction cost is higher than the coordination or testability benefit.
-
-## Mini Challenge
-Name one small feature where Command would make the code easier to extend or test.
-
-## Mini Challenge Solution
-A good solution identifies the changing part, the stable part, and why the pattern keeps them separate.
-
-## Related Topics
-- Previous: [Builder](14-builder.md)
-- Next: [functional programming in TypeScript](../day-12/01-functional-programming-in-type-script.md)
+## One tiny action
+Name one responsibility that **Command** is separating in the example.

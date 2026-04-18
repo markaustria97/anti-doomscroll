@@ -1,18 +1,30 @@
 # public/private/protected
 
-## TL;DR
-Public/private/protected compares similar ideas that behave differently in practice. Learn the safer default, the key difference in behavior, and the common bug that appears when people treat them as interchangeable. This is the kind of distinction interviewers love to probe.
+## T — TL;DR
+**public/private/protected** helps TypeScript describe what values are allowed before runtime. Use it to make assumptions explicit, not magical.
 
-## Key Concepts
-- Public/private/protected puts similar-looking concepts side by side so you can separate syntax from behavior.
-- Look for the one behavior difference that changes correctness, readability, or compatibility.
-- Interviews often ask for the default choice and the edge case where another option is better.
-- When in doubt, choose the option with the most explicit and least surprising behavior.
+## K — Key Concepts
+- Keep **public/private/protected** aligned with runtime truth.
+- Prefer readable types over clever ones that teammates cannot explain.
+- If data comes from outside your code, pair types with runtime validation.
 
-## Why It Matters
-Public/private/protected matters because similar-looking options often fail in different ways. The faster you can explain the behavior difference, the easier it is to choose the safe default and debug edge cases under pressure.
+## W — Why it matters
+TypeScript is most useful when it prevents bad assumptions early. **public/private/protected** helps you move mistakes into the editor instead of discovering them through runtime bugs.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** When is public/private/protected actually helpful?  
+  **A:** When it makes an invariant clearer and reduces unsafe assumptions in real code.
+- **Q:** What is the danger of overusing public/private/protected?  
+  **A:** You can create types that look impressive but hide runtime uncertainty or confuse the team.
+
+## C — Common pitfalls with fix
+- Using types to hide uncertainty instead of model it. — **Fix:** keep unknown data unknown until you validate or narrow it.
+- Making **public/private/protected** too clever. — **Fix:** choose the simpler type that your future self can explain quickly.
+
+## K — Coding challenge with solution
+**Challenge:** Read the example for **public/private/protected** and say which unsafe assumption became explicit.
+
+**Solution:**
 ```ts
 class Base {
   public id = "1"
@@ -21,23 +33,9 @@ class Base {
 }
 ```
 
-## Common Pitfalls
-- Remembering the syntax but not the behavior difference that actually matters.
-- Choosing the shorter form even when the more explicit form is safer.
-- Answering interview questions with rules of thumb but no example.
+**Why it works:** This works because **public/private/protected** is easiest to trust when the type rule and the runtime story match.
+## Next topic
+[readonly](22-readonly.md)
 
-## Interview Angle
-- **Q:** What is the practical difference in public/private/protected?  
-  **A:** Explain the behavior difference, then state the safer default and one case where the alternative is useful.
-- **Q:** Which option in public/private/protected would you choose by default?  
-  **A:** Pick the option with the least surprising behavior and justify it with a small example.
-
-## Mini Challenge
-Write two tiny examples that demonstrate the difference in public/private/protected.
-
-## Mini Challenge Solution
-A correct solution shows different outputs or behaviors, then states the safer default in one sentence.
-
-## Related Topics
-- Previous: [TS class features](20-ts-class-features.md)
-- Next: [readonly](22-readonly.md)
+## One tiny action
+Read the example for **public/private/protected** and name the exact value or shape that became safer.

@@ -1,39 +1,37 @@
 # Nx basics
 
-## TL;DR
-Nx basics is part of the JavaScript or TypeScript platform and workflow story. Learn what it is responsible for, what it is not responsible for, and the small set of defaults you need to be productive. Good tooling and platform choices remove friction long before you notice them.
+## T — TL;DR
+**Nx basics** turns isolated syntax knowledge into a small engineering decision. Focus on boundaries, names, and failure paths.
 
-## Key Concepts
-- Nx basics belongs to the platform or tooling layer rather than your application domain logic.
-- Start with the default setup and only add configuration you can explain.
-- Know whether the topic affects runtime behavior, development experience, or both.
-- Healthy tooling reduces accidental complexity and keeps teams aligned.
+## K — Key Concepts
+- Treat **Nx basics** like a small system, not an isolated syntax drill.
+- Define boundaries and data shapes before polishing implementation details.
+- A clear failure path usually matters more than a clever happy path.
 
-## Why It Matters
-Nx basics matters because setup and platform decisions quietly shape every other lesson in the stack. Good defaults reduce friction, make teams more consistent, and help you spend more time on application logic than on environment drift.
+## W — Why it matters
+Capstone topics matter because they combine many smaller lessons into one realistic task. **Nx basics** is where you practice making trade-offs instead of repeating syntax facts.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** How would you approach Nx basics in a real system?  
+  **A:** Start by naming the boundary, the data shape, and one failure path before writing much code.
+- **Q:** What makes a strong answer for Nx basics?  
+  **A:** A strong answer shows trade-offs, not just syntax or one happy-path implementation.
+
+## C — Common pitfalls with fix
+- Jumping into implementation before defining boundaries. — **Fix:** write the input, output, and failure cases first.
+- Optimizing too early. — **Fix:** make the happy path clear before you scale the design.
+
+## K — Coding challenge with solution
+**Challenge:** Name the boundary, data shape, or failure path shown in this tiny **Nx basics** example.
+
+**Solution:**
 ```txt
 Nx adds project graphs, generators, task orchestration, and caching.
 ```
 
-## Common Pitfalls
-- Over-configuring early instead of learning the default workflow first.
-- Assuming the tool can fix unclear architecture or weak tests on its own.
-- Letting local setup drift across teammates or CI environments.
+**Why it works:** This works because the example stays tiny while still showing one real design decision inside **Nx basics**.
+## Next topic
+[interview Q&A simulation](12-interview-q-and-a-simulation.md)
 
-## Interview Angle
-- **Q:** What role does Nx basics play in a JS/TS project?  
-  **A:** Name the problem it solves, where it fits in the workflow, and what it does not replace.
-- **Q:** What is a safe default for Nx basics?  
-  **A:** Choose the smallest setup that gives consistency without needless configuration.
-
-## Mini Challenge
-Create the smallest setup example or command sequence that shows how Nx basics helps your workflow.
-
-## Mini Challenge Solution
-A correct solution uses the tool for one concrete job and briefly states what feedback or outcome you expect.
-
-## Related Topics
-- Previous: [Turborepo basics](10-turborepo-basics.md)
-- Next: [interview Q&A simulation](12-interview-q-and-a-simulation.md)
+## One tiny action
+Write one boundary for **Nx basics** before thinking about a full implementation.

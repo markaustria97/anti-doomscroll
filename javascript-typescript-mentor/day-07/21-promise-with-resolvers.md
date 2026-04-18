@@ -1,40 +1,38 @@
 # Promise.withResolvers
 
-## TL;DR
-Promise.withResolvers shapes how promises are created, chained, or combined. The main mental model is to think in terms of fulfillment, rejection, and coordination between async tasks instead of line-by-line blocking code. Knowing the differences here prevents subtle async bugs.
+## T — TL;DR
+**Promise.withResolvers** is a modern JavaScript feature worth learning through behavior, not hype. Aim for one clear mental picture.
 
-## Key Concepts
-- Promise.withResolvers is about promise state and orchestration, not thread-based concurrency.
-- Promises settle once: they are either fulfilled or rejected, then they stay that way.
-- Error propagation follows the chain until something handles the rejection.
-- Choose the combinator or chaining style that matches your failure policy.
+## K — Key Concepts
+- Name the runtime rule behind **Promise.withResolvers** before you memorize syntax.
+- Predict the result first, then run the example to verify your model.
+- When behavior surprises you, reduce the code until only the rule remains.
 
-## Why It Matters
-This matters in day-to-day engineering because Promise.withResolvers affects how readable, predictable, and maintainable your code feels under change. Once you know the mental model, you can choose the feature on purpose instead of copying patterns blindly.
+## W — Why it matters
+You will keep seeing **Promise.withResolvers** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for Promise.withResolvers?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with Promise.withResolvers?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
+- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+
+## K — Coding challenge with solution
+**Challenge:** Use the example for **Promise.withResolvers** to explain the rule in your own words.
+
+**Solution:**
 ```js
 const { promise, resolve, reject } = Promise.withResolvers()
 resolve("done")
 ```
 
-## Common Pitfalls
-- Memorizing the surface syntax without learning the underlying mental model.
-- Using the feature everywhere instead of when it clearly improves the code.
-- Skipping edge cases such as empty inputs, nullish values, or failed async work.
+**Why it works:** This works because the example is small enough to explain without guessing.
+## Next topic
+[pipeline operator proposal](22-pipeline-operator-proposal.md)
 
-## Interview Angle
-- **Q:** What is Promise.withResolvers?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use Promise.withResolvers in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand Promise.withResolvers.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [array grouping](20-array-grouping.md)
-- Next: [pipeline operator proposal](22-pipeline-operator-proposal.md)
+## One tiny action
+Spend two minutes turning **Promise.withResolvers** into one tiny runnable example.

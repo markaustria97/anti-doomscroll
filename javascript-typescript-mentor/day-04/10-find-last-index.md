@@ -1,39 +1,37 @@
 # findLastIndex
 
-## TL;DR
-findLastIndex is a focused array helper for transforming, searching, or inspecting data without hand-written loops. The key is knowing what it returns, whether it mutates the input, and when a neighboring method would be a better fit. That makes your code shorter, clearer, and less bug-prone.
+## T — TL;DR
+**findLastIndex** is easiest when you know three things: what goes in, what comes out, and whether the original array changes.
 
-## Key Concepts
-- findLastIndex is usually better than a manual loop when you want one clear data operation.
-- Know the input shape, the callback signature if any, and the exact return value.
-- Check whether the method creates a new array, returns a single value, or only answers a boolean question.
-- Most mistakes come from picking a nearby method that sounds similar but returns something different.
+## K — Key Concepts
+- Know exactly what **findLastIndex** returns.
+- Check whether it creates a new value or changes an existing one.
+- Look for the edge case: empty input, missing value, sparse data, or type coercion.
 
-## Why It Matters
-This matters in day-to-day engineering because findLastIndex affects how readable, predictable, and maintainable your code feels under change. Once you know the mental model, you can choose the feature on purpose instead of copying patterns blindly.
+## W — Why it matters
+Small data operations like **findLastIndex** show up everywhere. Getting them right reduces bugs and makes everyday code easier to read in code review.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for findLastIndex?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with findLastIndex?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Using **findLastIndex** without checking the return value. — **Fix:** say the exact return type before you run the code.
+- Forgetting edge cases like empty input or missing values. — **Fix:** test one happy path and one awkward path.
+
+## K — Coding challenge with solution
+**Challenge:** Predict what the example returns, then change one input to expose an edge case in **findLastIndex**.
+
+**Solution:**
 ```js
 const lastDraftIndex = posts.findLastIndex((post) => post.status === "draft")
 ```
 
-## Common Pitfalls
-- Picking a nearby method with a different return shape.
-- Forgetting whether the operation is shallow or whether it returns a new value.
-- Ignoring edge cases such as empty arrays, missing keys, or whitespace details.
+**Why it works:** This works because the example makes the input and output of **findLastIndex** obvious enough to reason about before you run it.
+## Next topic
+[flat](11-flat.md)
 
-## Interview Angle
-- **Q:** What is findLastIndex?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use findLastIndex in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand findLastIndex.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [findLast](09-find-last.md)
-- Next: [flat](11-flat.md)
+## One tiny action
+Type the example for **findLastIndex** once and say the return value out loud before you run it.

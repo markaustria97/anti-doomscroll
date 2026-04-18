@@ -1,18 +1,30 @@
 # Chrome DevTools memory profiling workflow
 
-## TL;DR
-Chrome DevTools memory profiling workflow helps you reason about how JavaScript values stay alive, get collected, or show up in debugging tools. The mental model matters more than memorizing engine internals: know what keeps references reachable and what tools help you inspect leaks. That knowledge is essential for production debugging.
+## T — TL;DR
+**Chrome DevTools memory profiling workflow** matters because leaks and retained objects stay invisible until the app feels slow or unstable.
 
-## Key Concepts
-- Chrome DevTools memory profiling workflow is mostly about reachability: values stay alive while something reachable still references them.
-- Garbage collection is automatic, but leak prevention is still a programming responsibility.
-- Weak references are niche tools and should not be used as normal ownership models.
-- Debugging memory issues usually means verifying retention paths, not guessing.
+## K — Key Concepts
+- Ask what **Chrome DevTools memory profiling workflow** keeps alive and when those references can disappear.
+- Memory problems usually come from retention, not from one large allocation.
+- Use tools to confirm your guess instead of trusting a vague hunch.
 
-## Why It Matters
-Memory issues are expensive because they usually show up after a feature already works. Knowing Chrome DevTools memory profiling workflow helps you keep long-running sessions stable, investigate leaks methodically, and avoid premature fixes that only hide symptoms.
+## W — Why it matters
+Memory issues are expensive to debug when you wait too long. **Chrome DevTools memory profiling workflow** gives you a smaller checklist for spotting leaks before they become user-facing.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What rule should you remember for Chrome DevTools memory profiling workflow?  
+  **A:** State the rule in plain language and support it with one tiny example.
+- **Q:** What mistake do beginners make with Chrome DevTools memory profiling workflow?  
+  **A:** They often memorize syntax before they can predict the behavior.
+
+## C — Common pitfalls with fix
+- Guessing at leaks without measuring. — **Fix:** capture a snapshot, profile, or log the retention path.
+- Keeping references around 'just in case'. — **Fix:** shorten object lifetimes and release caches or listeners.
+
+## K — Coding challenge with solution
+**Challenge:** Name what stays referenced in the example for **Chrome DevTools memory profiling workflow** and what would let it be cleaned up.
+
+**Solution:**
 ```txt
 1. Take a baseline heap snapshot
 2. Repeat the user flow
@@ -20,23 +32,9 @@ Memory issues are expensive because they usually show up after a feature already
 4. Compare retained objects and paths
 ```
 
-## Common Pitfalls
-- Blaming the garbage collector when the real issue is a lingering reference you still own.
-- Using WeakRef or FinalizationRegistry as normal app logic instead of niche tools.
-- Trying to fix leaks without first reproducing and measuring them.
+**Why it works:** This works because it keeps object lifetime small enough to talk about what stays reachable in **Chrome DevTools memory profiling workflow**.
+## Next topic
+[console.table](12-console-table.md)
 
-## Interview Angle
-- **Q:** What is Chrome DevTools memory profiling workflow?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use Chrome DevTools memory profiling workflow in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand Chrome DevTools memory profiling workflow.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [performance.memory](10-performance-memory.md)
-- Next: [console.table](12-console-table.md)
+## One tiny action
+Point at one reference in the example for **Chrome DevTools memory profiling workflow** and ask, 'What keeps this alive?'

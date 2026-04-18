@@ -1,39 +1,37 @@
 # code review simulation
 
-## TL;DR
-Code review simulation pulls together multiple JavaScript and TypeScript ideas into a system-level skill. Use it to practice design trade-offs, naming, boundaries, and failure handling instead of isolated syntax tricks.
+## T — TL;DR
+**code review simulation** turns isolated syntax knowledge into a small engineering decision. Focus on boundaries, names, and failure paths.
 
-## Key Concepts
-- Code review simulation combines language features, typing, and system design choices.
-- Focus on boundaries, error handling, and naming before polishing implementation details.
-- A strong answer explains trade-offs, not just one possible implementation.
-- This is where interview prep starts looking like real engineering work.
+## K — Key Concepts
+- Treat **code review simulation** like a small system, not an isolated syntax drill.
+- Define boundaries and data shapes before polishing implementation details.
+- A clear failure path usually matters more than a clever happy path.
 
-## Why It Matters
-This topic matters because interview prep is strongest when it resembles actual system design work. Code review simulation forces you to balance correctness, maintainability, and communication instead of only writing syntax-level answers.
+## W — Why it matters
+Capstone topics matter because they combine many smaller lessons into one realistic task. **code review simulation** is where you practice making trade-offs instead of repeating syntax facts.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** How would you approach code review simulation in a real system?  
+  **A:** Start by naming the boundary, the data shape, and one failure path before writing much code.
+- **Q:** What makes a strong answer for code review simulation?  
+  **A:** A strong answer shows trade-offs, not just syntax or one happy-path implementation.
+
+## C — Common pitfalls with fix
+- Jumping into implementation before defining boundaries. — **Fix:** write the input, output, and failure cases first.
+- Optimizing too early. — **Fix:** make the happy path clear before you scale the design.
+
+## K — Coding challenge with solution
+**Challenge:** Name the boundary, data shape, or failure path shown in this tiny **code review simulation** example.
+
+**Solution:**
 ```txt
 Look for correctness, naming, tests, readability, and failure handling.
 ```
 
-## Common Pitfalls
-- Memorizing the surface syntax without learning the underlying mental model.
-- Using the feature everywhere instead of when it clearly improves the code.
-- Skipping edge cases such as empty inputs, nullish values, or failed async work.
+**Why it works:** This works because the example stays tiny while still showing one real design decision inside **code review simulation**.
+## Next topic
+[advanced debugging scenarios](14-advanced-debugging-scenarios.md)
 
-## Interview Angle
-- **Q:** What is code review simulation?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use code review simulation in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand code review simulation.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [interview Q&A simulation](12-interview-q-and-a-simulation.md)
-- Next: [advanced debugging scenarios](14-advanced-debugging-scenarios.md)
+## One tiny action
+Write one boundary for **code review simulation** before thinking about a full implementation.

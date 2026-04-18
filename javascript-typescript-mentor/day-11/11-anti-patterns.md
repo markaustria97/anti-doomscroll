@@ -1,39 +1,37 @@
 # anti-patterns
 
-## TL;DR
-Anti-patterns is a production-oriented practice for keeping systems easier to extend, test, and review. The important question is when it buys clarity and when it becomes extra abstraction that the team has to maintain.
+## T — TL;DR
+**anti-patterns** is a design tool for keeping change local. Use it only when it makes the next edit, test, or review easier.
 
-## Key Concepts
-- Anti-patterns is a design tool for managing change over time, not just passing an interview.
-- Good production patterns improve testability, readability, and failure isolation.
-- Team consistency matters as much as the pattern itself.
-- Use abstraction to simplify decisions, not to make simple code look advanced.
+## K — Key Concepts
+- Use **anti-patterns** to separate a changing part from a stable part.
+- Every abstraction should remove a real source of friction.
+- Good names matter as much as the pattern itself.
 
-## Why It Matters
-Production systems change under pressure from new requirements, failures, and team growth. Anti-patterns gives you vocabulary and structure for making those changes without turning every feature into a rewrite.
+## W — Why it matters
+Architecture topics like **anti-patterns** matter when code has to survive change. A small amount of structure can make future edits cheaper and safer.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What problem does anti-patterns solve?  
+  **A:** Explain the change or testing problem it reduces, not only the definition.
+- **Q:** When would you avoid anti-patterns?  
+  **A:** Avoid it when the abstraction cost is higher than the clarity or testability benefit.
+
+## C — Common pitfalls with fix
+- Adding the pattern because it sounds advanced. — **Fix:** point to the exact pain it removes first.
+- Hiding simple logic behind too many layers. — **Fix:** keep the abstraction small and named by purpose.
+
+## K — Coding challenge with solution
+**Challenge:** Point to the boundary in the example for **anti-patterns** and explain why that split helps change or testing.
+
+**Solution:**
 ```txt
 Examples: god objects, hidden globals, overuse of any, shotgun surgery
 ```
 
-## Common Pitfalls
-- Applying the pattern because the name sounds impressive instead of because the problem needs it.
-- Adding abstraction before the change pressure is real.
-- Hiding important domain rules behind too many layers.
+**Why it works:** This works because the example keeps the abstraction small enough to see what responsibility **anti-patterns** is separating.
+## Next topic
+[Singleton](12-singleton.md)
 
-## Interview Angle
-- **Q:** What problem does anti-patterns solve?  
-  **A:** Answer with a change-management problem, not only a definition.
-- **Q:** When would you avoid anti-patterns?  
-  **A:** Avoid it when the abstraction cost is higher than the coordination or testability benefit.
-
-## Mini Challenge
-Name one small feature where anti-patterns would make the code easier to extend or test.
-
-## Mini Challenge Solution
-A good solution identifies the changing part, the stable part, and why the pattern keeps them separate.
-
-## Related Topics
-- Previous: [naming conventions](10-naming-conventions.md)
-- Next: [Singleton](12-singleton.md)
+## One tiny action
+Name one responsibility that **anti-patterns** is separating in the example.

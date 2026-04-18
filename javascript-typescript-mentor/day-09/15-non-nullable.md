@@ -1,40 +1,38 @@
 # NonNullable
 
-## TL;DR
-NonNullable is a built-in TypeScript utility type for transforming an existing type instead of rewriting it by hand. The important questions are what it changes, whether the transformation is shallow, and how it affects downstream APIs. Utility types make refactors safer and show up often in real code reviews.
+## T — TL;DR
+**NonNullable** helps TypeScript describe what values are allowed before runtime. Use it to make assumptions explicit, not magical.
 
-## Key Concepts
-- NonNullable derives a new type from an existing type instead of repeating shape information.
-- Most utility types are shallow transforms, so nested objects keep their inner shapes.
-- They are best when you want one source of truth for a model and several safe variations of it.
-- Think about assignability and optionality, not runtime output.
+## K — Key Concepts
+- Keep **NonNullable** aligned with runtime truth.
+- Prefer readable types over clever ones that teammates cannot explain.
+- If data comes from outside your code, pair types with runtime validation.
 
-## Why It Matters
-NonNullable matters because duplicated type shapes drift over time. Utility types let you express variations like patches, projections, and derived results while keeping one source of truth for the underlying model.
+## W — Why it matters
+TypeScript is most useful when it prevents bad assumptions early. **NonNullable** helps you move mistakes into the editor instead of discovering them through runtime bugs.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** When is NonNullable actually helpful?  
+  **A:** When it makes an invariant clearer and reduces unsafe assumptions in real code.
+- **Q:** What is the danger of overusing NonNullable?  
+  **A:** You can create types that look impressive but hide runtime uncertainty or confuse the team.
+
+## C — Common pitfalls with fix
+- Using types to hide uncertainty instead of model it. — **Fix:** keep unknown data unknown until you validate or narrow it.
+- Making **NonNullable** too clever. — **Fix:** choose the simpler type that your future self can explain quickly.
+
+## K — Coding challenge with solution
+**Challenge:** Read the example for **NonNullable** and say which unsafe assumption became explicit.
+
+**Solution:**
 ```ts
 type MaybeId = string | null | undefined
 type Id = NonNullable<MaybeId>
 ```
 
-## Common Pitfalls
-- Forgetting that many utility types are shallow, not deep, transformations.
-- Using a derived type where a dedicated domain type would communicate intent better.
-- Assuming the transformed type says anything about runtime validation.
+**Why it works:** This works because **NonNullable** is easiest to trust when the type rule and the runtime story match.
+## Next topic
+[Readonly](16-readonly.md)
 
-## Interview Angle
-- **Q:** What does NonNullable transform?  
-  **A:** Explain the input type, the output type, and whether the transformation is shallow.
-- **Q:** When would you avoid NonNullable?  
-  **A:** Avoid it when a dedicated domain type communicates intent more clearly than a generic transform.
-
-## Mini Challenge
-Derive one new type from an existing model with NonNullable.
-
-## Mini Challenge Solution
-A correct solution starts from a base type, applies the utility type, and explains what changed in the resulting shape.
-
-## Related Topics
-- Previous: [Exclude](14-exclude.md)
-- Next: [Readonly](16-readonly.md)
+## One tiny action
+Read the example for **NonNullable** and name the exact value or shape that became safer.

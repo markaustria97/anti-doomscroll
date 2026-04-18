@@ -1,40 +1,38 @@
 # Promise.resolve / Promise.reject
 
-## TL;DR
-Promise.resolve / Promise.reject shapes how promises are created, chained, or combined. The main mental model is to think in terms of fulfillment, rejection, and coordination between async tasks instead of line-by-line blocking code. Knowing the differences here prevents subtle async bugs.
+## T — TL;DR
+**Promise.resolve / Promise.reject** makes more sense when you picture a timeline: start work, queue work, resume work, then handle success or failure.
 
-## Key Concepts
-- Promise.resolve / Promise.reject is about promise state and orchestration, not thread-based concurrency.
-- Promises settle once: they are either fulfilled or rejected, then they stay that way.
-- Error propagation follows the chain until something handles the rejection.
-- Choose the combinator or chaining style that matches your failure policy.
+## K — Key Concepts
+- Put **Promise.resolve / Promise.reject** on a timeline: when does work start, pause, resume, or fail?
+- Most async bugs are ordering bugs, forgotten error paths, or missing cancellation.
+- The smaller the example, the easier it is to see the queueing rule.
 
-## Why It Matters
-This matters in day-to-day engineering because Promise.resolve / Promise.reject affects how readable, predictable, and maintainable your code feels under change. Once you know the mental model, you can choose the feature on purpose instead of copying patterns blindly.
+## W — Why it matters
+A lot of production bugs come from misunderstanding timing. **Promise.resolve / Promise.reject** helps you explain why code that looks simple can still behave later, fail later, or race.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** How would you explain Promise.resolve / Promise.reject without starting with syntax?  
+  **A:** Describe the timeline first: when work begins, when it waits, and when it resumes or fails.
+- **Q:** What bug usually appears when people misunderstand Promise.resolve / Promise.reject?  
+  **A:** Ordering bugs, missed errors, and forgotten cancellation paths are the common ones.
+
+## C — Common pitfalls with fix
+- Reading async code as if it runs top to bottom without pausing. — **Fix:** draw a quick timeline of start, wait, resume, and error.
+- Ignoring rejection or cancellation paths. — **Fix:** include one failure case in every small example.
+
+## K — Coding challenge with solution
+**Challenge:** Trace the example for **Promise.resolve / Promise.reject** and explain where execution waits, resumes, or can fail.
+
+**Solution:**
 ```js
 Promise.resolve(42).then(console.log)
 Promise.reject(new Error("boom")).catch(console.error)
 ```
 
-## Common Pitfalls
-- Memorizing the surface syntax without learning the underlying mental model.
-- Using the feature everywhere instead of when it clearly improves the code.
-- Skipping edge cases such as empty inputs, nullish values, or failed async work.
+**Why it works:** This works because it exposes the timing rule behind **Promise.resolve / Promise.reject** instead of hiding it inside a large async flow.
+## Next topic
+[then / catch / finally](09-then-catch-finally.md)
 
-## Interview Angle
-- **Q:** What is Promise.resolve / Promise.reject?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use Promise.resolve / Promise.reject in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
-
-## Mini Challenge
-Write the smallest example you can that proves you understand Promise.resolve / Promise.reject.
-
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
-
-## Related Topics
-- Previous: [I/O callbacks vs timer callbacks](07-io-callbacks-vs-timer-callbacks.md)
-- Next: [then / catch / finally](09-then-catch-finally.md)
+## One tiny action
+Draw a 3-step timeline for **Promise.resolve / Promise.reject**: start, wait, resume.

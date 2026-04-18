@@ -1,18 +1,30 @@
-# type-safe EventEmitter pattern
+# type-safe event emitter pattern
 
-## TL;DR
-Type-safe EventEmitter pattern is a production-oriented practice for keeping systems easier to extend, test, and review. The important question is when it buys clarity and when it becomes extra abstraction that the team has to maintain.
+## T — TL;DR
+**type-safe event emitter pattern** is a design tool for keeping change local. Use it only when it makes the next edit, test, or review easier.
 
-## Key Concepts
-- Type-safe EventEmitter pattern is a design tool for managing change over time, not just passing an interview.
-- Good production patterns improve testability, readability, and failure isolation.
-- Team consistency matters as much as the pattern itself.
-- Use abstraction to simplify decisions, not to make simple code look advanced.
+## K — Key Concepts
+- Use **type-safe event emitter pattern** to separate a changing part from a stable part.
+- Every abstraction should remove a real source of friction.
+- Good names matter as much as the pattern itself.
 
-## Why It Matters
-Production systems change under pressure from new requirements, failures, and team growth. Type-safe EventEmitter pattern gives you vocabulary and structure for making those changes without turning every feature into a rewrite.
+## W — Why it matters
+Architecture topics like **type-safe event emitter pattern** matter when code has to survive change. A small amount of structure can make future edits cheaper and safer.
 
-## Syntax / Example
+## I — Interview questions with answers
+- **Q:** What problem does type-safe event emitter pattern solve?  
+  **A:** Explain the change or testing problem it reduces, not only the definition.
+- **Q:** When would you avoid type-safe event emitter pattern?  
+  **A:** Avoid it when the abstraction cost is higher than the clarity or testability benefit.
+
+## C — Common pitfalls with fix
+- Adding the pattern because it sounds advanced. — **Fix:** point to the exact pain it removes first.
+- Hiding simple logic behind too many layers. — **Fix:** keep the abstraction small and named by purpose.
+
+## K — Coding challenge with solution
+**Challenge:** Point to the boundary in the example for **type-safe event emitter pattern** and explain why that split helps change or testing.
+
+**Solution:**
 ```ts
 type Events = {
   saved: { id: string }
@@ -20,23 +32,9 @@ type Events = {
 }
 ```
 
-## Common Pitfalls
-- Applying the pattern because the name sounds impressive instead of because the problem needs it.
-- Adding abstraction before the change pressure is real.
-- Hiding important domain rules behind too many layers.
+**Why it works:** This works because the example keeps the abstraction small enough to see what responsibility **type-safe event emitter pattern** is separating.
+## Next topic
+[SOLID principles](07-solid-principles.md)
 
-## Interview Angle
-- **Q:** What problem does type-safe EventEmitter pattern solve?  
-  **A:** Answer with a change-management problem, not only a definition.
-- **Q:** When would you avoid type-safe EventEmitter pattern?  
-  **A:** Avoid it when the abstraction cost is higher than the coordination or testability benefit.
-
-## Mini Challenge
-Name one small feature where type-safe EventEmitter pattern would make the code easier to extend or test.
-
-## Mini Challenge Solution
-A good solution identifies the changing part, the stable part, and why the pattern keeps them separate.
-
-## Related Topics
-- Previous: [dependency injection](05-dependency-injection.md)
-- Next: [SOLID principles](07-solid-principles.md)
+## One tiny action
+Name one responsibility that **type-safe event emitter pattern** is separating in the example.
