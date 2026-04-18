@@ -1,37 +1,41 @@
 # Prettier
 
 ## T — TL;DR
-**Prettier** should make daily work smoother, not more complicated. Learn the smallest setup that gives you a clear benefit right away.
+Prettier is an automatic code formatter. Its job is to remove formatting decisions so you can spend your attention on logic.
 
 ## K — Key Concepts
-- Use **Prettier** for one concrete job before adding extra configuration.
-- Keep the setup small enough that you can explain every line.
-- Good tooling removes friction; it does not replace testing or design.
+- Prettier rewrites code into a consistent style.
+- It is intentionally opinionated so teams stop arguing about whitespace and commas.
+- Prettier changes formatting, not program behavior.
 
 ## W — Why it matters
-When **Prettier** is set up well, it quietly saves attention every day. That is valuable when you only have a short learning window.
+Formatting debates are low-value work. Prettier makes code look consistent automatically, which lets reviews focus on correctness and design.
 
 ## I — Interview questions with answers
-- **Q:** What problem does Prettier solve?  
-  **A:** Answer with one concrete workflow problem, not a marketing description.
-- **Q:** What is a good default setup for Prettier?  
-  **A:** Choose the smallest configuration that produces visible value and is easy to maintain.
+- **Q:** Why use Prettier if editors can format code already?  
+  **A:** Because Prettier gives the whole team the same output, not just one person's editor settings.
+- **Q:** Should Prettier replace ESLint?  
+  **A:** No. Prettier handles formatting. ESLint handles suspicious or undesirable code patterns.
 
 ## C — Common pitfalls with fix
-- Adding too much configuration too early. — **Fix:** start with the smallest working setup.
-- Expecting tooling to fix architecture or tests. — **Fix:** use the tool for its specific job only.
+- Expecting Prettier to catch bugs. — **Fix:** use it for formatting only.
+- Reformatting code manually after Prettier runs. — **Fix:** trust the formatter and keep the project consistent.
 
 ## K — Coding challenge with solution
-**Challenge:** Write the smallest setup or command that proves **Prettier** is working for you.
+**Challenge:** Create a tiny Prettier config that prefers semicolons and single quotes.
 
 **Solution:**
-```bash
-pnpm prettier --write src/**/*.ts
+```json
+{
+  "semi": true,
+  "singleQuote": true
+}
 ```
 
-**Why it works:** This works because it shows the smallest visible payoff from **Prettier** without hiding the setup behind extra tooling decisions.
+**Why it works:** This config gives Prettier two formatting rules to apply consistently across the project.
+
 ## Next topic
 [var / let / const](05-var-let-const.md)
 
 ## One tiny action
-Open a scratch note and write one sentence: 'I use **Prettier** to ___.'
+Think of one formatting choice you would rather never decide manually again.

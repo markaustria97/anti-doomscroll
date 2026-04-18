@@ -1,39 +1,40 @@
 # throw
 
 ## T — TL;DR
-**throw** is easier when you tie it to one concrete rule instead of memorizing isolated syntax.
+`throw` stops normal execution and signals that something went wrong. Use it when continuing would produce bad or misleading behavior.
 
 ## K — Key Concepts
-- Name the runtime rule behind **throw** before you memorize syntax.
-- Predict the result first, then run the example to verify your model.
-- When behavior surprises you, reduce the code until only the rule remains.
+- `throw` can throw any value, but `Error` objects are the practical standard.
+- Control jumps to the nearest matching `catch`.
+- Throwing is for exceptional failure, not for every minor branch.
 
 ## W — Why it matters
-You will keep seeing **throw** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
+If your code detects an invalid state and keeps going, the bug often becomes harder to trace later. A good `throw` fails fast and leaves a clearer trail.
 
 ## I — Interview questions with answers
-- **Q:** What rule should you remember for throw?  
-  **A:** State the rule in plain language and support it with one tiny example.
-- **Q:** What mistake do beginners make with throw?  
-  **A:** They often memorize syntax before they can predict the behavior.
+- **Q:** Why is `throw new Error(...)` better than `throw 'bad'`?  
+  **A:** Error objects carry a message, stack trace, and optional metadata, which makes debugging much easier.
+- **Q:** When should you throw instead of returning a fallback value?  
+  **A:** Throw when the caller needs to know the operation failed and a fallback would hide a real problem.
 
 ## C — Common pitfalls with fix
-- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
-- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+- Throwing strings or random objects. — **Fix:** throw `Error` instances or subclasses.
+- Throwing for expected validation cases without a plan. — **Fix:** decide whether the case is a normal result or an actual exception.
 
 ## K — Coding challenge with solution
-**Challenge:** Use the example for **throw** to explain the rule in your own words.
+**Challenge:** Throw when a required token is missing.
 
 **Solution:**
 ```js
-if (!token) {
-  throw new Error("Missing auth token")
+function requireToken(token) {
+  if (!token) {
+    throw new Error('Missing auth token')
+  }
+  return token
 }
 ```
 
-**Why it works:** This works because the example is small enough to explain without guessing.
-## Next topic
-[function declarations vs expressions vs arrow functions](../day-02/01-function-declarations-vs-expressions-vs-arrow-functions.md)
+**Why it works:** The function refuses to continue in an invalid state, so later code does not run with a missing credential.
 
 ## One tiny action
-Spend two minutes turning **throw** into one tiny runnable example.
+Think of one situation where silently continuing would be worse than throwing immediately.

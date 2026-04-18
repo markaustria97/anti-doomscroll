@@ -1,44 +1,41 @@
 # primitives vs objects
 
 ## T — TL;DR
-**primitives vs objects** is a choice lesson: learn the safe default, the behavior difference that actually matters, and one exception worth remembering.
+Primitives are simple values like strings and numbers. Objects are reference-based containers. That single difference explains a lot of JavaScript behavior.
 
 ## K — Key Concepts
-- Start with the default choice in **primitives vs objects**, then learn the single case that changes your answer.
-- Compare behavior, not just syntax or popularity.
-- A 3-line example is usually enough to make the distinction stick.
+- Primitives are compared by value.
+- Objects are compared by reference identity.
+- Assignment copies a primitive value, but for objects it copies the reference.
 
 ## W — Why it matters
-Questions about **primitives vs objects** are common because they reveal whether you understand behavior or only memorized names.
+A lot of mutation bugs come from assuming objects behave like copied values. Once you understand reference identity, many confusing behaviors stop feeling random.
 
 ## I — Interview questions with answers
-- **Q:** What is the main behavior difference in primitives vs objects?  
-  **A:** State the default choice first, then name the edge case that would make you choose the other option.
-- **Q:** How would you explain primitives vs objects quickly in an interview?  
-  **A:** Use one sentence for the rule and one tiny example for proof.
+- **Q:** Why is `{}` === `{}` false?  
+  **A:** Because they are two different object references, even though they look similar.
+- **Q:** Why can changing one object affect another variable?  
+  **A:** Because both variables may point to the same underlying object.
 
 ## C — Common pitfalls with fix
-- Memorizing slogans instead of behavior. — **Fix:** compare the outputs or side effects of one tiny example.
-- Choosing by familiarity instead of by requirement. — **Fix:** say what default you prefer and why.
+- Assuming assignment clones an object. — **Fix:** remember assignment copies the reference, not the contents.
+- Treating strings like mutable objects. — **Fix:** primitives are immutable; create a new value instead.
 
 ## K — Coding challenge with solution
-**Challenge:** Use the example for **primitives vs objects** to explain the rule in your own words.
+**Challenge:** Show that mutating through one variable can affect another.
 
 **Solution:**
 ```js
-let a = 1
-let b = a
-b = 2
-
-const user = { name: "Ada" }
-const copy = user
-copy.name = "Grace"
-console.log(user.name) // "Grace"
+const a = { done: false }
+const b = a
+b.done = true
+console.log(a.done) // true
 ```
 
-**Why it works:** This works because the example is small enough to explain without guessing.
+**Why it works:** `a` and `b` reference the same object, so mutating through `b` changes what `a` sees too.
+
 ## Next topic
 [type coercion](07-type-coercion.md)
 
 ## One tiny action
-Spend two minutes turning **primitives vs objects** into one tiny runnable example.
+Ask once: are these two values being compared by value or by reference?

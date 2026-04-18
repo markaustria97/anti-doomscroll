@@ -1,43 +1,44 @@
 # try / catch / finally
 
 ## T — TL;DR
-**try / catch / finally** is easier when you tie it to one concrete rule instead of memorizing isolated syntax.
+Use `try` for code that may throw, `catch` to handle the error, and `finally` for cleanup that must happen either way.
 
 ## K — Key Concepts
-- Name the runtime rule behind **try / catch / finally** before you memorize syntax.
-- Predict the result first, then run the example to verify your model.
-- When behavior surprises you, reduce the code until only the rule remains.
+- `try` wraps code that may fail by throwing.
+- `catch` receives the thrown error.
+- `finally` runs whether the operation succeeds or fails.
 
 ## W — Why it matters
-You will keep seeing **try / catch / finally** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
+Real programs fail: parsing input, reading files, making network calls. Structured error handling helps you fail in a controlled and understandable way.
 
 ## I — Interview questions with answers
-- **Q:** What rule should you remember for try / catch / finally?  
-  **A:** State the rule in plain language and support it with one tiny example.
-- **Q:** What mistake do beginners make with try / catch / finally?  
-  **A:** They often memorize syntax before they can predict the behavior.
+- **Q:** When should `finally` be used?  
+  **A:** When cleanup must happen regardless of success or failure, such as releasing a resource or stopping a loading state.
+- **Q:** Should `catch` swallow every error silently?  
+  **A:** No. Handle the problem meaningfully or rethrow it.
 
 ## C — Common pitfalls with fix
-- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
-- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+- Catching errors and doing nothing. — **Fix:** either recover, log with context, or rethrow.
+- Putting business logic in `finally`. — **Fix:** keep `finally` for cleanup work.
 
 ## K — Coding challenge with solution
-**Challenge:** Use the example for **try / catch / finally** to explain the rule in your own words.
+**Challenge:** Parse JSON safely and return `null` if parsing fails.
 
 **Solution:**
 ```js
-try {
-  riskyWork()
-} catch (error) {
-  console.error(error)
-} finally {
-  cleanup()
+function safeParse(json) {
+  try {
+    return JSON.parse(json)
+  } catch {
+    return null
+  }
 }
 ```
 
-**Why it works:** This works because the example is small enough to explain without guessing.
+**Why it works:** `JSON.parse` throws on invalid JSON, and `catch` turns that failure into a controlled fallback.
+
 ## Next topic
 [built-in Error types](17-built-in-error-types.md)
 
 ## One tiny action
-Spend two minutes turning **try / catch / finally** into one tiny runnable example.
+Think of one place in code that can throw and name what the caller should get back.

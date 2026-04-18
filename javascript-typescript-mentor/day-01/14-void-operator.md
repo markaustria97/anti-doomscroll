@@ -1,38 +1,39 @@
 # void operator
 
 ## T — TL;DR
-**void operator** is easier when you tie it to one concrete rule instead of memorizing isolated syntax.
+The `void` operator evaluates an expression and then discards its value, returning `undefined`. It is rare, but useful to recognize.
 
 ## K — Key Concepts
-- Name the runtime rule behind **void operator** before you memorize syntax.
-- Predict the result first, then run the example to verify your model.
-- When behavior surprises you, reduce the code until only the rule remains.
+- `void expr` still runs `expr` for side effects.
+- The result of the whole expression is always `undefined`.
+- It is sometimes used to intentionally ignore a promise result or force an expression context.
 
 ## W — Why it matters
-You will keep seeing **void operator** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
+`void` looks odd if you have never seen it. Once you know it means run this and ignore the value, the code becomes much less mysterious.
 
 ## I — Interview questions with answers
-- **Q:** What rule should you remember for void operator?  
-  **A:** State the rule in plain language and support it with one tiny example.
-- **Q:** What mistake do beginners make with void operator?  
-  **A:** They often memorize syntax before they can predict the behavior.
+- **Q:** What does `void` return?  
+  **A:** Always `undefined`.
+- **Q:** Why might someone write `void someAsyncCall()`?  
+  **A:** To make it explicit that the promise result is intentionally not used there.
 
 ## C — Common pitfalls with fix
-- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
-- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+- Thinking `void` stops the expression from running. — **Fix:** remember the side effect still happens.
+- Using `void` to hide sloppy async handling. — **Fix:** use it only when ignoring the result is actually intentional.
 
 ## K — Coding challenge with solution
-**Challenge:** Use the example for **void operator** to explain the rule in your own words.
+**Challenge:** Show that `void` keeps the side effect but discards the value.
 
 **Solution:**
 ```js
-button.onclick = () => void saveDraft()
-const nope = void 0 // always undefined
+const result = void console.log('saved')
+console.log(result) // undefined
 ```
 
-**Why it works:** This works because the example is small enough to explain without guessing.
+**Why it works:** `console.log('saved')` runs, but `void` replaces the final expression result with `undefined`.
+
 ## Next topic
 [control flow](15-control-flow.md)
 
 ## One tiny action
-Spend two minutes turning **void operator** into one tiny runnable example.
+Read `void something()` as: run it, ignore its value.

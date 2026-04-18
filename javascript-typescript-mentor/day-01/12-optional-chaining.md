@@ -1,38 +1,40 @@
 # optional chaining
 
 ## T — TL;DR
-**optional chaining** is easier when you tie it to one concrete rule instead of memorizing isolated syntax.
+Optional chaining lets you safely access a property or call a method only when the value before it is not `null` or `undefined`.
 
 ## K — Key Concepts
-- Name the runtime rule behind **optional chaining** before you memorize syntax.
-- Predict the result first, then run the example to verify your model.
-- When behavior surprises you, reduce the code until only the rule remains.
+- `obj?.prop` stops and returns `undefined` if `obj` is nullish.
+- `fn?.()` safely calls a function only if it exists.
+- Optional chaining checks nullish values, not all falsy values.
 
 ## W — Why it matters
-You will keep seeing **optional chaining** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
+Nested data is common in API responses and config objects. Optional chaining removes repetitive guards while keeping the missing-data case visible.
 
 ## I — Interview questions with answers
-- **Q:** What rule should you remember for optional chaining?  
-  **A:** State the rule in plain language and support it with one tiny example.
-- **Q:** What mistake do beginners make with optional chaining?  
-  **A:** They often memorize syntax before they can predict the behavior.
+- **Q:** Why is optional chaining better than a long chain of `&&` checks?  
+  **A:** Because it expresses the real intent directly: stop only on `null` or `undefined`.
+- **Q:** What does optional chaining return when it stops early?  
+  **A:** `undefined`.
 
 ## C — Common pitfalls with fix
-- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
-- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+- Assuming it protects against every runtime error. — **Fix:** remember it only handles nullish access on that chain.
+- Using it where the value should actually be required. — **Fix:** validate required data early instead of silently propagating `undefined`.
 
 ## K — Coding challenge with solution
-**Challenge:** Use the example for **optional chaining** to explain the rule in your own words.
+**Challenge:** Read a city from nested data without crashing when `profile` is missing.
 
 **Solution:**
 ```js
-const city = user?.address?.city
-const first = list?.[0]
+const user = { name: 'Ada' }
+const city = user.profile?.address?.city
+console.log(city) // undefined
 ```
 
-**Why it works:** This works because the example is small enough to explain without guessing.
+**Why it works:** Each `?.` checks whether the value on its left is nullish before going deeper.
+
 ## Next topic
 [nullish coalescing](13-nullish-coalescing.md)
 
 ## One tiny action
-Spend two minutes turning **optional chaining** into one tiny runnable example.
+Replace one long guard chain in your head with `?.`.

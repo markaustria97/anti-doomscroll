@@ -1,38 +1,43 @@
 # built-in Error types
 
 ## T — TL;DR
-**built-in Error types** is easier when you tie it to one concrete rule instead of memorizing isolated syntax.
+JavaScript has more than plain `Error`. Specific built-in error types like `TypeError` and `RangeError` help explain what kind of failure happened.
 
 ## K — Key Concepts
-- Name the runtime rule behind **built-in Error types** before you memorize syntax.
-- Predict the result first, then run the example to verify your model.
-- When behavior surprises you, reduce the code until only the rule remains.
+- `Error` is the general base type.
+- Specific errors add meaning: `TypeError`, `ReferenceError`, `SyntaxError`, `RangeError`, and others.
+- Better error types make debugging and handling clearer.
 
 ## W — Why it matters
-You will keep seeing **built-in Error types** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
+Errors are part of your API. If something fails, the error should help another developer quickly understand whether the problem was type, range, syntax, or something else.
 
 ## I — Interview questions with answers
-- **Q:** What rule should you remember for built-in Error types?  
-  **A:** State the rule in plain language and support it with one tiny example.
-- **Q:** What mistake do beginners make with built-in Error types?  
-  **A:** They often memorize syntax before they can predict the behavior.
+- **Q:** Why throw `TypeError` instead of plain `Error` sometimes?  
+  **A:** Because it communicates that the caller passed a value with the wrong type or shape.
+- **Q:** What is the value of specific error classes?  
+  **A:** They make logs clearer and allow targeted handling.
 
 ## C — Common pitfalls with fix
-- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
-- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+- Throwing the same generic error for every failure. — **Fix:** choose the most specific built-in type that matches the problem.
+- Mixing programmer errors with user-facing validation. — **Fix:** decide what kind of failure the code is reporting.
 
 ## K — Coding challenge with solution
-**Challenge:** Use the example for **built-in Error types** to explain the rule in your own words.
+**Challenge:** Throw a `TypeError` if a function receives a non-string username.
 
 **Solution:**
 ```js
-throw new TypeError("Expected a string")
-// Other common built-ins: RangeError, ReferenceError, SyntaxError
+function normalizeUsername(username) {
+  if (typeof username !== 'string') {
+    throw new TypeError('username must be a string')
+  }
+  return username.trim().toLowerCase()
+}
 ```
 
-**Why it works:** This works because the example is small enough to explain without guessing.
+**Why it works:** The function checks its contract first and throws a specific built-in error when the caller breaks it.
+
 ## Next topic
 [Error.cause](18-error-cause.md)
 
 ## One tiny action
-Spend two minutes turning **built-in Error types** into one tiny runnable example.
+Pick one failure and ask whether plain `Error` is specific enough.

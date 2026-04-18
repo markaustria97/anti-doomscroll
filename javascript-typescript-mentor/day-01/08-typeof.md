@@ -1,39 +1,40 @@
 # typeof
 
 ## T — TL;DR
-**typeof** is easier when you tie it to one concrete rule instead of memorizing isolated syntax.
+`typeof` is a fast runtime check for broad type categories. It is great for primitives, but you need to remember its edge cases.
 
 ## K — Key Concepts
-- Name the runtime rule behind **typeof** before you memorize syntax.
-- Predict the result first, then run the example to verify your model.
-- When behavior surprises you, reduce the code until only the rule remains.
+- `typeof` returns strings like `'string'`, `'number'`, `'boolean'`, and `'undefined'`.
+- `typeof null` is `'object'`, which is a historical quirk.
+- Arrays also report as `'object'`, so use `Array.isArray(...)` when you need array detection.
 
 ## W — Why it matters
-You will keep seeing **typeof** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
+When input can have multiple shapes, `typeof` is often the first guard you write. It is simple and useful as long as you remember where it stops being precise.
 
 ## I — Interview questions with answers
-- **Q:** What rule should you remember for typeof?  
-  **A:** State the rule in plain language and support it with one tiny example.
-- **Q:** What mistake do beginners make with typeof?  
-  **A:** They often memorize syntax before they can predict the behavior.
+- **Q:** Why is `typeof null` equal to `'object'`?  
+  **A:** It is an old JavaScript behavior preserved for backward compatibility.
+- **Q:** When is `typeof` not enough?  
+  **A:** When you need to distinguish arrays, `null`, or specific object shapes.
 
 ## C — Common pitfalls with fix
-- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
-- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+- Using `typeof value === 'object'` and forgetting `null`. — **Fix:** also check `value !== null`.
+- Using `typeof` to detect arrays. — **Fix:** use `Array.isArray(value)`.
 
 ## K — Coding challenge with solution
-**Challenge:** Use the example for **typeof** to explain the rule in your own words.
+**Challenge:** Write a guard that accepts objects but rejects `null`.
 
 **Solution:**
 ```js
-typeof 1 // "number"
-typeof null // "object" (legacy quirk)
-typeof (() => {}) // "function"
+function isObject(value) {
+  return typeof value === 'object' && value !== null
+}
 ```
 
-**Why it works:** This works because the example is small enough to explain without guessing.
+**Why it works:** The `typeof` check includes objects and `null`, so the extra null check removes the edge case.
+
 ## Next topic
 [== vs ===](09-double-equals-vs-triple-equals.md)
 
 ## One tiny action
-Spend two minutes turning **typeof** into one tiny runnable example.
+Repeat this once: `typeof null` is weird, and arrays need `Array.isArray`.

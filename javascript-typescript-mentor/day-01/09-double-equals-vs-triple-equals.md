@@ -1,40 +1,40 @@
 # == vs ===
 
 ## T — TL;DR
-**== vs ===** is a choice lesson: learn the safe default, the behavior difference that actually matters, and one exception worth remembering.
+Use `===` by default. `==` performs coercion before comparing, which is sometimes valid but often too easy to misread.
 
 ## K — Key Concepts
-- Start with the default choice in **== vs ===**, then learn the single case that changes your answer.
-- Compare behavior, not just syntax or popularity.
-- A 3-line example is usually enough to make the distinction stick.
+- `===` compares without type coercion.
+- `==` may convert values before comparing them.
+- The best equality check is the one a reader can predict quickly.
 
 ## W — Why it matters
-Questions about **== vs ===** are common because they reveal whether you understand behavior or only memorized names.
+Equality checks show up everywhere. Choosing the stricter operator usually makes intent clearer and avoids surprising matches.
 
 ## I — Interview questions with answers
-- **Q:** What is the main behavior difference in == vs ===?  
-  **A:** State the default choice first, then name the edge case that would make you choose the other option.
-- **Q:** How would you explain == vs === quickly in an interview?  
-  **A:** Use one sentence for the rule and one tiny example for proof.
+- **Q:** Why do style guides usually prefer `===`?  
+  **A:** Because it avoids hidden conversion rules and is easier to reason about.
+- **Q:** Is `==` always wrong?  
+  **A:** No, but it is only worth using when the coercion rule is intentional and clearly understood.
 
 ## C — Common pitfalls with fix
-- Memorizing slogans instead of behavior. — **Fix:** compare the outputs or side effects of one tiny example.
-- Choosing by familiarity instead of by requirement. — **Fix:** say what default you prefer and why.
+- Comparing unnormalized input with `==`. — **Fix:** convert values first, then use `===`.
+- Treating `==` as a convenience shortcut. — **Fix:** treat equality as a precise rule.
 
 ## K — Coding challenge with solution
-**Challenge:** Use the example for **== vs ===** to explain the rule in your own words.
+**Challenge:** Compare a string ID with a numeric ID safely.
 
 **Solution:**
 ```js
-0 == false // true
-0 === false // false
-
-// Prefer === unless you intentionally want coercion rules.
+const inputId = '42'
+const userId = 42
+const isMatch = Number(inputId) === userId
 ```
 
-**Why it works:** This works because the example is small enough to explain without guessing.
+**Why it works:** The conversion happens once, explicitly, so the comparison itself stays simple.
+
 ## Next topic
 [operators](10-operators.md)
 
 ## One tiny action
-Spend two minutes turning **== vs ===** into one tiny runnable example.
+Look at one comparison and ask: do I want comparison, or conversion plus comparison?

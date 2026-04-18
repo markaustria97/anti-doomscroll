@@ -1,41 +1,44 @@
 # Error.cause
 
 ## T — TL;DR
-**Error.cause** is easier when you tie it to one concrete rule instead of memorizing isolated syntax.
+`Error.cause` lets you wrap one error inside another without losing the original reason. It is for adding context, not hiding detail.
 
 ## K — Key Concepts
-- Name the runtime rule behind **Error.cause** before you memorize syntax.
-- Predict the result first, then run the example to verify your model.
-- When behavior surprises you, reduce the code until only the rule remains.
+- A wrapped error can explain the higher-level operation that failed.
+- The original low-level error is preserved in `cause`.
+- This is especially useful across layers like parsing, storage, and HTTP.
 
 ## W — Why it matters
-You will keep seeing **Error.cause** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
+As errors move through your system, context often gets lost. `Error.cause` lets you say what failed here while still preserving what failed underneath.
 
 ## I — Interview questions with answers
-- **Q:** What rule should you remember for Error.cause?  
-  **A:** State the rule in plain language and support it with one tiny example.
-- **Q:** What mistake do beginners make with Error.cause?  
-  **A:** They often memorize syntax before they can predict the behavior.
+- **Q:** Why not just throw the original error again?  
+  **A:** Because the current layer may need to add useful context about which operation failed.
+- **Q:** Why is `cause` better than string-concatenating messages?  
+  **A:** Because the original error stays structured and inspectable.
 
 ## C — Common pitfalls with fix
-- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
-- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+- Wrapping an error and losing the original one. — **Fix:** pass the original error as `cause`.
+- Adding vague outer messages. — **Fix:** make the new message explain the higher-level operation.
 
 ## K — Coding challenge with solution
-**Challenge:** Use the example for **Error.cause** to explain the rule in your own words.
+**Challenge:** Wrap a low-level parse error with a clearer high-level message.
 
 **Solution:**
 ```js
-try {
-  loadConfig()
-} catch (error) {
-  throw new Error("App startup failed", { cause: error })
+function readConfig(json) {
+  try {
+    return JSON.parse(json)
+  } catch (error) {
+    throw new Error('Failed to read config', { cause: error })
+  }
 }
 ```
 
-**Why it works:** This works because the example is small enough to explain without guessing.
+**Why it works:** The new error explains the operation that failed, and `cause` preserves the original parsing problem.
+
 ## Next topic
 [throw](19-throw.md)
 
 ## One tiny action
-Spend two minutes turning **Error.cause** into one tiny runnable example.
+Ask two questions about one wrapped error: what failed here, and what caused it underneath?

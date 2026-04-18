@@ -1,39 +1,45 @@
 # pnpm
 
 ## T — TL;DR
-**pnpm** should make daily work smoother, not more complicated. Learn the smallest setup that gives you a clear benefit right away.
+`pnpm` is a package manager for Node projects. Its main strengths are fast installs, disk efficiency, and stricter dependency boundaries.
 
 ## K — Key Concepts
-- Use **pnpm** for one concrete job before adding extra configuration.
-- Keep the setup small enough that you can explain every line.
-- Good tooling removes friction; it does not replace testing or design.
+- `pnpm` stores downloaded packages once and links them into projects.
+- Its dependency layout makes undeclared dependency mistakes easier to catch.
+- You still use the same basic workflow: install packages, run scripts, and commit the lockfile.
 
 ## W — Why it matters
-When **pnpm** is set up well, it quietly saves attention every day. That is valuable when you only have a short learning window.
+Package management is part of everyday engineering work. If you trust your package manager, project setup becomes calmer and dependency bugs become easier to explain.
 
 ## I — Interview questions with answers
-- **Q:** What problem does pnpm solve?  
-  **A:** Answer with one concrete workflow problem, not a marketing description.
-- **Q:** What is a good default setup for pnpm?  
-  **A:** Choose the smallest configuration that produces visible value and is easy to maintain.
+- **Q:** How is `pnpm` different from npm at a high level?  
+  **A:** It uses a content-addressable store and links packages into projects instead of copying full dependency trees repeatedly.
+- **Q:** Why is the lockfile important?  
+  **A:** It helps everyone install the same dependency graph, which reduces machine-specific surprises.
 
 ## C — Common pitfalls with fix
-- Adding too much configuration too early. — **Fix:** start with the smallest working setup.
-- Expecting tooling to fix architecture or tests. — **Fix:** use the tool for its specific job only.
+- Deleting the lockfile casually. — **Fix:** treat `pnpm-lock.yaml` as part of the project state.
+- Importing packages that were never declared directly. — **Fix:** add every direct import to `dependencies` or `devDependencies`.
 
 ## K — Coding challenge with solution
-**Challenge:** Write the smallest setup or command that proves **pnpm** is working for you.
+**Challenge:** Add a runtime dependency and one script to a Node project.
 
 **Solution:**
-```bash
-pnpm add zod
-pnpm install
-pnpm test
+```json
+{
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "zod": "^4.0.0"
+  }
+}
 ```
 
-**Why it works:** This works because it shows the smallest visible payoff from **pnpm** without hiding the setup behind extra tooling decisions.
+**Why it works:** `pnpm` will install `zod` from `dependencies`, and `pnpm start` will run the `start` script.
+
 ## Next topic
 [ESLint](03-eslint.md)
 
 ## One tiny action
-Open a scratch note and write one sentence: 'I use **pnpm** to ___.'
+Say this once: if my code imports it directly, I should declare it directly.

@@ -1,40 +1,41 @@
 # control flow
 
 ## T — TL;DR
-**control flow** is easier when you tie it to one concrete rule instead of memorizing isolated syntax.
+Control flow is how your program decides what runs next. Good control flow is usually simple: clear conditions, early exits, and easy-to-scan branches.
 
 ## K — Key Concepts
-- Name the runtime rule behind **control flow** before you memorize syntax.
-- Predict the result first, then run the example to verify your model.
-- When behavior surprises you, reduce the code until only the rule remains.
+- `if`, `else`, `switch`, loops, `break`, `continue`, and `return` all shape execution order.
+- Early returns often reduce nesting.
+- Clear branches make invalid states easier to see.
 
 ## W — Why it matters
-You will keep seeing **control flow** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
+Messy control flow creates bugs even when each line is technically valid. Clean branching makes code easier to debug, review, and change.
 
 ## I — Interview questions with answers
-- **Q:** What rule should you remember for control flow?  
-  **A:** State the rule in plain language and support it with one tiny example.
-- **Q:** What mistake do beginners make with control flow?  
-  **A:** They often memorize syntax before they can predict the behavior.
+- **Q:** Why are early returns often preferred?  
+  **A:** They remove nesting and make edge cases visible first.
+- **Q:** When is `switch` useful?  
+  **A:** When one value determines several clear, named branches.
 
 ## C — Common pitfalls with fix
-- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
-- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+- Nesting too many `if` blocks. — **Fix:** return early for invalid or special cases.
+- Writing branches that overlap. — **Fix:** list the cases before coding them.
 
 ## K — Coding challenge with solution
-**Challenge:** Use the example for **control flow** to explain the rule in your own words.
+**Challenge:** Rewrite a function so invalid input exits early.
 
 **Solution:**
 ```js
-for (const item of items) {
-  if (!item.active) continue
-  if (item.id === targetId) break
+function greet(name) {
+  if (!name) return 'Missing name'
+  return `Hello, ${name}`
 }
 ```
 
-**Why it works:** This works because the example is small enough to explain without guessing.
+**Why it works:** The edge case is handled first, so the happy path stays flat.
+
 ## Next topic
 [try / catch / finally](16-try-catch-finally.md)
 
 ## One tiny action
-Spend two minutes turning **control flow** into one tiny runnable example.
+Take one nested condition and ask whether an early return would flatten it.

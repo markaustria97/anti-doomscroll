@@ -1,38 +1,40 @@
 # nullish coalescing
 
 ## T — TL;DR
-**nullish coalescing** is easier when you tie it to one concrete rule instead of memorizing isolated syntax.
+Use `??` when you want a default only for `null` or `undefined`. It is safer than `||` when `0`, `false`, or `''` are valid values.
 
 ## K — Key Concepts
-- Name the runtime rule behind **nullish coalescing** before you memorize syntax.
-- Predict the result first, then run the example to verify your model.
-- When behavior surprises you, reduce the code until only the rule remains.
+- `a ?? b` returns `b` only if `a` is nullish.
+- `||` replaces any falsy value, not just missing ones.
+- `??` pairs naturally with optional chaining.
 
 ## W — Why it matters
-You will keep seeing **nullish coalescing** in real code, interviews, and debugging sessions. Learning the rule once is cheaper than re-learning the surprise later.
+Defaults show up everywhere. Using the wrong operator can quietly overwrite valid values and create bugs that look random.
 
 ## I — Interview questions with answers
-- **Q:** What rule should you remember for nullish coalescing?  
-  **A:** State the rule in plain language and support it with one tiny example.
-- **Q:** What mistake do beginners make with nullish coalescing?  
-  **A:** They often memorize syntax before they can predict the behavior.
+- **Q:** When should you use `??` instead of `||`?  
+  **A:** When falsy values like `0` or `''` should be preserved.
+- **Q:** Why do `?.` and `??` work well together?  
+  **A:** `?.` safely reads a maybe-missing value, and `??` provides a fallback only if that read produced a nullish result.
 
 ## C — Common pitfalls with fix
-- Trying to memorize details without a mental model. — **Fix:** reduce the example until the rule is obvious.
-- Skipping the awkward case. — **Fix:** test one edge case on purpose.
+- Using `||` for counters or page sizes. — **Fix:** use `??` when `0` is a valid value.
+- Defaulting too early and hiding bad data. — **Fix:** decide first whether the field is optional or invalid.
 
 ## K — Coding challenge with solution
-**Challenge:** Use the example for **nullish coalescing** to explain the rule in your own words.
+**Challenge:** Keep a page size of `0` if it was intentionally provided.
 
 **Solution:**
 ```js
-const port = process.env.PORT ?? 3000
-// unlike ||, 0 is kept
+const pageSize = 0
+const effectivePageSize = pageSize ?? 20
+console.log(effectivePageSize) // 0
 ```
 
-**Why it works:** This works because the example is small enough to explain without guessing.
+**Why it works:** `??` does not treat `0` as missing, so the explicit value survives.
+
 ## Next topic
 [void operator](14-void-operator.md)
 
 ## One tiny action
-Spend two minutes turning **nullish coalescing** into one tiny runnable example.
+Compare `0 || 20` and `0 ?? 20` once.

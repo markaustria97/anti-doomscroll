@@ -1,41 +1,44 @@
 # ESLint
 
 ## T — TL;DR
-**ESLint** should make daily work smoother, not more complicated. Learn the smallest setup that gives you a clear benefit right away.
+ESLint checks code without running it. Use it to catch suspicious patterns early and keep boring mistakes out of code review.
 
 ## K — Key Concepts
-- Use **ESLint** for one concrete job before adding extra configuration.
-- Keep the setup small enough that you can explain every line.
-- Good tooling removes friction; it does not replace testing or design.
+- ESLint is static analysis, not runtime testing.
+- Some rules catch likely bugs, while others enforce team conventions.
+- ESLint and Prettier solve different problems: code quality vs formatting.
 
 ## W — Why it matters
-When **ESLint** is set up well, it quietly saves attention every day. That is valuable when you only have a short learning window.
+A linter gives fast feedback on small mistakes before they turn into debugging time or review comments. That saves attention when your session is short.
 
 ## I — Interview questions with answers
-- **Q:** What problem does ESLint solve?  
-  **A:** Answer with one concrete workflow problem, not a marketing description.
-- **Q:** What is a good default setup for ESLint?  
-  **A:** Choose the smallest configuration that produces visible value and is easy to maintain.
+- **Q:** What kinds of issues can ESLint catch?  
+  **A:** Unused variables, unreachable code, undefined names, and patterns your team wants to avoid.
+- **Q:** Why keep lint rules shared in the repo?  
+  **A:** So developers and CI all enforce the same standards.
 
 ## C — Common pitfalls with fix
-- Adding too much configuration too early. — **Fix:** start with the smallest working setup.
-- Expecting tooling to fix architecture or tests. — **Fix:** use the tool for its specific job only.
+- Enabling a huge ruleset you cannot explain. — **Fix:** start with a recommended config and add rules slowly.
+- Using ESLint for formatting fights. — **Fix:** let Prettier handle formatting.
 
 ## K — Coding challenge with solution
-**Challenge:** Write the smallest setup or command that proves **ESLint** is working for you.
+**Challenge:** Configure ESLint to report unused variables.
 
 **Solution:**
-```json
-{
-  "scripts": {
-    "lint": "eslint ."
+```js
+export default [
+  {
+    rules: {
+      'no-unused-vars': 'error'
+    }
   }
-}
+]
 ```
 
-**Why it works:** This works because it shows the smallest visible payoff from **ESLint** without hiding the setup behind extra tooling decisions.
+**Why it works:** When a variable is declared but never used, ESLint will flag it before the code reaches review.
+
 ## Next topic
 [Prettier](04-prettier.md)
 
 ## One tiny action
-Open a scratch note and write one sentence: 'I use **ESLint** to ___.'
+Look at one file and name one issue ESLint could catch without executing the code.
