@@ -124,9 +124,6 @@ export function Sidebar({
                             : "text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-white"
                         }`}
                       >
-                        <span className="shrink-0 w-5 text-right font-mono text-xs mt-0.5 opacity-50">
-                          {idx + 1}.
-                        </span>
                         <span className="leading-snug">{topic.title}</span>
                       </Link>
                     );

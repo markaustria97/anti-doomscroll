@@ -1,40 +1,246 @@
-# Temporal Dead Zone
+# 10 — Temporal Dead Zone (TDZ)
 
-## TL;DR
-Temporal Dead Zone sits at the heart of how JavaScript functions execute and how names are resolved. Once you understand the underlying scope and function rules, a lot of confusing runtime behavior becomes predictable.
+## T — TL;DR
 
-## Key Concepts
-- Temporal Dead Zone depends on how JavaScript creates function objects and scope records.
-- A variable name only makes sense relative to the scope where it is looked up.
-- Hoisting changes availability rules, but not always initialization timing.
-- Closures are not magic storage; they are just functions retaining access to outer bindings.
+The **Temporal Dead Zone** is the period between entering a scope and the point where a `let` or `const` variable is declared. Accessing the variable during this period throws a `ReferenceError`.
 
-## Why It Matters
-This matters in day-to-day engineering because Temporal Dead Zone affects how readable, predictable, and maintainable your code feels under change. Once you know the mental model, you can choose the feature on purpose instead of copying patterns blindly.
-
-## Syntax / Example
 ```js
-// console.log(count) // ReferenceError
-let count = 1
+{
+  // TDZ for x starts here
+  // console.log(x) // ReferenceError
+  let x = 10; // TDZ for x ends here
+  console.log(x); // 10
+}
 ```
 
-## Common Pitfalls
-- Memorizing the surface syntax without learning the underlying mental model.
-- Using the feature everywhere instead of when it clearly improves the code.
-- Skipping edge cases such as empty inputs, nullish values, or failed async work.
+## K — Key Concepts
 
-## Interview Angle
-- **Q:** What is Temporal Dead Zone?  
-  **A:** Give the mental model first, then show a tiny example.
-- **Q:** Why would you use Temporal Dead Zone in production?  
-  **A:** Explain the readability, correctness, or maintainability benefit.
+### The Timeline
 
-## Mini Challenge
-Write the smallest example you can that proves you understand Temporal Dead Zone.
+```js
+{
+  // ──── TDZ for `x` begins (scope entered) ────
 
-## Mini Challenge Solution
-A good solution is short, runnable, and includes the exact output or behavior you expect.
+  console.log(typeof x); // ReferenceError (even typeof!)
+  // x = 5              // ReferenceError
 
-## Related Topics
-- Previous: [hoisting](09-hoisting.md)
-- Next: [strict mode](11-strict-mode.md)
+  // ──── TDZ for `x` ends (declaration reached) ────
+  let x = 10;
+  console.log(x); // 10
+}
+```
+
+### Why TDZ Exists
+
+`var`'s behavior of silently being `undefined` before its declaration caused bugs:
+
+```js
+console.log(name); // undefined — looks like a bug but doesn't crash
+var name = "Mark";
+```
+
+`let`/`const` chose a safer approach: **fail loudly** if you access before initialization.
+
+### TDZ Proves Hoisting
+
+If `let`/`const` weren't hoisted, accessing them before declaration would just resolve to an outer variable:
+
+```js
+const x = "outer";
+{
+  // If let x wasn't hoisted, this would print "outer"
+  // But instead it throws ReferenceError — proving x IS hoisted
+  // console.log(x) // ReferenceError: Cannot access 'x' before initialization
+  let x = "inner";
+}
+```
+
+The engine **knows** about the inner `x` (it's hoisted), but it's in the TDZ so access is denied.
+
+### `typeof` and TDZ
+
+Normally, `typeof` on an undeclared variable is safe:
+
+```js
+typeof undeclaredVariable; // "undefined" — no error
+```
+
+But `typeof` on a TDZ variable **still throws**:
+
+```js
+{
+  // typeof x // ReferenceError — x is in TDZ
+  let x = 1;
+}
+```
+
+### TDZ in Different Contexts
+
+**Function parameters:**
+
+```js
+// Default parameters have their own TDZ
+function f(a = b, b = 1) {} // b is in TDZ when a's default is evaluated
+f(); // ReferenceError: Cannot access 'b' before initialization
+```
+
+**`for` loop:**
+
+```js
+for (let i = 0; i < 3; i++) {
+  // i is available here — TDZ ended at the let declaration
+  console.log(i);
+}
+```
+
+**Class declarations:**
+
+```js
+// const instance = new MyClass() // ReferenceError: TDZ
+class MyClass {}
+```
+
+**`const` must be initialized:**
+
+```js
+// const x // SyntaxError: Missing initializer in const declaration
+const x = 1; // must have a value
+```
+
+### TDZ and Closures
+
+```js
+let x = "outer";
+
+function example() {
+  // A closure created here would close over the TDZ version of x
+  // console.log(x) // ReferenceError if called before let x below
+  let x = "inner";
+  console.log(x); // "inner"
+}
+
+example();
+```
+
+### TDZ Duration — It's Temporal, Not Spatial
+
+The "dead zone" is about **time**, not position in code:
+
+```js
+{
+  // This function REFERENCES x, but doesn't ACCESS it during TDZ
+  const fn = () => x; // defining is fine — x isn't accessed yet
+
+  let x = 42;
+  console.log(fn()); // 42 — called AFTER TDZ ends, so it works
+}
+```
+
+```js
+{
+  const fn = () => x;
+
+  // fn() // ReferenceError — called DURING TDZ
+  let x = 42;
+  fn(); // 42 — called AFTER TDZ ends
+}
+```
+
+## W — Why It Matters
+
+- TDZ prevents a class of bugs that `var` silently allows.
+- Understanding TDZ means you truly understand `let`/`const` hoisting.
+- The "temporal not spatial" distinction is a deep knowledge indicator in interviews.
+- TDZ in default parameters and class declarations catches many developers off guard.
+
+## I — Interview Questions with Answers
+
+### Q1: What is the Temporal Dead Zone?
+
+**A:** The TDZ is the period from when a scope is entered to when a `let` or `const` variable is declared. During this period, the variable exists (is hoisted) but cannot be accessed — any attempt throws `ReferenceError`.
+
+### Q2: Does `typeof` protect against TDZ?
+
+**A:** No. `typeof` on a TDZ variable still throws `ReferenceError`. It only returns `"undefined"` safely for completely undeclared variables.
+
+### Q3: Is TDZ spatial or temporal?
+
+**A:** **Temporal** (time-based). It's about when the variable is accessed relative to when it's declared, not where the access appears in the code. A function defined during TDZ can reference the variable, as long as it's not called until after the declaration.
+
+### Q4: Does `var` have a TDZ?
+
+**A:** No. `var` is hoisted and initialized to `undefined` immediately. There is no dead zone.
+
+## C — Common Pitfalls with Fix
+
+### Pitfall: Accessing `let`/`const` before declaration assuming it's like `var`
+
+```js
+console.log(x); // ReferenceError
+let x = 5;
+```
+
+**Fix:** Always declare before use.
+
+### Pitfall: Default parameter TDZ
+
+```js
+function f(a = b, b = 1) {} // ReferenceError
+```
+
+**Fix:** Only reference earlier parameters in defaults.
+
+### Pitfall: Thinking `typeof` is safe for TDZ variables
+
+```js
+{
+  typeof x; // ReferenceError!
+  let x = 1;
+}
+```
+
+**Fix:** Be aware that `typeof` does NOT protect against TDZ, only against undeclared variables.
+
+## K — Coding Challenge with Solution
+
+### Challenge
+
+Which lines throw and which succeed?
+
+```js
+// Snippet 1
+{
+  const fn = () => y;
+  let y = 42;
+  console.log(fn());
+}
+
+// Snippet 2
+{
+  const fn = () => z;
+  console.log(fn());
+  let z = 42;
+}
+
+// Snippet 3
+const a = "outer";
+{
+  console.log(a);
+  const a = "inner";
+}
+```
+
+### Solution
+
+```js
+// Snippet 1
+console.log(fn()); // 42 ✅ — fn is called AFTER TDZ ends
+
+// Snippet 2
+console.log(fn()); // ReferenceError ❌ — fn is called DURING TDZ for z
+
+// Snippet 3
+console.log(a); // ReferenceError ❌ — inner `a` is hoisted, creating TDZ, shadowing outer `a`
+```
+
+---
