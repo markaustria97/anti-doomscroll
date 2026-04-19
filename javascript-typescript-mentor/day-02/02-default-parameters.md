@@ -2,15 +2,12 @@
 
 ## T — TL;DR
 
-Default parameters let you set fallback values for function arguments when they are `undefined` (or not passed).
+Default parameters let you set fallback values for function arguments when they're `undefined` (or not passed).
 
 ```js
 function greet(name = "World") {
-  return `Hello, ${name}!`;
+  return `Hello, ${name}!`
 }
-
-greet(); // "Hello, World!"
-greet("Mark"); // "Hello, Mark!"
 ```
 
 ## K — Key Concepts
@@ -18,233 +15,179 @@ greet("Mark"); // "Hello, Mark!"
 ### Basic Syntax
 
 ```js
-function createUser(name = "Anonymous", role = "viewer") {
-  return { name, role };
+function greet(name = "World") {
+  return `Hello, ${name}!`
 }
 
-createUser(); // { name: "Anonymous", role: "viewer" }
-createUser("Mark"); // { name: "Mark", role: "viewer" }
-createUser("Mark", "admin"); // { name: "Mark", role: "admin" }
+greet("Mark")    // "Hello, Mark!"
+greet()          // "Hello, World!"
+greet(undefined) // "Hello, World!" — undefined triggers the default
+greet(null)      // "Hello, null!" — null does NOT trigger the default
+greet("")        // "Hello, !" — empty string does NOT trigger the default
 ```
 
-### Only Triggers on `undefined`
-
-Default parameters activate when the argument is `undefined` — NOT for other falsy values.
-
-```js
-function example(x = 10) {
-  return x;
-}
-
-example(undefined); // 10 — default triggers
-example(null); // null — default does NOT trigger
-example(0); // 0
-example(""); // ""
-example(false); // false
-```
-
-This is different from `||` which triggers on all falsy values, and matches the behavior of `??`.
+Key rule: **Defaults only kick in for `undefined`**, not for other falsy values.
 
 ### Expressions as Defaults
 
-Defaults can be any expression — they are evaluated **at call time**, not at definition time.
+Defaults can be **any expression**, evaluated at call time:
 
 ```js
-function getTimestamp(date = new Date()) {
-  return date.toISOString();
+function createId(prefix = "id", timestamp = Date.now()) {
+  return `${prefix}_${timestamp}`
 }
 
-// Each call gets a fresh Date
-getTimestamp(); // "2026-04-18T..."
+createId() // "id_1713500000000" — Date.now() is called each time
+createId() // "id_1713500000001" — different timestamp
 ```
 
 ### Defaults Can Reference Earlier Parameters
 
-Parameters are evaluated left to right, so later defaults can use earlier parameters:
-
 ```js
-function createRange(start, end = start + 10) {
-  return { start, end };
+function createUser(name, greeting = `Hello, ${name}!`) {
+  return { name, greeting }
 }
 
-createRange(5); // { start: 5, end: 15 }
-createRange(5, 20); // { start: 5, end: 20 }
+createUser("Mark") // { name: "Mark", greeting: "Hello, Mark!" }
 ```
 
-But earlier parameters **cannot** reference later ones:
+But you **cannot** reference later parameters:
 
 ```js
-function broken(a = b, b = 1) {
-  return [a, b];
-}
-broken(); // ReferenceError: Cannot access 'b' before initialization
-```
-
-### Default with Destructuring
-
-```js
-function configure({ host = "localhost", port = 3000 } = {}) {
-  return `${host}:${port}`;
-}
-
-configure(); // "localhost:3000"
-configure({ port: 8080 }); // "localhost:8080"
-configure({ host: "api.com" }); // "api.com:3000"
-```
-
-The `= {}` at the end means even calling `configure()` with no arguments works (it destructures an empty object).
-
-### Functions as Defaults
-
-```js
-function fetchData(url, parser = JSON.parse) {
-  const raw = getRawData(url);
-  return parser(raw);
-}
+function broken(a = b, b = 1) {} // ReferenceError — b is in TDZ
 ```
 
 ### Default Parameters and `arguments`
 
-Default parameters do **not** affect the `arguments` object in sloppy mode (and `arguments` should be avoided anyway):
+Default parameters do NOT affect the `arguments` object:
 
 ```js
-function example(x = 10) {
-  console.log(arguments.length);
-  console.log(arguments[0]);
-  console.log(x);
+function example(a, b = 10) {
+  console.log(arguments.length) // reflects actual arguments passed
+  console.log(arguments[1])     // undefined if b wasn't passed
+  console.log(b)                // 10 (default applied)
 }
 
-example(); // arguments.length = 0, arguments[0] = undefined, x = 10
-example(5); // arguments.length = 1, arguments[0] = 5, x = 5
+example(1)
+// arguments.length = 1
+// arguments[1] = undefined
+// b = 10
 ```
 
-### The Old Pattern (Before ES6)
+### Destructured Defaults
 
 ```js
-// Old way — buggy with falsy values
-function greet(name) {
-  name = name || "World"; // fails for "", 0, false
-  return `Hello, ${name}!`;
+function createUser({ name = "Anonymous", role = "user" } = {}) {
+  return { name, role }
 }
 
-// Modern way — correct
-function greet(name = "World") {
-  return `Hello, ${name}!`;
+createUser()                    // { name: "Anonymous", role: "user" }
+createUser({ name: "Mark" })   // { name: "Mark", role: "user" }
+createUser({ role: "admin" })  // { name: "Anonymous", role: "admin" }
+```
+
+The `= {}` at the end handles the case where the entire object is missing.
+
+### The Old Way (Pre-ES6)
+
+```js
+// Before default parameters:
+function greet(name) {
+  name = name || "World" // Bug: treats "", 0, false as missing!
 }
+
+// Correct old way:
+function greet(name) {
+  name = name !== undefined ? name : "World"
+}
+
+// Modern way — clean and correct:
+function greet(name = "World") {}
 ```
 
 ## W — Why It Matters
 
-- Cleaner than manual `undefined` checks or `||` fallbacks.
-- Correct behavior with falsy values (`0`, `""`, `false` are preserved).
-- Used everywhere: config objects, API wrappers, component props.
-- Combined with destructuring, it's the standard for options patterns.
-- Interview questions test whether defaults trigger on `null` vs `undefined`.
+- Default parameters make function APIs cleaner and more self-documenting.
+- They eliminate verbose `undefined` checks at the top of every function.
+- Understanding that only `undefined` triggers defaults (not `null`) prevents bugs.
+- Destructured defaults are used **everywhere** in React components (props) and configuration objects.
 
 ## I — Interview Questions with Answers
 
-### Q1: When do default parameters activate?
+### Q1: What values trigger default parameters?
 
-**A:** When the argument is `undefined` — either explicitly passed as `undefined` or not passed at all. They do NOT activate for `null`, `0`, `""`, `false`, or any other falsy value.
+**A:** Only `undefined` (including when the argument is not passed at all). `null`, `0`, `""`, `false`, and `NaN` do NOT trigger defaults.
 
-### Q2: Are default values evaluated at definition time or call time?
+### Q2: Are default parameter expressions evaluated eagerly or lazily?
 
-**A:** **Call time**. Each invocation evaluates the default expression fresh. This is why `new Date()` as a default gives a different result each call.
+**A:** **Lazily** — at call time, not at function definition time. If you use `Date.now()` as a default, it's called fresh each time the function runs with that parameter missing.
 
 ### Q3: Can a default parameter reference another parameter?
 
-**A:** Yes, but only **earlier** parameters (left to right). Later parameters are not yet initialized.
-
-### Q4: What is the `= {}` pattern in destructured parameters?
-
-**A:** It provides an empty object as the default so the function can be called with no arguments without throwing. Example: `function f({ a = 1 } = {})`.
+**A:** Yes, but only parameters defined **before** it (left to right). Referencing a later parameter causes a `ReferenceError` due to the TDZ.
 
 ## C — Common Pitfalls with Fix
 
-### Pitfall: Expecting default to trigger on `null`
+### Pitfall: Expecting `null` to trigger the default
 
 ```js
-function greet(name = "World") {
-  return name;
+function fn(x = 10) { return x }
+fn(null) // null — NOT 10!
+```
+
+**Fix:** If you want to handle `null` too, use `??`:
+
+```js
+function fn(x) {
+  const value = x ?? 10
+  return value
 }
-greet(null); // null — not "World"
-```
-
-**Fix:** If you need to handle `null`, use `??` inside the body:
-
-```js
-function greet(name) {
-  const n = name ?? "World";
-  return n;
-}
-```
-
-### Pitfall: Referencing a later parameter
-
-```js
-function f(a = b, b = 1) {}
-f(); // ReferenceError
-```
-
-**Fix:** Only reference parameters defined to the left.
-
-### Pitfall: Forgetting `= {}` with destructured params
-
-```js
-function f({ a = 1 }) {}
-f(); // TypeError: Cannot destructure property 'a' of undefined
-```
-
-**Fix:** Add `= {}`:
-
-```js
-function f({ a = 1 } = {}) {}
-f(); // works — a = 1
 ```
 
 ### Pitfall: Using `||` instead of default parameters
 
 ```js
-function setPort(port) {
-  port = port || 3000; // overwrites valid 0
-}
+function fn(x) { x = x || 10 }
+fn(0)  // 10 — wrong! 0 is a valid value
+fn("") // 10 — wrong! "" might be valid
 ```
 
-**Fix:** Use default parameter or `??`:
+**Fix:** Use default parameters or `??`.
+
+### Pitfall: Forgetting the `= {}` on destructured objects
 
 ```js
-function setPort(port = 3000) {} // correct
+function fn({ name = "default" }) {} // crashes if called with fn()
+```
+
+**Fix:**
+
+```js
+function fn({ name = "default" } = {}) {} // safe with fn()
 ```
 
 ## K — Coding Challenge with Solution
 
 ### Challenge
 
+What does each call return?
+
 ```js
-function createConfig(host = "localhost", port = 8080, secure = false) {
-  return `${secure ? "https" : "http"}://${host}:${port}`;
+function test(a, b = a * 2, c = b + 1) {
+  return [a, b, c]
 }
 
-console.log(createConfig());
-console.log(createConfig("api.com"));
-console.log(createConfig("api.com", undefined, true));
-console.log(createConfig("api.com", null, true));
+console.log(test(5))
+console.log(test(5, 3))
+console.log(test(5, undefined, 100))
 ```
 
 ### Solution
 
 ```js
-createConfig();
-// "http://localhost:8080"
-
-createConfig("api.com");
-// "http://api.com:8080"
-
-createConfig("api.com", undefined, true);
-// "https://api.com:8080" — undefined triggers default for port
-
-createConfig("api.com", null, true);
-// "https://api.com:null" — null does NOT trigger default
+test(5)                 // [5, 10, 11]  — b = 5*2 = 10, c = 10+1 = 11
+test(5, 3)              // [5, 3, 4]   — b = 3 (provided), c = 3+1 = 4
+test(5, undefined, 100) // [5, 10, 100] — b = 5*2 = 10 (undefined triggers default), c = 100 (provided)
 ```
 
 ---

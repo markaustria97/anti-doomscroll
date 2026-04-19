@@ -10,7 +10,7 @@ try {
 } catch (error) {
   // handle the error
 } finally {
-  // always runs — whether error or not
+  // ALWAYS runs — whether error occurred or not
 }
 ```
 
@@ -28,7 +28,7 @@ try {
 }
 ```
 
-### Only `try` is Required with Either `catch` or `finally`
+### Only `try` Is Required with Either `catch` or `finally`
 
 ```js
 // try + catch (most common)
@@ -38,11 +38,11 @@ try {
   handleError(e)
 }
 
-// try + finally (no catch)
+// try + finally (no catch — error propagates up)
 try {
   acquireResource()
 } finally {
-  releaseResource() // cleanup runs even if error is thrown upward
+  releaseResource() // cleanup runs even if error is thrown
 }
 
 // try + catch + finally
@@ -61,21 +61,20 @@ try {
 try {
   null.toString()
 } catch (error) {
-  console.log(error.message)  // "Cannot read properties of null (reading 'toString')"
-  console.log(error.name)     // "TypeError"
-  console.log(error.stack)    // full stack trace
+  console.log(error.message) // "Cannot read properties of null (reading 'toString')"
+  console.log(error.name)    // "TypeError"
+  console.log(error.stack)   // full stack trace
 }
 ```
 
 ### Optional Catch Binding (ES2019)
 
-You can omit the error parameter:
+You can omit the error parameter if you don't need it:
 
 ```js
 try {
   JSON.parse(data)
 } catch {
-  // don't need the error object
   console.log("Parse failed")
 }
 ```
@@ -87,7 +86,7 @@ function example() {
   try {
     return "try"
   } finally {
-    console.log("finally runs")
+    console.log("finally runs") // this STILL runs
   }
 }
 
@@ -103,11 +102,11 @@ function example() {
   try {
     return "try"
   } finally {
-    return "finally" // this wins
+    return "finally" // ⚠️ this wins!
   }
 }
 
-example() // "finally"
+example() // "finally" — NOT "try"
 ```
 
 ### Nesting
@@ -141,7 +140,7 @@ try {
 }
 ```
 
-For async code, you need `async`/`await` with `try`/`catch`, or `.catch()` on promises (covered on Day 5).
+For async code, use `async`/`await` with `try`/`catch`, or `.catch()` on promises (covered on Day 5).
 
 ## W — Why It Matters
 
@@ -158,11 +157,11 @@ For async code, you need `async`/`await` with `try`/`catch`, or `.catch()` on pr
 
 ### Q2: Does `finally` run if `try` has a `return`?
 
-**A:** Yes. `finally` always runs. If `finally` itself has a `return`, it overrides the `try`/`catch` return.
+**A:** Yes. `finally` always runs. If `finally` itself has a `return`, it **overrides** the `try`/`catch` return value.
 
 ### Q3: Can `try`/`catch` catch errors from `setTimeout`?
 
-**A:** No. `setTimeout` callbacks run in a separate call stack. You need error handling inside the callback itself.
+**A:** No. `setTimeout` callbacks run in a separate call stack (macrotask). You need error handling inside the callback itself.
 
 ### Q4: What is optional catch binding?
 
@@ -179,7 +178,7 @@ function f() {
 f() // 2 — not 1!
 ```
 
-**Fix:** Avoid `return` in `finally`. Use `finally` only for cleanup.
+**Fix:** Avoid `return` in `finally`. Use `finally` **only** for cleanup.
 
 ### Pitfall: Catching all errors and silencing them
 
@@ -187,7 +186,7 @@ f() // 2 — not 1!
 try {
   doSomething()
 } catch {
-  // empty — swallowed error
+  // empty — swallowed error!
 }
 ```
 
@@ -207,7 +206,7 @@ try {
 try {
   await fetch("/api")
 } catch (e) {
-  // now it catches
+  // now it catches network errors
 }
 ```
 
@@ -244,11 +243,11 @@ D
 ```
 
 Explanation:
-1. `"A"` — logged in try
-2. Error is thrown — `"B"` is skipped
-3. `"C"` — logged in catch
+1. `"A"` — logged in `try`
+2. Error is thrown — `"B"` is **skipped**
+3. `"C"` — logged in `catch`
 4. `return "D"` is scheduled but `finally` runs first
-5. `"E"` — logged in finally
-6. `"D"` — the return value from catch
+5. `"E"` — logged in `finally`
+6. `"D"` — the return value from `catch`
 
 ---

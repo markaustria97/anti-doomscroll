@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`void` evaluates an expression and returns `undefined`. Always.
+`void` evaluates an expression and **always returns `undefined`**.
 
 ```js
 void 0         // undefined
@@ -26,7 +26,7 @@ const result = void console.log("hi") // logs "hi", result = undefined
 
 **1. Guaranteed `undefined`**
 
-In old JavaScript, `undefined` could be reassigned as a variable name:
+In old JavaScript, `undefined` could be reassigned:
 
 ```js
 // Old JS (non-strict mode)
@@ -37,16 +37,15 @@ console.log(undefined) // "oops"
 void 0 // always undefined, no matter what
 ```
 
-In modern strict mode this is no longer an issue, but `void 0` is still used by minifiers because it's shorter than `undefined`.
+In modern strict mode this is no longer an issue, but `void 0` is still used by **minifiers** because it's shorter than `undefined`.
 
 **2. Preventing navigation in `href`**
 
 ```html
-<!-- Old pattern in HTML -->
 <a href="javascript:void(0)">Click me</a>
 ```
 
-This prevents the browser from navigating when the link is clicked.
+Prevents the browser from navigating when the link is clicked.
 
 **3. Arrow functions — discarding return values**
 
@@ -58,9 +57,9 @@ const onClick = () => apiCall()
 const onClick = () => void apiCall()
 ```
 
-This matters when a framework expects `undefined` return (like some event handlers).
+This matters when a framework expects `undefined` return.
 
-**4. IIFEs**
+**4. IIFEs (Immediately Invoked Function Expressions)**
 
 ```js
 void function() {
@@ -72,7 +71,7 @@ void function() {
 
 ### Minification
 
-Minifiers like Terser replace `undefined` with `void 0` because it's 2 characters shorter.
+Minifiers like Terser replace `undefined` with `void 0` because it's **2 characters shorter**:
 
 ```js
 // Before minification
@@ -84,7 +83,7 @@ if (x === void 0) {}
 
 ## W — Why It Matters
 
-- You'll see `void 0` in minified code and some library source.
+- You'll see `void 0` in minified code and some library source code.
 - The arrow function pattern (`() => void expr`) prevents accidental return values.
 - Understanding `void` shows deep JS knowledge in interviews.
 - It's a minor topic but one that trips people up when they encounter it.
@@ -108,7 +107,7 @@ if (x === void 0) {}
 ### Pitfall: Thinking `void` is a function
 
 ```js
-void(0) // works but void is an operator, not a function
+void(0) // works, but void is an OPERATOR, not a function
 void 0  // same thing — no parentheses needed
 ```
 
@@ -117,7 +116,7 @@ void 0  // same thing — no parentheses needed
 ### Pitfall: Unexpected return in arrow functions
 
 ```js
-const handler = () => map.set(key, value) // returns the Map
+const handler = () => map.set(key, value) // returns the Map object
 ```
 
 **Fix:**

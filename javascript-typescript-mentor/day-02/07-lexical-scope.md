@@ -2,257 +2,210 @@
 
 ## T — TL;DR
 
-**Lexical scope** (also called **static scope**) means a function's scope is determined by **where it is written in the source code**, not where or how it's called.
-
-```js
-const name = "outer";
-
-function greet() {
-  console.log(name); // looks up to where greet was DEFINED
-}
-
-function wrapper() {
-  const name = "inner";
-  greet();
-}
-
-wrapper(); // "outer" — not "inner"
-```
+Lexical scope means a function's access to variables is determined by **where the function is written** in the source code, not where it's called.
 
 ## K — Key Concepts
 
-### The Core Rule
+### Definition
 
-When a variable is referenced inside a function, JavaScript looks it up in:
-
-1. The function's own local scope.
-2. The enclosing function's scope.
-3. The next enclosing scope...
-4. The global scope.
-
-This lookup chain is determined at **write time** (where the function appears in the code), not at **call time**.
+**Lexical scope** (also called **static scope**) means that the scope of a variable is defined by its position in the source code. Inner functions have access to variables declared in their outer functions.
 
 ```js
-function outer() {
-  const x = 10;
+const outer = "I'm outer"
 
-  function inner() {
-    console.log(x); // finds x in outer's scope
+function foo() {
+  const inner = "I'm inner"
+
+  function bar() {
+    console.log(outer) // ✅ accessible ��� lexically above
+    console.log(inner) // ✅ accessible — lexically above
   }
 
-  return inner;
+  bar()
 }
 
-const fn = outer();
-fn(); // 10 — even though fn is called outside of outer()
+foo()
 ```
 
-This is the foundation of **closures** (Day 3).
+### The Scope Chain
+
+When JavaScript looks up a variable, it searches:
+
+1. The **current** function scope
+2. The **parent** function scope
+3. The **grandparent** function scope
+4. ... all the way up to the **global** scope
+
+If not found anywhere → `ReferenceError`.
+
+```js
+const a = 1           // global scope
+
+function outer() {
+  const b = 2         // outer scope
+
+  function middle() {
+    const c = 3       // middle scope
+
+    function inner() {
+      console.log(a)  // 1 — found in global
+      console.log(b)  // 2 — found in outer
+      console.log(c)  // 3 — found in middle
+      console.log(d)  // ReferenceError — not found anywhere
+    }
+
+    inner()
+  }
+
+  middle()
+}
+
+outer()
+```
 
 ### Lexical vs Dynamic Scope
 
-JavaScript uses **lexical scope**. Some languages (like Bash, old Perl) use dynamic scope.
+JavaScript uses **lexical** scope. Some languages (like old Bash) use **dynamic** scope.
 
 ```js
-// LEXICAL scope (JavaScript)
-const x = "global";
+const x = 10
 
-function a() {
-  console.log(x);
+function foo() {
+  console.log(x) // always 10 — lexical scope looks at where foo is WRITTEN
 }
 
-function b() {
-  const x = "local";
-  a(); // still prints "global" — a() was DEFINED in the global scope
+function bar() {
+  const x = 20
+  foo() // still prints 10, NOT 20
 }
 
-b(); // "global"
+bar()
 ```
 
-If JavaScript had dynamic scope, `a()` would print `"local"` because it was **called** from `b()`. But JS is lexical — `a()` looks up `x` from where it was **defined**.
+In dynamic scope, `foo()` would print 20 because it would look at the **caller's** scope. JavaScript doesn't do this.
 
-### Nested Scope Chains
+### Lexical Scope and Arrow Functions
+
+Arrow functions follow lexical scope for both variables AND `this`:
 
 ```js
-const a = "global a";
+function Timer() {
+  this.seconds = 0
 
-function level1() {
-  const b = "level1 b";
+  // Arrow function — `this` is lexically bound to Timer instance
+  setInterval(() => {
+    this.seconds++ // `this` comes from Timer, not from setInterval
+  }, 1000)
+}
+```
 
-  function level2() {
-    const c = "level2 c";
+### Scope Is Determined at Write Time, Not Call Time
 
-    function level3() {
-      console.log(a); // "global a" — found in global scope
-      console.log(b); // "level1 b" — found in level1's scope
-      console.log(c); // "level2 c" — found in level2's scope
-    }
-
-    level3();
+```js
+function createGreeter(greeting) {
+  // This function "remembers" greeting from its lexical scope
+  return function (name) {
+    return `${greeting}, ${name}!`
   }
-
-  level2();
 }
 
-level1();
+const hello = createGreeter("Hello")
+const hi = createGreeter("Hi")
+
+hello("Mark") // "Hello, Mark!" — greeting = "Hello" from creation
+hi("Mark")    // "Hi, Mark!" — greeting = "Hi" from creation
 ```
 
-### Scope Chain Visualization
-
-```
-level3's scope chain:
-  level3 local → level2 local → level1 local → global
-```
-
-Each function creates a new link in the chain. Variable lookup walks outward through this chain.
-
-### Block Scope Is Also Lexical
-
-`let` and `const` create block-scoped variables, but the lookup mechanism is still lexical:
-
-```js
-function example() {
-  const x = 1;
-
-  if (true) {
-    const y = 2;
-    console.log(x); // 1 — found in enclosing function scope
-    console.log(y); // 2 — found in this block scope
-  }
-
-  // console.log(y) // ReferenceError — y is in the if-block's scope
-}
-```
-
-### `this` Is NOT Lexically Scoped (Except in Arrows)
-
-Regular functions determine `this` at **call time** (dynamic). Arrow functions inherit `this` **lexically**.
-
-```js
-const obj = {
-  name: "Mark",
-  regular() {
-    console.log(this.name); // "Mark" — dynamic this from method call
-  },
-  arrow: () => {
-    console.log(this?.name); // undefined — lexical this from outer scope
-  },
-};
-```
-
-This distinction is covered in depth on Day 3.
+This is the **foundation of closures** (covered fully on Day 3).
 
 ## W — Why It Matters
 
-- Lexical scope is the mental model for understanding all variable access in JavaScript.
-- It's the prerequisite for closures — if you get lexical scope, closures become simple.
-- It explains why arrow functions capture `this` differently from regular functions.
-- Interview questions about scope are really questions about lexical scope.
+- Lexical scope is the **foundation** of closures, modules, and data privacy.
+- Understanding scope chains explains how variable lookup works and why some variables are "not defined."
+- It's why arrow functions capture `this` correctly in callbacks.
+- The scope chain is how JavaScript engines optimize variable access.
 
 ## I — Interview Questions with Answers
 
 ### Q1: What is lexical scope?
 
-**A:** Lexical (static) scope means a function's accessible variables are determined by where the function is physically written in the source code. The scope chain is established at definition time, not call time.
+**A:** Lexical scope means a function's variable access is determined by **where it's defined** in the source code, not where it's called. Inner functions can access variables from outer functions based on their nesting position.
 
-### Q2: How does variable lookup work in JavaScript?
+### Q2: What is the scope chain?
 
-**A:** When a variable is referenced, the engine searches:
+**A:** The chain of nested scopes that JavaScript traverses when looking up a variable. It starts from the current scope and walks up through parent scopes to the global scope. If the variable isn't found, a `ReferenceError` is thrown.
 
-1. Current function/block scope
-2. Enclosing function/block scope
-3. Continues outward...
-4. Global scope
-5. If not found → `ReferenceError`
+### Q3: Does JavaScript use lexical or dynamic scope?
 
-### Q3: What is the difference between lexical and dynamic scope?
-
-**A:** Lexical scope looks up variables from where the function is **defined**. Dynamic scope looks up variables from where the function is **called**. JavaScript uses lexical scope.
-
-### Q4: Is `this` lexically scoped?
-
-**A:** In **arrow functions**, yes — `this` is inherited from the enclosing scope. In **regular functions**, no — `this` is determined dynamically at call time.
+**A:** **Lexical** scope. Variable lookup is based on the physical nesting of functions in the source code, not the call stack at runtime.
 
 ## C — Common Pitfalls with Fix
 
-### Pitfall: Expecting variables from the call site
+### Pitfall: Expecting dynamic scoping behavior
 
 ```js
-const x = "outer";
-function logX() {
-  console.log(x);
-}
+const x = 1
+function logX() { console.log(x) }
 
-function callLogX() {
-  const x = "inner";
-  logX();
+function wrapper() {
+  const x = 2
+  logX() // 1, not 2!
 }
-callLogX(); // "outer" — not "inner"
+wrapper()
 ```
 
-**Fix:** Understand that `logX` looks up `x` from where it was defined, not from where it was called.
+**Fix:** Remember JavaScript uses **lexical** scope. `logX` sees `x = 1` because that's what's in its lexical environment.
 
-### Pitfall: Shadowing
+### Pitfall: Variable shadowing confusion
 
 ```js
-const x = "outer";
-function example() {
-  const x = "inner"; // shadows outer x
-  console.log(x); // "inner"
+const x = "global"
+
+function fn() {
+  const x = "local" // shadows the global x
+  console.log(x)    // "local"
 }
-example();
-console.log(x); // "outer" — unchanged
+
+fn()
+console.log(x) // "global" — unaffected
 ```
 
-**Fix:** Be aware of shadowing. It's not a bug, but it can cause confusion. Avoid reusing variable names from outer scopes.
-
-### Pitfall: Assuming block scope for `var`
-
-```js
-function example() {
-  if (true) {
-    var x = 1; // function-scoped, NOT block-scoped
-  }
-  console.log(x); // 1
-}
-```
-
-**Fix:** Use `let`/`const` for block scope.
+**Fix:** Be aware that inner variables can **shadow** outer ones. The outer variable still exists; it's just hidden in the inner scope.
 
 ## K — Coding Challenge with Solution
 
 ### Challenge
 
-What does each `console.log` print?
+What does this print?
 
 ```js
-const a = 1;
+const x = "global"
 
-function first() {
-  const a = 2;
+function a() {
+  const x = "a"
 
-  function second() {
-    console.log(a);
+  function b() {
+    console.log(x)
   }
 
-  return second;
+  return b
 }
 
-function third() {
-  const a = 3;
-  const fn = first();
-  fn();
+function c() {
+  const x = "c"
+  const bFn = a()
+  bFn()
 }
 
-third();
+c()
 ```
 
 ### Solution
 
 ```
-2
+"a"
 ```
 
-`second()` was **defined** inside `first()`, where `a = 2`. Even though it's called from `third()` where `a = 3`, lexical scope means it looks up `a` from its definition site.
+Explanation: `b` is defined inside `a`, so it lexically sees `x = "a"`. It doesn't matter that `bFn()` is **called** inside `c` where `x = "c"`. Lexical scope = where it's **written**, not where it's **called**.
 
 ---

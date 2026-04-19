@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`throw` stops execution and sends an error up the call stack. It can throw **any value**, but you should always throw `Error` objects.
+`throw` stops execution and sends an error up the call stack. It can throw **any value**, but you should **always throw `Error` objects**.
 
 ```js
 throw new Error("Something went wrong")
@@ -22,25 +22,25 @@ function divide(a, b) {
 ```
 
 When `throw` executes:
-1. Execution stops immediately in the current function.
-2. The error propagates up the call stack.
+1. Execution **stops immediately** in the current function.
+2. The error **propagates up** the call stack.
 3. If a `try`/`catch` is found, it catches the error.
 4. If no `try`/`catch` exists, the program crashes (or the promise rejects).
 
-### You Can Throw Anything
+### You Can Throw Anything (But Don't)
 
 ```js
-throw "error"           // string — avoid
-throw 42                // number — avoid
-throw { msg: "fail" }   // object — avoid
-throw new Error("fail") // Error — always do this
+throw "error"           // string — avoid ❌
+throw 42                // number — avoid ❌
+throw { msg: "fail" }   // object — avoid ❌
+throw new Error("fail") // Error — always do this ✅
 ```
 
 **Always throw `Error` objects** because:
 - They have `.message`, `.name`, `.stack`.
 - They support `Error.cause`.
 - They work with `instanceof` checks.
-- They give you a stack trace for debugging.
+- They give you a **stack trace** for debugging.
 
 ### Throwing Custom Errors
 
@@ -77,14 +77,14 @@ try {
   } else if (error instanceof TypeError) {
     console.log(`Type error: ${error.message}`)
   } else {
-    throw error // re-throw unknown errors
+    throw error // re-throw unknown errors!
   }
 }
 ```
 
 ### Re-throwing
 
-If you catch an error you can't handle, **re-throw it**:
+If you catch an error you **can't handle**, re-throw it:
 
 ```js
 try {
@@ -98,15 +98,15 @@ try {
 }
 ```
 
-### `throw` in Expressions (Throw Expressions — Proposal)
+### `throw` in Expressions (Limitation)
 
 Currently, `throw` is a **statement**, not an expression:
 
 ```js
-// These don't work (yet):
+// This does NOT work:
 const value = input ?? throw new Error("Required") // SyntaxError
 
-// Workaround: use a helper function
+// Workaround: helper function
 function required(name) {
   throw new Error(`${name} is required`)
 }
@@ -132,7 +132,7 @@ try {
 }
 ```
 
-In async functions, `throw` rejects the returned promise.
+In async functions, `throw` **rejects** the returned promise.
 
 ## W — Why It Matters
 
@@ -154,11 +154,11 @@ In async functions, `throw` rejects the returned promise.
 
 ### Q3: What happens if you throw inside an `async` function?
 
-**A:** The returned promise is rejected with the thrown value.
+**A:** The returned promise is **rejected** with the thrown value.
 
 ### Q4: What is re-throwing?
 
-**A:** Catching an error, determining you can't handle it, and using `throw error` to pass it up the call stack.
+**A:** Catching an error, determining you can't handle it, and using `throw error` to pass it up the call stack for another handler.
 
 ### Q5: How do you create a custom error class?
 
@@ -178,7 +178,7 @@ class AppError extends Error {
 ### Pitfall: Throwing strings
 
 ```js
-throw "Something went wrong" // no stack trace, no instanceof
+throw "Something went wrong" // no stack trace, no instanceof ❌
 ```
 
 **Fix:** `throw new Error("Something went wrong")`
@@ -186,7 +186,7 @@ throw "Something went wrong" // no stack trace, no instanceof
 ### Pitfall: Catching and swallowing errors
 
 ```js
-try { doWork() } catch (e) {} // silent failure
+try { doWork() } catch (e) {} // silent failure — bugs hide here
 ```
 
 **Fix:** At minimum, log the error. Better: handle or re-throw.
@@ -195,8 +195,7 @@ try { doWork() } catch (e) {} // silent failure
 
 ```js
 catch (error) {
-  // handles all errors the same way — dangerous
-  console.log("Error:", error.message)
+  console.log("Error:", error.message) // handles ALL errors the same — dangerous
 }
 ```
 
@@ -207,7 +206,7 @@ catch (error) {
   if (error instanceof ExpectedError) {
     handle(error)
   } else {
-    throw error
+    throw error // don't swallow unexpected errors
   }
 }
 ```
@@ -216,7 +215,7 @@ catch (error) {
 
 ```js
 throw Error("oops")     // works but inconsistent
-throw new Error("oops") // preferred — standard constructor pattern
+throw new Error("oops") // preferred — standard constructor pattern ✅
 ```
 
 ## K — Coding Challenge with Solution
@@ -225,8 +224,9 @@ throw new Error("oops") // preferred — standard constructor pattern
 
 Write a function `parseAge(input)` that:
 1. Throws a `TypeError` if input is not a string.
-2. Throws a `RangeError` if the parsed number is negative or over 150.
-3. Returns the parsed number otherwise.
+2. Throws a `TypeError` if the parsed value is `NaN`.
+3. Throws a `RangeError` if the parsed number is negative or over 150.
+4. Returns the parsed number otherwise.
 
 Then write a caller that catches each error type differently.
 
@@ -270,29 +270,34 @@ try {
 
 # ✅ Day 1 Complete
 
-You've covered all 16 subtopics:
+All 16 subtopics with independent T-KWICK frameworks:
 
-| # | Topic | Status |
-|---|-------|--------|
-| 1 | Node.js LTS, pnpm, ESLint, Prettier | ✅ |
-| 2 | `var`, `let`, `const` | ✅ |
-| 3 | Primitives vs Objects | ✅ |
-| 4 | Type Coercion | ✅ |
-| 5 | `typeof` | ✅ |
-| 6 | `==` vs `===` | ✅ |
-| 7 | Operators | ✅ |
-| 8 | Logical Assignment Operators | ✅ |
-| 9 | Optional Chaining (`?.`) | ✅ |
-| 10 | Nullish Coalescing (`??`) | ✅ |
-| 11 | `void` Operator | ✅ |
-| 12 | Control Flow | ✅ |
-| 13 | `try` / `catch` / `finally` | ✅ |
-| 14 | Built-in Error Types | ✅ |
-| 15 | `Error.cause` (ES2022) | ✅ |
-| 16 | `throw` | ✅ |
+| # | Topic | Framework |
+|---|-------|-----------|
+| 1 | Node.js LTS, pnpm, ESLint, Prettier | ✅ T-KWICK |
+| 2 | `var`, `let`, `const` | ✅ T-KWICK |
+| 3 | Primitives vs Objects | ✅ T-KWICK |
+| 4 | Type Coercion | ✅ T-KWICK |
+| 5 | `typeof` | ✅ T-KWICK |
+| 6 | `==` vs `===` | ✅ T-KWICK |
+| 7 | Operators | ✅ T-KWICK |
+| 8 | Logical Assignment Operators (`??=`, `&&=`, `\|\|=`) | ✅ T-KWICK |
+| 9 | Optional Chaining (`?.`) | ✅ T-KWICK |
+| 10 | Nullish Coalescing (`??`) | ✅ T-KWICK |
+| 11 | `void` Operator | ✅ T-KWICK |
+| 12 | Control Flow | ✅ T-KWICK |
+| 13 | `try` / `catch` / `finally` | ✅ T-KWICK |
+| 14 | Built-in Error Types | ✅ T-KWICK |
+| 15 | `Error.cause` (ES2022) | ✅ T-KWICK |
+| 16 | `throw` | ✅ T-KWICK |
+
+---
 
 ## Next Steps
 
-- `Quiz Day 1` — 5 interview-style problems covering all topics
-- `Generate Day 2` — Functions, Scope & Hoisting
-- `next topic` — continue to Day 2's first subtopic
+| Command | What Happens |
+|---------|--------------|
+| `Quiz Day 1` | 5 interview-style problems covering all 16 topics |
+| `Generate Day 2` | Full lesson — Functions, Scope & Hoisting |
+| `next topic` | Start Day 2's first subtopic |
+| `recap` | Quick Day 1 summary |

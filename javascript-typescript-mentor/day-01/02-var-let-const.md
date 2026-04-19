@@ -4,7 +4,7 @@
 
 JavaScript has three ways to declare variables:
 
-| Keyword | Scope | Reassign? | Hoist behavior |
+| Keyword | Scope | Reassign? | Hoist Behavior |
 |---------|-------|-----------|----------------|
 | `var` | Function | Yes | Hoisted, initialized to `undefined` |
 | `let` | Block | Yes | Hoisted, but in TDZ |
@@ -54,8 +54,8 @@ user.name = "Alex" // ✅ allowed — mutating the object
 // user = {}       // ❌ error — reassigning the binding
 
 const arr = [1, 2, 3]
-arr.push(4)        // ✅ allowed
-// arr = [5, 6]    // ❌ error
+arr.push(4)        // ✅ allowed — mutating the array
+// arr = [5, 6]    // ❌ error — reassigning the binding
 ```
 
 If you want true shallow immutability:
@@ -79,7 +79,7 @@ var x = 10
 // console.log(y) // ReferenceError: Cannot access 'y' before initialization
 let y = 20
 
-// const — same TDZ behavior
+// const — same TDZ behavior as let
 // console.log(z) // ReferenceError
 const z = 30
 ```
@@ -91,13 +91,13 @@ const z = 30
 for (var i = 0; i < 3; i++) {
   setTimeout(() => console.log(i), 100)
 }
-// Prints: 3, 3, 3 — because var is function-scoped, all callbacks share ONE i
+// Prints: 3, 3, 3 — var is function-scoped, all callbacks share ONE i
 
 // Fix: use let
 for (let i = 0; i < 3; i++) {
   setTimeout(() => console.log(i), 100)
 }
-// Prints: 0, 1, 2 — because let creates a new binding per iteration
+// Prints: 0, 1, 2 — let creates a new binding per iteration
 ```
 
 ### Redeclaration
@@ -136,7 +136,7 @@ const c = 1
 
 ### Q3: Is `const` immutable?
 
-**A:** No. `const` prevents reassignment of the variable binding. Objects and arrays declared with `const` can still be mutated. Use `Object.freeze()` for shallow immutability.
+**A:** No. `const` prevents reassignment of the variable **binding**. Objects and arrays declared with `const` can still be mutated. Use `Object.freeze()` for shallow immutability.
 
 ### Q4: What does this print and why?
 
@@ -185,7 +185,7 @@ let name = "Mark"
 
 ### Challenge
 
-What does each `console.log` print? (or does it error?)
+What does each `console.log` print? (Or does it error?)
 
 ```js
 console.log(a)

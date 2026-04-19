@@ -2,279 +2,225 @@
 
 ## T — TL;DR
 
-Strict mode is an opt-in restricted variant of JavaScript that catches common mistakes and prevents unsafe actions.
-
-```js
-"use strict";
-
-x = 10; // ReferenceError — no implicit globals
-```
-
-ES modules and classes are **always in strict mode** by default.
+Strict mode (`"use strict"`) makes JavaScript throw errors for unsafe actions that would otherwise fail silently — it catches bugs early and makes code more predictable.
 
 ## K — Key Concepts
 
 ### Enabling Strict Mode
 
-**File-level:**
-
 ```js
-"use strict";
-// entire file is strict
-```
+// For an entire script (must be the FIRST statement)
+"use strict"
 
-**Function-level:**
-
-```js
+// For a single function
 function example() {
-  "use strict";
-  // only this function is strict
+  "use strict"
+  // strict mode only inside this function
 }
 ```
 
-**Automatic strict mode:**
+**Important:** ES modules (`import`/`export`) and `class` bodies are **always** in strict mode automatically.
 
-- ES modules (`import`/`export`) are always strict.
-- Class bodies are always strict.
+### What Strict Mode Changes
 
-### What Strict Mode Prevents
-
-**1. Implicit globals:**
+#### 1. No Accidental Globals
 
 ```js
-"use strict";
-x = 10; // ReferenceError: x is not defined
+"use strict"
+x = 10 // ReferenceError: x is not defined
+
+// Without strict mode: silently creates a global variable
 ```
 
-Without strict mode, this silently creates a global variable.
-
-**2. Assigning to read-only properties:**
+#### 2. Assignment to Read-Only Properties Throws
 
 ```js
-"use strict";
-const obj = Object.freeze({ x: 1 });
-obj.x = 2; // TypeError: Cannot assign to read only property
+"use strict"
+const obj = Object.freeze({ name: "Mark" })
+obj.name = "Alex" // TypeError: Cannot assign to read only property
+
+undefined = 1 // TypeError
+NaN = 2       // TypeError
 ```
 
-In sloppy mode, this fails silently.
-
-**3. Deleting undeletable properties:**
+#### 3. Deleting Undeletable Properties Throws
 
 ```js
-"use strict";
-delete Object.prototype; // TypeError
+"use strict"
+delete Object.prototype // TypeError
 ```
 
-**4. Duplicate parameter names:**
+#### 4. Duplicate Parameter Names Are Forbidden
 
 ```js
-"use strict";
-// function f(a, a) {} // SyntaxError: Duplicate parameter name not allowed
+"use strict"
+function fn(a, a) {} // SyntaxError: Duplicate parameter name
+
+// Without strict mode: silently allows it (last one wins)
 ```
 
-**5. Octal literals with leading zero:**
+#### 5. Octal Literals Are Forbidden
 
 ```js
-"use strict";
-// const n = 010 // SyntaxError
-const n = 0o10; // ✅ Use 0o prefix for octals
+"use strict"
+const x = 010 // SyntaxError
+
+// Use 0o10 instead for octal
+const y = 0o10 // 8
 ```
 
-**6. Setting properties on primitives:**
+#### 6. `this` Is `undefined` (Not `window`) in Standalone Functions
 
 ```js
-"use strict";
-true.x = 1; // TypeError: Cannot create property 'x' on boolean 'true'
-```
-
-**7. `arguments` aliasing broken:**
-
-```js
-"use strict";
-function f(a) {
-  arguments[0] = 99;
-  console.log(a); // 1 — NOT linked in strict mode
+"use strict"
+function fn() {
+  console.log(this) // undefined
 }
-f(1);
+fn()
+
+// Without strict mode: `this` would be window/globalThis
 ```
 
-**8. `this` is `undefined` in plain function calls:**
+This is **critical** for understanding `this` behavior in Day 3.
+
+#### 7. `arguments` Decoupled from Parameters
 
 ```js
-"use strict";
-function example() {
-  console.log(this); // undefined — not globalThis
-}
-example();
-```
-
-In sloppy mode, `this` would be `globalThis` (or `window`).
-
-**9. `with` statement is banned:**
-
-```js
-"use strict";
-// with (obj) {} // SyntaxError
-```
-
-**10. `eval` doesn't introduce variables into surrounding scope:**
-
-```js
-"use strict";
-eval("var x = 10");
-// console.log(x) // ReferenceError
-```
-
-**11. `arguments.callee` is banned:**
-
-```js
-"use strict";
-function f() {
-  arguments.callee; // TypeError
+"use strict"
+function fn(a) {
+  arguments[0] = 99
+  console.log(a) // original value — NOT 99
 }
 ```
 
-### Full List of Changes
-
-| Sloppy Mode                           | Strict Mode               |
-| ------------------------------------- | ------------------------- |
-| Undeclared assignment creates global  | `ReferenceError`          |
-| Silent failure on read-only           | `TypeError`               |
-| Duplicate params allowed              | `SyntaxError`             |
-| `this` in plain call = `globalThis`   | `this` = `undefined`      |
-| `arguments` aliased to params         | Not aliased               |
-| `010` = octal 8                       | `SyntaxError`             |
-| `with` allowed                        | `SyntaxError`             |
-| `eval` leaks vars                     | Vars stay in `eval` scope |
-| `arguments.callee` available          | `TypeError`               |
-| `delete` on non-configurable = silent | `TypeError`               |
-
-### Strict Mode in Modern Code
-
-Since **ES modules** are strict by default, if your project uses:
+#### 8. `eval` Has Its Own Scope
 
 ```js
-// package.json
-{ "type": "module" }
+"use strict"
+eval("var x = 10")
+// console.log(x) // ReferenceError — x doesn't leak out of eval
 ```
 
-Or files with `.mjs` extension, you're already in strict mode. No need for `"use strict"`.
-
-Similarly, all code inside `class` bodies is strict:
+#### 9. `with` Statement Is Forbidden
 
 ```js
-class Example {
-  method() {
-    // already strict mode
-    x = 10; // ReferenceError
-  }
-}
+"use strict"
+with (obj) {} // SyntaxError
 ```
+
+#### 10. Reserved Words Are Protected
+
+```js
+"use strict"
+let implements = 1   // SyntaxError
+let interface = 2    // SyntaxError
+let private = 3      // SyntaxError
+```
+
+### Should You Always Use Strict Mode?
+
+**Yes.** In practice:
+- ES modules are always strict.
+- Classes are always strict.
+- Most modern code is in modules, so you're already in strict mode.
+- If writing scripts, add `"use strict"` at the top.
 
 ## W — Why It Matters
 
-- Strict mode catches bugs that sloppy mode silently ignores.
-- It's the default in modern JS (modules and classes).
-- Understanding strict vs sloppy explains differences in `this`, `arguments`, and error behavior.
-- Production code should always be strict — either via `"use strict"` or by using modules.
-- Interview questions often ask about `this` behavior, which differs between modes.
+- Strict mode catches real bugs that sloppy mode hides (accidental globals, silent failures).
+- Understanding strict mode's `this = undefined` behavior is prerequisite for Day 3's `this` deep dive.
+- It's the default in all modern code (modules, classes).
+- Interviewers test strict mode differences — especially `this` behavior and accidental globals.
 
 ## I — Interview Questions with Answers
 
-### Q1: What is strict mode?
+### Q1: What does strict mode do?
 
-**A:** An opt-in restricted variant of JavaScript that catches common coding errors by throwing exceptions instead of silently failing. Enabled by `"use strict"` or automatically in ES modules and class bodies.
+**A:** It makes JavaScript throw errors for unsafe or ambiguous code that would otherwise fail silently. This includes accidental globals, assignments to read-only properties, duplicate parameters, and more.
 
-### Q2: What does `this` equal in a plain function call in strict mode?
+### Q2: How do you enable strict mode?
 
-**A:** `undefined`. In sloppy mode, it would be `globalThis` (or `window` in browsers).
+**A:** Add `"use strict"` as the first statement in a script or function. ES modules and class bodies are strict mode by default.
 
-### Q3: How do you enable strict mode?
+### Q3: What is `this` inside a regular function in strict mode?
 
-**A:** Add `"use strict"` at the top of a file or function body. Or use ES modules / classes, which are strict by default.
+**A:** `undefined`. In sloppy mode, it would be the global object (`window`/`globalThis`).
 
-### Q4: Name three things strict mode prevents.
+### Q4: Are ES modules in strict mode?
 
-**A:**
-
-1. Implicit global variable creation
-2. Silent failure when assigning to read-only properties
-3. Duplicate parameter names
+**A:** Yes, always. You don't need to add `"use strict"` in module files.
 
 ## C — Common Pitfalls with Fix
 
-### Pitfall: Expecting `this` to be `globalThis` in strict mode
+### Pitfall: Forgetting that `this` is `undefined` in strict mode
 
 ```js
-"use strict";
-function example() {
-  console.log(this); // undefined, not window/globalThis
+"use strict"
+function greet() {
+  console.log(this.name) // TypeError: Cannot read properties of undefined
 }
+greet()
 ```
 
-**Fix:** Understand the rule. Use `.call(obj)` or `.bind(obj)` if you need a specific `this`.
+**Fix:** Use `.call()`, `.bind()`, or call the function as a method of an object.
 
-### Pitfall: Not knowing modules are strict
+### Pitfall: Not knowing modules are always strict
 
 ```js
-// In an ES module:
-x = 10; // ReferenceError — strict mode is automatic
+// In an ES module (file with import/export):
+x = 10 // ReferenceError — strict mode is automatic
 ```
 
-**Fix:** Always declare variables. If you're using modules, you're already in strict mode.
+**Fix:** Always declare variables with `let`/`const`.
 
-### Pitfall: Placing `"use strict"` after code
+### Pitfall: Placing `"use strict"` after other code
 
 ```js
-const x = 1;
-("use strict"); // has no effect — must be the FIRST statement
+const x = 1
+"use strict" // has NO effect — must be the FIRST statement
 ```
 
-**Fix:** Place `"use strict"` at the very top of the file or function.
+**Fix:** Always put `"use strict"` at the very top of the file or function.
 
 ## K — Coding Challenge with Solution
 
 ### Challenge
 
-What happens in strict mode for each?
+What does each scenario output? (Assume browser environment)
 
 ```js
-"use strict";
-
-// 1
-x = 5;
-
-// 2
-const obj = Object.freeze({ a: 1 });
-obj.a = 2;
-
-// 3
-function f(a, a) {
-  return a;
+// Scenario 1 (sloppy mode)
+function sloppy() {
+  console.log(this)
 }
+sloppy()
 
-// 4
-function g() {
-  return this;
+// Scenario 2 (strict mode)
+"use strict"
+function strict() {
+  console.log(this)
 }
-console.log(g());
+strict()
 
-// 5
-delete Object.prototype;
+// Scenario 3
+"use strict"
+function create() {
+  x = 10
+}
+create()
 ```
 
 ### Solution
 
 ```js
-// 1 — ReferenceError: x is not defined (no implicit globals)
+// Scenario 1
+sloppy() // window (or globalThis) — sloppy mode default
 
-// 2 — TypeError: Cannot assign to read only property 'a'
+// Scenario 2
+strict() // undefined — strict mode changes this to undefined
 
-// 3 — SyntaxError: Duplicate parameter name not allowed in this context
-
-// 4 — undefined (this is undefined in plain function call in strict mode)
-
-// 5 — TypeError: Cannot delete property 'prototype' of function Object
+// Scenario 3
+create() // ReferenceError: x is not defined — strict mode prevents accidental globals
 ```
 
 ---

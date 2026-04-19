@@ -23,11 +23,11 @@ console.log(a) // "default"
 
 let b = 0
 b ??= 42
-console.log(b) // 0 — not assigned, because 0 is not null/undefined
+console.log(b) // 0 — NOT assigned, because 0 is not null/undefined
 
 let c = ""
 c ??= "fallback"
-console.log(c) // "" — not assigned
+console.log(c) // "" — NOT assigned
 ```
 
 ### `||=` — Logical OR Assignment
@@ -41,7 +41,7 @@ console.log(a) // 42 — 0 is falsy, so assigned
 
 let b = "hello"
 b ||= "world"
-console.log(b) // "hello" — truthy, not assigned
+console.log(b) // "hello" — truthy, NOT assigned
 ```
 
 ### `&&=` — Logical AND Assignment
@@ -55,7 +55,7 @@ console.log(a) // 2 — 1 is truthy, so assigned
 
 let b = 0
 b &&= 2
-console.log(b) // 0 — 0 is falsy, not assigned
+console.log(b) // 0 — 0 is falsy, NOT assigned
 ```
 
 ### Practical Use Cases
@@ -68,12 +68,13 @@ function greet(options) {
   return `${options.greeting}, ${options.name}!`
 }
 
-greet({ name: null }) // "Hello, Anonymous!"
-greet({ name: "" })   // "Hello, !" — ??= preserves empty string
+greet({ name: null })  // "Hello, Anonymous!"
+greet({ name: "" })    // "Hello, !" — ??= preserves empty string
 
-// Conditional cleanup (&&= for "only if exists")
+// Conditional transform (&&= for "only if exists")
 let user = { name: "Mark", session: "abc123" }
-user.session &&= encrypt(user.session) // only encrypt if session exists
+user.session &&= encrypt(user.session)
+// only encrypts if session is truthy
 
 // Fallback values (||= treats all falsy as "missing")
 let count = 0
@@ -82,11 +83,11 @@ count ||= 10 // count becomes 10 — careful, 0 was a valid value!
 
 ### Short-Circuit Behavior
 
-These operators do NOT assign if the condition is not met — the right side is never evaluated:
+These operators do NOT assign if the condition is not met — the right side is **never evaluated**:
 
 ```js
 let x = "exists"
-x ??= expensiveFunction() // expensiveFunction() is never called
+x ??= expensiveFunction() // expensiveFunction() is NEVER called
 ```
 
 ## W — Why It Matters
@@ -104,7 +105,7 @@ x ??= expensiveFunction() // expensiveFunction() is never called
 
 ### Q2: Does the right side always get evaluated?
 
-**A:** No. These operators short-circuit. If the condition is not met, the right-hand expression is never executed.
+**A:** No. These operators **short-circuit**. If the condition is not met, the right-hand expression is never executed.
 
 ### Q3: What does this print?
 
@@ -119,7 +120,7 @@ console.log(a)
 
 ## C — Common Pitfalls with Fix
 
-### Pitfall: Using `||=` when `0` or `""` are valid
+### Pitfall: Using `||=` when `0` or `""` are valid values
 
 ```js
 let port = 0
@@ -137,7 +138,7 @@ console.log(port) // 0 — preserved
 
 ### Pitfall: Thinking `&&=` is like `??=`
 
-They are opposites in intent:
+They are **opposites** in intent:
 - `??=` → "assign if missing"
 - `&&=` → "transform if present"
 
@@ -162,9 +163,9 @@ console.log(a, b, c, d)
 ### Solution
 
 ```js
-a // "A"     — null triggers ??=
-b // 0       — 0 is not null/undefined, ??= does NOT assign
-c // "hello" — "hello" is truthy, ||= does NOT assign
+a // "A"       — null triggers ??=
+b // 0         — 0 is not null/undefined, ??= does NOT assign
+c // "hello"   — "hello" is truthy, ||= does NOT assign
 d // undefined — undefined is falsy, &&= does NOT assign
 
 // Output: "A" 0 "hello" undefined

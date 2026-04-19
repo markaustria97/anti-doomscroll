@@ -16,13 +16,13 @@ JavaScript values split into two categories:
 ### The 7 Primitives
 
 ```js
-const str = "hello"        // string
-const num = 42             // number
+const str = "hello"           // string
+const num = 42                // number
 const big = 9007199254740991n // bigint
-const bool = true          // boolean
-const undef = undefined    // undefined
-const nul = null           // null
-const sym = Symbol("id")   // symbol
+const bool = true             // boolean
+const undef = undefined       // undefined
+const nul = null              // null
+const sym = Symbol("id")     // symbol
 ```
 
 ### Stored by Value vs by Reference
@@ -52,9 +52,9 @@ console.log(obj1.name) // "Alex" — both point to the same object
 "hello" === "hello"  // true
 42 === 42            // true
 
-// Objects — compared by reference
+// Objects — compared by reference (identity)
 { name: "Mark" } === { name: "Mark" }  // false — different objects in memory
-[1, 2] === [1, 2]                      // false
+[1, 2] === [1, 2]                      // false — different arrays
 
 const a = { x: 1 }
 const b = a
@@ -78,13 +78,15 @@ str = str.toUpperCase() // reassignment — str now points to new string "HELLO"
 When you call a method on a primitive, JS temporarily wraps it in an object:
 
 ```js
-"hello".toUpperCase() // JS wraps "hello" in a String object, calls the method, discards the wrapper
+"hello".toUpperCase()
+// JS wraps "hello" in a String object, calls the method, discards the wrapper
 ```
 
-The wrapper types exist: `String`, `Number`, `Boolean`, `Symbol`, `BigInt`. But **never use `new String()` etc.** directly.
+The wrapper types exist: `String`, `Number`, `Boolean`, `Symbol`, `BigInt`.
+But **never use `new String()` etc.** directly.
 
 ```js
-typeof "hello"           // "string" (primitive)
+typeof "hello"             // "string" (primitive)
 typeof new String("hello") // "object" (wrapper — avoid this)
 ```
 
@@ -105,14 +107,14 @@ function rename(obj) {
 }
 const user = { name: "Mark" }
 rename(user)
-console.log(user.name) // "Alex" — changed
+console.log(user.name) // "Alex" — changed!
 ```
 
 Important nuance: JavaScript is **pass by value**, but for objects the "value" that gets passed is the **reference**. This means:
 
 ```js
 function replace(obj) {
-  obj = { name: "New" } // reassigns local variable, does NOT affect original
+  obj = { name: "New" } // reassigns LOCAL variable, does NOT affect original
 }
 const user = { name: "Mark" }
 replace(user)
@@ -131,7 +133,7 @@ typeof null      // "object" ← historical bug in JS, never fixed
 
 ## W — Why It Matters
 
-- Misunderstanding reference vs value is the #1 source of mutation bugs.
+- Misunderstanding reference vs value is the **#1 source of mutation bugs**.
 - Knowing that `===` on objects compares references, not contents, prevents subtle bugs.
 - Autoboxing explains why `"hello".length` works even though strings are primitives.
 - Interview questions test this constantly: "What gets logged?" with object mutations.
@@ -163,10 +165,10 @@ console.log(a)
 
 ### Q5: How do you compare two objects by value?
 
-**A:** There is no built-in deep equality. Options:
+**A:** There is no built-in deep equality in JS. Options:
 - `JSON.stringify(a) === JSON.stringify(b)` (limited — property order matters, can't handle `undefined`, functions, circular refs).
-- Use a library like Lodash's `_.isEqual`.
-- `structuredClone` doesn't compare, but it deep copies.
+- Use a library like Lodash's `_.isEqual()`.
+- `structuredClone` doesn't compare, but it deep-copies.
 
 ## C — Common Pitfalls with Fix
 
@@ -176,10 +178,10 @@ console.log(a)
 const defaults = { theme: "dark" }
 const userSettings = defaults
 userSettings.theme = "light"
-console.log(defaults.theme) // "light" — oops
+console.log(defaults.theme) // "light" — oops!
 ```
 
-**Fix:** Create a copy:
+**Fix:** Create a shallow copy:
 
 ```js
 const userSettings = { ...defaults }
@@ -188,10 +190,10 @@ const userSettings = { ...defaults }
 ### Pitfall: Comparing arrays/objects with `===`
 
 ```js
-[1, 2] === [1, 2] // false
+[1, 2] === [1, 2] // false!
 ```
 
-**Fix:** Use deep comparison or serialize.
+**Fix:** Use deep comparison (library or manual) or serialize for simple cases.
 
 ### Pitfall: Thinking `typeof null` is `"null"`
 
@@ -205,7 +207,7 @@ s.toUpperCase()
 console.log(s) // "hello" — unchanged!
 ```
 
-**Fix:** Reassign: `s = s.toUpperCase()`
+**Fix:** Reassign: `s = s.toUpperCase()`.
 
 ## K — Coding Challenge with Solution
 
@@ -235,8 +237,8 @@ console.log(typeof undefined)
 ### Solution
 
 ```js
-console.log(x)            // "hello" — primitives copy by value
-console.log(a.count)      // 2 — objects share reference
+console.log(x)             // "hello" — primitives copy by value
+console.log(a.count)       // 2 — objects share reference
 console.log(arr1 === arr2) // false — different references
 console.log(typeof null)   // "object" — historical bug
 console.log(typeof undefined) // "undefined"

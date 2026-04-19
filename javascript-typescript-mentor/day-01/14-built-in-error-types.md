@@ -13,13 +13,13 @@ JavaScript has several built-in error constructors. The most common:
 | `URIError` | Bad `encodeURI`/`decodeURI` usage |
 | `EvalError` | Legacy (rarely seen) |
 
-All inherit from `Error`.
+All inherit from the base `Error` class.
 
 ## K — Key Concepts
 
 ### `TypeError`
 
-The most common runtime error. Triggered when:
+The **most common** runtime error. Triggered when:
 - Accessing a property on `null` or `undefined`
 - Calling something that isn't a function
 - Assigning to a `const`
@@ -38,9 +38,9 @@ x = 2                   // TypeError: Assignment to constant variable
 Triggered when a numeric value is out of range:
 
 ```js
-new Array(-1)                // RangeError: Invalid array length
-(1).toFixed(200)             // RangeError: toFixed() digits argument must be between 0 and 100
-function f() { f() }; f()   // RangeError: Maximum call stack size exceeded
+new Array(-1)              // RangeError: Invalid array length
+(1).toFixed(200)           // RangeError: toFixed() digits argument must be between 0 and 100
+function f() { f() }; f() // RangeError: Maximum call stack size exceeded
 ```
 
 ### `SyntaxError`
@@ -52,18 +52,15 @@ JSON.parse("{invalid}")  // SyntaxError: Unexpected token i in JSON
 eval("if (")             // SyntaxError: Unexpected end of input
 ```
 
-Note: `SyntaxError` at parse time cannot be caught with `try`/`catch` because the code never runs:
+Important distinction:
 
 ```js
-// This ENTIRE file fails to parse:
+// Parse-time SyntaxError — try/catch CANNOT help, file never runs:
 try {
-  const x = ;  // SyntaxError — try/catch doesn't help
+  const x = ;  // SyntaxError — entire file fails to parse
 } catch (e) {}
-```
 
-But runtime `SyntaxError` (like from `JSON.parse` or `eval`) CAN be caught:
-
-```js
+// Runtime SyntaxError — CAN be caught:
 try {
   JSON.parse("bad json")
 } catch (e) {
@@ -74,11 +71,11 @@ try {
 ### `ReferenceError`
 
 ```js
-console.log(x) // ReferenceError: x is not defined (when x was never declared)
+console.log(x) // ReferenceError: x is not defined
 
-let y = 1
+// TDZ also causes ReferenceError:
 {
-  console.log(y) // ReferenceError: Cannot access 'y' before initialization (TDZ)
+  console.log(y) // ReferenceError: Cannot access 'y' before initialization
   let y = 2
 }
 ```
@@ -116,7 +113,7 @@ try {
 
 ## W — Why It Matters
 
-- You encounter `TypeError` daily — knowing why it happens speeds up debugging.
+- You encounter `TypeError` **daily** — knowing why it happens speeds up debugging.
 - `RangeError` from recursion indicates infinite loops or missing base cases.
 - Knowing which errors are catchable vs parse-time prevents wasted `try`/`catch` blocks.
 - Interviews often ask "what error does this throw?" as a reading comprehension test.
@@ -129,7 +126,7 @@ try {
 
 ### Q2: Can you catch a `SyntaxError`?
 
-**A:** Only runtime `SyntaxError` (from `JSON.parse`, `eval`, `new Function`). Parse-time syntax errors cannot be caught because the code never executes.
+**A:** Only **runtime** `SyntaxError` (from `JSON.parse`, `eval`, `new Function`). Parse-time syntax errors cannot be caught because the code never executes.
 
 ### Q3: What error does infinite recursion cause?
 
@@ -137,7 +134,7 @@ try {
 
 ### Q4: What properties do all error objects have?
 
-**A:** `.message`, `.name`, and `.stack` (non-standard but universal).
+**A:** `.message`, `.name`, and `.stack` (non-standard but universally supported).
 
 ## C — Common Pitfalls with Fix
 
@@ -145,7 +142,7 @@ try {
 
 ```js
 catch (e) {
-  console.log("Something went wrong")
+  console.log("Something went wrong") // no specifics
 }
 ```
 
@@ -158,9 +155,11 @@ catch (e) {
 ### Pitfall: Confusing `ReferenceError` and `TypeError`
 
 ```js
-undeclaredVar.name    // ReferenceError — variable not declared
-let x = null; x.name // TypeError — variable exists but is null
+undeclaredVar.name     // ReferenceError — variable not declared
+let x = null; x.name  // TypeError — variable exists but is null
 ```
+
+**Fix:** `ReferenceError` = variable doesn't exist. `TypeError` = variable exists but used wrongly.
 
 ## K — Coding Challenge with Solution
 
@@ -179,11 +178,11 @@ const z = 1; z = 2
 ### Solution
 
 ```js
-null.toString()              // TypeError
-new Array(-1)                // RangeError
-JSON.parse("{bad}")          // SyntaxError
-console.log(notDeclared)     // ReferenceError
-const z = 1; z = 2          // TypeError (assignment to constant)
+null.toString()           // TypeError
+new Array(-1)             // RangeError
+JSON.parse("{bad}")       // SyntaxError
+console.log(notDeclared)  // ReferenceError
+const z = 1; z = 2       // TypeError (assignment to constant variable)
 ```
 
 ---

@@ -40,13 +40,6 @@ Unary `+` converts to number:
 +"abc"   // NaN
 ```
 
-Unary `-` negates:
-
-```js
--"5"     // -5
--true    // -1
-```
-
 ### Increment/Decrement
 
 ```js
@@ -65,27 +58,27 @@ a--  // returns 7, then a becomes 6 (postfix)
 "abc" > 3  // false — "abc" coerced to NaN, any comparison with NaN = false
 ```
 
-String comparison is lexicographic (character by character by Unicode):
+String comparison is **lexicographic** (character by character by Unicode):
 
 ```js
 "banana" > "apple"  // true — 'b' > 'a'
-"10" > "9"          // false — '1' < '9' (string comparison!)
+"10" > "9"          // false — '1' < '9' (string comparison, not numeric!)
 ```
 
 ### Logical Operators (Short-Circuit)
 
-`&&` and `||` return **one of the operands**, not `true`/`false`.
+`&&` and `||` return **one of the operands**, not necessarily `true`/`false`.
 
 ```js
 // && returns first falsy value, or last value if all truthy
-0 && "hello"      // 0
-1 && "hello"      // "hello"
-"a" && "b" && "c" // "c"
+0 && "hello"       // 0
+1 && "hello"       // "hello"
+"a" && "b" && "c"  // "c"
 
 // || returns first truthy value, or last value if all falsy
-0 || "hello"      // "hello"
-"" || null || "default" // "default"
-"a" || "b"        // "a"
+0 || "hello"              // "hello"
+"" || null || "default"   // "default"
+"a" || "b"                // "a"
 ```
 
 ### Ternary Operator
@@ -128,7 +121,7 @@ Assignment:   = += -= etc.
 Comma:        ,
 ```
 
-When in doubt, use parentheses.
+**When in doubt, use parentheses.**
 
 ## W — Why It Matters
 
@@ -153,7 +146,7 @@ When in doubt, use parentheses.
 
 ### Q4: Why is `"10" > "9"` false?
 
-**A:** Because both operands are strings, so JavaScript does lexicographic comparison. `'1'` (Unicode 49) is less than `'9'` (Unicode 57).
+**A:** Because both operands are strings, so JavaScript does **lexicographic** comparison. `'1'` (Unicode 49) is less than `'9'` (Unicode 57).
 
 ## C — Common Pitfalls with Fix
 
@@ -168,7 +161,7 @@ true || false && false // true — && has higher precedence than ||
 ### Pitfall: String comparison when numbers are expected
 
 ```js
-"10" > "9" // false — string comparison, not numeric
+"10" > "9" // false — string comparison, not numeric!
 ```
 
 **Fix:** Convert to numbers: `Number("10") > Number("9")`.
@@ -208,9 +201,9 @@ console.log("value" || "default")
 console.log(b) // 4
 console.log(a) // 3
 
-console.log(0 && "hello")        // 0 (first falsy)
-console.log(1 && "hello")        // "hello" (all truthy, returns last)
-console.log("" || "default")     // "default" (first truthy)
+console.log(0 && "hello")         // 0 (first falsy)
+console.log(1 && "hello")         // "hello" (all truthy, returns last)
+console.log("" || "default")      // "default" (first truthy)
 console.log("value" || "default") // "value" (first truthy)
 ```
 

@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Control flow determines which code runs and when. The core structures:
+Control flow determines **which code runs and when**. The core structures:
 
 - **Conditional**: `if`/`else if`/`else`, `switch`
 - **Loops**: `for`, `while`, `do...while`, `for...of`, `for...in`
@@ -49,7 +49,7 @@ Key details:
 - Without `break`, execution **falls through** to the next case.
 
 ```js
-// Fall-through (intentional)
+// Intentional fall-through
 switch (day) {
   case "Saturday":
   case "Sunday":
@@ -77,10 +77,10 @@ while (i < 3) {
   i++
 }
 
-// do...while runs at least once
+// do...while runs AT LEAST ONCE
 let j = 10
 do {
-  console.log(j) // 10
+  console.log(j) // 10 — runs even though j < 3 is false
   j++
 } while (j < 3)
 ```
@@ -108,20 +108,20 @@ for (const key in obj) {
 }
 ```
 
-⚠️ `for...in` also iterates **inherited** properties. Use `Object.hasOwn(obj, key)` to filter.
+⚠️ `for...in` also iterates **inherited enumerable** properties. Use `Object.hasOwn(obj, key)` to filter.
 
 ⚠️ **Do NOT use `for...in` on arrays.** It iterates string keys, not values, and can include prototype properties.
 
 ### `break` and `continue`
 
 ```js
-// break — exits the loop
+// break — exits the loop entirely
 for (let i = 0; i < 10; i++) {
   if (i === 5) break
   console.log(i) // 0, 1, 2, 3, 4
 }
 
-// continue — skips to next iteration
+// continue — skips to the next iteration
 for (let i = 0; i < 5; i++) {
   if (i === 2) continue
   console.log(i) // 0, 1, 3, 4
@@ -133,7 +133,7 @@ for (let i = 0; i < 5; i++) {
 ```js
 outer: for (let i = 0; i < 3; i++) {
   for (let j = 0; j < 3; j++) {
-    if (j === 1) break outer // breaks the outer loop
+    if (j === 1) break outer // breaks the OUTER loop
     console.log(i, j)
   }
 }
@@ -150,7 +150,7 @@ Not a replacement for complex `if` blocks — keep ternaries simple.
 
 ## W — Why It Matters
 
-- Every program uses control flow.
+- Every program uses control flow — it's fundamental.
 - Knowing `for...of` vs `for...in` prevents a common category of bugs.
 - `switch` fall-through is a frequent interview trap.
 - Labels are rare but appear in algorithm challenges.
@@ -202,10 +202,10 @@ switch (x) {
 ### Pitfall: Infinite loops
 
 ```js
-while (true) {} // blocks the entire thread
+while (true) {} // blocks the entire thread forever
 ```
 
-**Fix:** Always ensure your loop has an exit condition.
+**Fix:** Always ensure your loop has a reachable exit condition.
 
 ## K — Coding Challenge with Solution
 
@@ -251,7 +251,7 @@ string
 
 Explanation:
 - `"b"` is skipped by `continue`.
-- `switch` uses `===`, so `"2"` matches the string case.
-- `continue outer` skips to next iteration of outer loop when `i=0, j=1`, so `0 1` is never printed.
+- `switch` uses `===`, so `"2"` matches the string case, not the number case.
+- `continue outer` skips to next iteration of the outer loop when `i=0, j=1`, so `0 1` is never printed.
 
 ---

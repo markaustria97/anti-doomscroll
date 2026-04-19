@@ -12,9 +12,9 @@ value ?? "default"
 |-----------|------------|-----------|
 | `null` | `"default"` | `"default"` |
 | `undefined` | `"default"` | `"default"` |
-| `0` | `"default"` | `0` |
-| `""` | `"default"` | `""` |
-| `false` | `"default"` | `false` |
+| `0` | `"default"` | `0` ✅ |
+| `""` | `"default"` | `""` ✅ |
+| `false` | `"default"` | `false` ✅ |
 
 ## K — Key Concepts
 
@@ -45,8 +45,8 @@ function createUser(options) {
 }
 
 createUser({ name: "", age: 0, active: false })
-// { name: "", age: 0, active: false } — all values preserved with ??
-// With || this would be { name: "Anonymous", age: 0, active: true } — wrong!
+// With ??:  { name: "", age: 0, active: false } — all values preserved ✅
+// With ||:  { name: "Anonymous", age: 0, active: true } — wrong! ❌
 ```
 
 ### Cannot Mix with `&&` or `||` Without Parentheses
@@ -68,9 +68,7 @@ const value = a ?? b ?? c ?? "final default"
 // Returns the first non-nullish value, or "final default"
 ```
 
-### With Optional Chaining
-
-This is the most common combination:
+### With Optional Chaining (Most Common Combo)
 
 ```js
 const city = response?.data?.user?.address?.city ?? "Unknown"
@@ -110,7 +108,7 @@ const port = config.port || 3000
 
 ```js
 const port = config.port ?? 3000
-// If config.port is 0, you get 0 — correct
+// If config.port is 0, you get 0 — correct ✅
 ```
 
 ### Pitfall: Mixing `??` with `||` or `&&` without parentheses
@@ -138,27 +136,13 @@ console.log("" || "default")
 ### Solution
 
 ```js
-0 ?? 42               // 0
-"" ?? "default"       // ""
-null ?? "fallback"    // "fallback"
-undefined ?? null ?? "end" // null (undefined is nullish → null, null is not nullish for second ??... wait)
-// Actually: undefined ?? null → null, then null ?? "end" → "end"
-// So: "end"
-false ?? true         // false
-0 || 42               // 42
-"" || "default"       // "default"
-```
-
-Corrected output:
-
-```
-0
-""
-"fallback"
-"end"
-false
-42
-"default"
+0 ?? 42                    // 0
+"" ?? "default"            // ""
+null ?? "fallback"         // "fallback"
+undefined ?? null ?? "end" // "end"  (undefined→null, then null→"end")
+false ?? true              // false
+0 || 42                    // 42
+"" || "default"            // "default"
 ```
 
 ---

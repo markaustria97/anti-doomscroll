@@ -1,39 +1,151 @@
-# conditional types
+# 1 — Conditional Types
 
-## TL;DR
-Conditional types is a TypeScript feature that improves correctness at compile time without changing JavaScript runtime behavior on its own. The goal is to model intent clearly, let the checker find mistakes early, and keep types aligned with the real data flow.
+## T — TL;DR
 
-## Key Concepts
-- Conditional types exists at compile time unless it maps onto a JavaScript runtime feature.
-- The best TypeScript types describe real invariants instead of hiding uncertainty.
-- Prefer inference and clear modeling over clever types for their own sake.
-- When types and runtime checks drift apart, the runtime always wins.
+Conditional types are **if/else at the type level** — `T extends U ? X : Y` — and when `T` is a union, they **distribute** over each member, enabling powerful type filtering and transformation.
 
-## Why It Matters
-In real projects, conditional types helps you move mistakes from runtime into the editor, review, or CI pipeline. That usually means safer refactors, clearer APIs, and less defensive guessing when you consume data from another module or service.
+## K — Key Concepts
 
-## Syntax / Example
+### Basic Syntax
+
 ```ts
-type MessageOf<T> = T extends { message: unknown } ? T["message"] : never
+type IsString<T> = T extends string ? true : false
+
+type A = IsString<string>    // true
+type B = IsString<number>    // false
+type C = IsString<"hello">   // true (literal extends string)
 ```
 
-## Common Pitfalls
-- Forgetting that many TypeScript features disappear at runtime; add runtime validation when inputs are untrusted.
-- Using clever types that confuse the team more than they help; prefer readable models.
-- Assuming a type assertion proves something true; it only tells the compiler to trust you.
+### Distributive Conditional Types
 
-## Interview Angle
-- **Q:** Is conditional types compile-time, runtime, or both?  
-  **A:** Most TypeScript features are compile-time only unless they map to an actual JavaScript construct.
-- **Q:** When does conditional types improve a codebase?  
-  **A:** When it makes invariants clearer, helps refactors, and reduces unsafe assumptions about data.
+When `T` is a **naked type parameter** and receives a union, the condition distributes:
 
-## Mini Challenge
-Write a tiny TypeScript example that uses conditional types to make an unsafe value or API a little safer.
+```ts
+type ToArray<T> = T extends unknown ? T[] : never
 
-## Mini Challenge Solution
-One valid answer is any short snippet where conditional types helps the compiler reject an invalid usage or narrow uncertainty before the value is used.
+type Result = ToArray<string | number>
+// = (string extends unknown ? string[] : never) | (number extends unknown ? number[] : never)
+// = string[] | number[]
+```
 
-## Related Topics
-- Previous: [unknown vs any vs never](../day-09/19-unknown-vs-any-vs-never.md)
-- Next: [mapped types](02-mapped-types.md)
+Without distribution you'd get `(string | number)[]` — a mixed array. With distribution, you get `string[] | number[]` — separate arrays.
+
+### Preventing Distribution
+
+Wrap both sides in a tuple:
+
+```ts
+type ToArrayNonDist<T> = [T] extends [unknown] ? T[] : never
+
+type Result = ToArrayNonDist<string | number>
+// (string | number)[] — NOT distributed
+```
+
+### Chaining Conditionals
+
+```ts
+type TypeName<T> =
+  T extends string ? "string" :
+  T extends number ? "number" :
+  T extends boolean ? "boolean" :
+  T extends Function ? "function" :
+  T extends undefined ? "undefined" :
+  "object"
+
+type A = TypeName<string>     // "string"
+type B = TypeName<() => void> // "function"
+type C = TypeName<string[]>   // "object"
+```
+
+### Real-World: Flatten Array Type
+
+```ts
+type Flatten<T> = T extends Array<infer U> ? U : T
+
+type A = Flatten<string[]>     // string
+type B = Flatten<number[][]>   // number[] (one level)
+type C = Flatten<string>       // string (passthrough)
+```
+
+### Conditional with `never`
+
+`never` is the empty union — distribution over it produces `never`:
+
+```ts
+type Example<T> = T extends string ? T : never
+
+type A = Example<string | number | boolean>
+// = string | never | never
+// = string
+```
+
+This is exactly how `Extract` works.
+
+## W — Why It Matters
+
+- Conditional types are the **backbone** of all advanced utility types.
+- `Extract`, `Exclude`, `NonNullable`, `ReturnType` — all conditional types.
+- Understanding distribution is the key that unlocks type-level programming.
+- React's `ComponentProps`, tRPC's inference, and Prisma's query types all use conditionals.
+- This is the most tested advanced TS topic in senior interviews.
+
+## I — Interview Questions with Answers
+
+### Q1: What is a conditional type?
+
+**A:** A type-level ternary: `T extends U ? X : Y`. If `T` is assignable to `U`, the result is `X`; otherwise `Y`. When `T` is a union and a naked type parameter, it distributes — the condition is evaluated for each union member independently.
+
+### Q2: What is distributive behavior?
+
+**A:** When a conditional type has a naked type parameter (not wrapped in a tuple), and that parameter is instantiated with a union, the condition applies to each member separately. `ToArray<string | number>` produces `string[] | number[]`, not `(string | number)[]`.
+
+### Q3: How do you prevent distribution?
+
+**A:** Wrap both sides in a tuple: `[T] extends [U] ? X : Y`. The brackets prevent the parameter from being "naked."
+
+## C — Common Pitfalls with Fix
+
+### Pitfall: Unexpected distribution
+
+```ts
+type Wrap<T> = T extends unknown ? { value: T } : never
+
+type Result = Wrap<string | number>
+// { value: string } | { value: number } — distributed!
+// You might have wanted { value: string | number }
+```
+
+**Fix:** `type Wrap<T> = [T] extends [unknown] ? { value: T } : never`
+
+### Pitfall: `never` disappearing in distribution
+
+```ts
+type Check<T> = T extends string ? true : false
+
+type Result = Check<never>
+// never — NOT false! Distribution over empty union = never
+```
+
+**Fix:** If you need to handle `never` explicitly: `[T] extends [never] ? "was never" : ...`
+
+## K — Coding Challenge with Solution
+
+### Challenge
+
+Create `IsNever<T>` that returns `true` if `T` is `never`, `false` otherwise:
+
+```ts
+type A = IsNever<never>  // true
+type B = IsNever<string> // false
+type C = IsNever<never | string> // false (never is absorbed)
+```
+
+### Solution
+
+```ts
+type IsNever<T> = [T] extends [never] ? true : false
+```
+
+Must use `[T] extends [never]` to prevent distribution. A naked `T extends never` with `T = never` distributes over the empty union and returns `never`, not `true`.
+
+---

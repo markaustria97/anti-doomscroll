@@ -16,10 +16,10 @@
 No coercion. If the types differ, it immediately returns `false`.
 
 ```js
-5 === 5         // true
-5 === "5"       // false — different types
+5 === 5            // true
+5 === "5"          // false — different types
 null === undefined // false
-NaN === NaN     // false — NaN is not equal to itself
+NaN === NaN        // false — NaN is not equal to itself!
 ```
 
 ### Loose Equality (`==`)
@@ -46,17 +46,17 @@ null == 0         // false — null only == undefined
 ### `null` and `undefined` Special Case
 
 ```js
-null == undefined   // true
-null == null        // true
+null == undefined    // true
+null == null         // true
 undefined == undefined // true
-null == 0           // false
-null == ""          // false
-null == false       // false
+null == 0            // false
+null == ""           // false
+null == false        // false
 ```
 
 `null` and `undefined` are only `==` to each other and themselves.
 
-This is actually the **one legitimate use** of `==`:
+This is the **one legitimate use** of `==`:
 
 ```js
 // Instead of:
@@ -80,7 +80,7 @@ To check: `Number.isNaN(value)` or `Object.is(NaN, NaN)` → `true`.
 Like `===` but fixes two edge cases:
 
 ```js
-Object.is(NaN, NaN)   // true (=== gives false)
+Object.is(NaN, NaN)   // true  (=== gives false)
 Object.is(0, -0)      // false (=== gives true)
 ```
 
@@ -131,7 +131,7 @@ result === NaN // false — always false!
 ### Pitfall: Thinking `null == false`
 
 ```js
-null == false // false — null only == undefined
+null == false // false — null only == undefined!
 ```
 
 **Fix:** Know the special rule: `null` is only loosely equal to `undefined`.

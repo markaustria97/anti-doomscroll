@@ -1,41 +1,220 @@
-# generic constraints
+# 3 — Generic Constraints (`extends`)
 
-## TL;DR
-Generic constraints is a TypeScript feature that improves correctness at compile time without changing JavaScript runtime behavior on its own. The goal is to model intent clearly, let the checker find mistakes early, and keep types aligned with the real data flow.
+## T — TL;DR
 
-## Key Concepts
-- Generic constraints exists at compile time unless it maps onto a JavaScript runtime feature.
-- The best TypeScript types describe real invariants instead of hiding uncertainty.
-- Prefer inference and clear modeling over clever types for their own sake.
-- When types and runtime checks drift apart, the runtime always wins.
+Generic constraints use `extends` to restrict what types a generic parameter accepts — ensuring the generic has the **minimum shape** needed for your function to work safely.
 
-## Why It Matters
-In real projects, generic constraints helps you move mistakes from runtime into the editor, review, or CI pipeline. That usually means safer refactors, clearer APIs, and less defensive guessing when you consume data from another module or service.
+## K — Key Concepts
 
-## Syntax / Example
+### The Problem Without Constraints
+
 ```ts
-function getId<T extends { id: string }>(value: T) {
-  return value.id
+function getLength<T>(item: T): number {
+  return item.length // ❌ Property 'length' does not exist on type 'T'
 }
 ```
 
-## Common Pitfalls
-- Forgetting that many TypeScript features disappear at runtime; add runtime validation when inputs are untrusted.
-- Using clever types that confuse the team more than they help; prefer readable models.
-- Assuming a type assertion proves something true; it only tells the compiler to trust you.
+TypeScript doesn't know `T` has `.length` — it could be anything.
 
-## Interview Angle
-- **Q:** Is generic constraints compile-time, runtime, or both?  
-  **A:** Most TypeScript features are compile-time only unless they map to an actual JavaScript construct.
-- **Q:** When does generic constraints improve a codebase?  
-  **A:** When it makes invariants clearer, helps refactors, and reduces unsafe assumptions about data.
+### Adding a Constraint
 
-## Mini Challenge
-Write a tiny TypeScript example that uses generic constraints to make an unsafe value or API a little safer.
+```ts
+function getLength<T extends { length: number }>(item: T): number {
+  return item.length // ✅ — T must have a `length` property
+}
 
-## Mini Challenge Solution
-One valid answer is any short snippet where generic constraints helps the compiler reject an invalid usage or narrow uncertainty before the value is used.
+getLength("hello")    // ✅ string has length
+getLength([1, 2, 3])  // ✅ array has length
+getLength(42)          // ❌ number doesn't have length
+```
 
-## Related Topics
-- Previous: [generic interfaces](02-generic-interfaces.md)
-- Next: [Partial](04-partial.md)
+### `extends` with Interfaces/Types
+
+```ts
+interface HasId {
+  id: string
+}
+
+function findById<T extends HasId>(items: T[], id: string): T | undefined {
+  return items.find(item => item.id === id)
+}
+
+const users = [{ id: "1", name: "Mark" }, { id: "2", name: "Alex" }]
+const found = findById(users, "1")
+// found: { id: string; name: string } | undefined ✅
+// Type is preserved — not widened to HasId
+```
+
+Key insight: The **constraint** defines the minimum; the **inferred type** keeps the full shape.
+
+### `keyof` Constraint
+
+```ts
+function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+  return obj[key]
+}
+
+const user = { name: "Mark", age: 30, email: "mark@test.com" }
+
+getProperty(user, "name")  // type: string ✅
+getProperty(user, "age")   // type: number ✅
+getProperty(user, "phone") // ❌ Argument of type '"phone"' is not assignable
+```
+
+This is one of the most important patterns in TypeScript — used in `lodash.get`, form libraries, ORM query builders, etc.
+
+### Constraining to Specific Types
+
+```ts
+// Must be a function
+function callFn<T extends (...args: any[]) => any>(fn: T): ReturnType<T> {
+  return fn()
+}
+
+// Must be a string key
+function createKey<T extends string>(prefix: T): `${T}_key` {
+  return `${prefix}_key` as `${T}_key`
+}
+
+createKey("user")  // type: "user_key"
+createKey("post")  // type: "post_key"
+
+// Must be a constructor
+function create<T extends new (...args: any[]) => any>(
+  ctor: T,
+  ...args: ConstructorParameters<T>
+): InstanceType<T> {
+  return new ctor(...args)
+}
+```
+
+### Constraint with Union
+
+```ts
+function formatId<T extends string | number>(id: T): string {
+  return `ID-${id}`
+}
+
+formatId("abc") // ✅
+formatId(123)   // ✅
+formatId(true)  // ❌ boolean doesn't extend string | number
+```
+
+### Recursive Constraints
+
+```ts
+// T must be comparable to itself
+function max<T extends { compareTo(other: T): number }>(a: T, b: T): T {
+  return a.compareTo(b) >= 0 ? a : b
+}
+
+// T must have children of the same type (tree)
+interface TreeNode<T extends TreeNode<T>> {
+  children: T[]
+}
+```
+
+### Real-World: Type-Safe Object Merge
+
+```ts
+function merge<T extends Record<string, unknown>, U extends Record<string, unknown>>(
+  target: T,
+  source: U
+): T & U {
+  return { ...target, ...source }
+}
+
+const result = merge(
+  { name: "Mark", age: 30 },
+  { email: "mark@test.com", active: true }
+)
+// type: { name: string; age: number } & { email: string; active: boolean }
+result.name   // string ✅
+result.email  // string ✅
+```
+
+## W — Why It Matters
+
+- Constraints prevent generic functions from accepting types they can't handle.
+- `K extends keyof T` is the **most used** constraint in real-world TypeScript.
+- Constraints preserve the specific type while guaranteeing minimum shape — best of both worlds.
+- Form libraries (react-hook-form), query builders (Prisma), and state managers (Zustand) all use constraints heavily.
+- Understanding constraints is what separates "knows generics" from "knows TypeScript" in interviews.
+
+## I — Interview Questions with Answers
+
+### Q1: What does `extends` mean in a generic constraint?
+
+**A:** It restricts the type parameter to types that are **assignable to** the constraint. `T extends HasId` means T must have at least an `id` property. The inferred type keeps additional properties — `extends` defines the minimum, not the exact type.
+
+### Q2: What does `K extends keyof T` mean?
+
+**A:** `K` must be one of the keys of `T`. Combined with `T[K]` (indexed access), it creates type-safe property access: the return type varies based on which key you pass.
+
+### Q3: Can you have multiple constraints?
+
+**A:** Yes, with intersection: `T extends HasId & HasName`. T must satisfy BOTH constraints. You cannot use `extends A | B` for OR — that means T extends the union type.
+
+## C — Common Pitfalls with Fix
+
+### Pitfall: Constraint too broad
+
+```ts
+function process<T extends object>(item: T) { /* ... */ }
+// Almost anything is an object — constraint is useless
+```
+
+**Fix:** Be specific: `T extends { id: string }` or `T extends Record<string, unknown>`.
+
+### Pitfall: Constraint too narrow (losing the generic benefit)
+
+```ts
+function format<T extends string>(value: T): string {
+  return value.toUpperCase()
+}
+// Why is this generic? Just use `string` directly.
+```
+
+**Fix:** Only use generics when the type parameter appears in multiple positions or affects the return type.
+
+### Pitfall: Trying to instantiate a constrained generic
+
+```ts
+function create<T extends { id: string }>(): T {
+  return { id: "default" } // ❌ not assignable to T — T might have more properties!
+}
+```
+
+**Fix:** You can't construct a generic type from within the function (TypeScript doesn't know the full shape). Pass a factory or constructor instead.
+
+## K — Coding Challenge with Solution
+
+### Challenge
+
+Create a type-safe `pluck<T, K>` function that extracts a specific property from each object in an array:
+
+```ts
+const users = [
+  { name: "Mark", age: 30 },
+  { name: "Alex", age: 25 },
+]
+
+pluck(users, "name") // ["Mark", "Alex"] — type: string[]
+pluck(users, "age")  // [30, 25] — type: number[]
+```
+
+### Solution
+
+```ts
+function pluck<T, K extends keyof T>(items: T[], key: K): T[K][] {
+  return items.map(item => item[key])
+}
+
+const names = pluck(users, "name") // string[]
+const ages = pluck(users, "age")   // number[]
+pluck(users, "email")              // ❌ '"email"' not assignable to '"name" | "age"'
+```
+
+The return type `T[K][]` means "an array of whatever type property `K` has on `T`."
+
+---

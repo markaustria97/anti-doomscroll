@@ -5,7 +5,8 @@
 `?.` safely accesses deeply nested properties. If any part in the chain is `null` or `undefined`, it **short-circuits and returns `undefined`** instead of throwing a `TypeError`.
 
 ```js
-const name = user?.profile?.name // safe, returns undefined if any part is nullish
+const name = user?.profile?.name
+// safe — returns undefined if any part is nullish
 ```
 
 ## K — Key Concepts
@@ -61,23 +62,16 @@ user?.address.street.zip // undefined — .address.street.zip is never evaluated
 
 ```js
 const obj = { name: "" }
-obj?.name?.toUpperCase() // "" — empty string is not nullish, so .toUpperCase() is called on ""
-// Wait: "".toUpperCase() = "", so result is ""
+obj?.name?.toUpperCase() // "" — empty string is NOT nullish
 
 const obj2 = { count: 0 }
-obj2?.count?.toFixed(2) // "0.00" — 0 is not nullish
-```
-
-### With `delete`
-
-```js
-delete user?.name // safe — does nothing if user is nullish
+obj2?.count?.toFixed(2) // "0.00" — 0 is NOT nullish
 ```
 
 ### Does NOT Work on the Left Side of Assignment
 
 ```js
-user?.name = "Mark" // SyntaxError
+user?.name = "Mark" // SyntaxError!
 ```
 
 ### Combining with Nullish Coalescing
@@ -106,7 +100,7 @@ const city = user?.address?.city ?? "Unknown"
 
 ### Q3: What does `a?.b.c.d` return if `a` is `null`?
 
-**A:** `undefined`. The entire chain after `?.` is skipped.
+**A:** `undefined`. The entire chain after `?.` is skipped due to short-circuiting.
 
 ### Q4: Can you use optional chaining for assignment?
 
@@ -117,16 +111,17 @@ const city = user?.address?.city ?? "Unknown"
 ### Pitfall: Overusing `?.` everywhere
 
 ```js
-user?.name?.toString()?.length // too defensive — if user exists, name is always a string
+user?.name?.toString()?.length
+// too defensive — if user exists, name is probably always a string
 ```
 
-**Fix:** Only use `?.` where the value can actually be `null`/`undefined`.
+**Fix:** Only use `?.` where the value can **actually** be `null`/`undefined`.
 
 ### Pitfall: Thinking `?.` checks for falsy values
 
 ```js
 const obj = { count: 0 }
-obj?.count?.toFixed(2) // "0.00" — 0 is not nullish
+obj?.count?.toFixed(2) // "0.00" — 0 is NOT nullish
 ```
 
 **Fix:** `?.` only cares about `null` and `undefined`.
