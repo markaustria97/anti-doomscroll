@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { SerwistProvider } from "./serwist";
 
 export const metadata: Metadata = {
   title: "JS/TS Mentor",
@@ -30,7 +31,14 @@ export default function RootLayout({
       <head>
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <SerwistProvider
+          swUrl="/serwist/sw.js"
+          disable={process.env.NODE_ENV === "development"}
+        >
+          {children}
+        </SerwistProvider>
+      </body>
     </html>
   );
 }
