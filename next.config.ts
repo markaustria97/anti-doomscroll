@@ -8,11 +8,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/api/copilot/challenge": [
       "./node_modules/@github/copilot/**/*",
-      "./node_modules/@github/copilot-*/**/*",
-    ],
-    "/api/copilot/challenge/route": [
-      "./node_modules/@github/copilot/**/*",
-      "./node_modules/@github/copilot-*/**/*",
+      "./node_modules/@github/copilot-linux-x64/**/*",
     ],
   },
 };
