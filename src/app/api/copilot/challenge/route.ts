@@ -1,0 +1,279 @@
+import { CopilotClient } from "@github/copilot-sdk";
+import type { PermissionRequestResult } from "@github/copilot-sdk";
+import { NextResponse } from "next/server";
+
+export const runtime = "nodejs";
+
+const DEFAULT_MODEL = process.env.COPILOT_CHALLENGE_MODEL?.trim() || "gpt-4.1";
+const MAX_INPUT_LENGTH = 12000;
+
+type AssistantMode = "review" | "hint";
+type LearnerLevel = "beginner" | "intermediate" | "advanced";
+
+interface ChallengeRequestBody {
+  mode?: AssistantMode;
+  dayId?: string;
+  topicId?: string;
+  topicTitle?: string;
+  challengeMarkdown?: string;
+  solutionMarkdown?: string;
+  userCode?: string;
+  learnerLevel?: LearnerLevel;
+}
+
+const denyAllPermissions = (): PermissionRequestResult => ({
+  kind: "denied-by-rules",
+  rules: [],
+});
+
+function isValidMode(value: string | undefined): value is AssistantMode {
+  return value === "review" || value === "hint";
+}
+
+function isValidLearnerLevel(value: string | undefined): value is LearnerLevel {
+  return (
+    value === "beginner" || value === "intermediate" || value === "advanced"
+  );
+}
+
+function truncate(value: string | undefined): string {
+  return (value || "").trim().slice(0, MAX_INPUT_LENGTH);
+}
+
+function buildPrompt({
+  mode,
+  learnerLevel,
+  topicTitle,
+  challengeMarkdown,
+  solutionMarkdown,
+  userCode,
+}: {
+  mode: AssistantMode;
+  learnerLevel: LearnerLevel;
+  topicTitle: string;
+  challengeMarkdown: string;
+  solutionMarkdown: string;
+  userCode: string;
+}) {
+  const learnerLevelInstructions: Record<LearnerLevel, string[]> = {
+    beginner: [
+      "Assume the learner is early in JavaScript or TypeScript study.",
+      "Use plain language, define terms briefly, and prefer one correction at a time.",
+      "When code is wrong, explain why in a low-jargon way and suggest the next smallest fix.",
+    ],
+    intermediate: [
+      "Assume the learner understands core syntax and wants concise but instructive feedback.",
+      "Call out correctness issues first, then mention one relevant tradeoff or simplification.",
+      "Keep the tone direct without becoming overly terse.",
+    ],
+    advanced: [
+      "Assume the learner wants stricter, interview-style evaluation.",
+      "Be direct about incorrect logic, edge cases, and code quality issues.",
+      "Focus on correctness, completeness, and robustness over encouragement.",
+    ],
+  };
+
+  const reviewInstructions =
+    mode === "review"
+      ? [
+          "Review the learner's code against the challenge and reference solution.",
+          "Decide whether the answer is correct, partially correct, or incorrect.",
+          "Point out bugs, missing behavior, and one or two concrete improvements.",
+          "Do not paste the full reference solution unless absolutely required to explain a blocking mistake.",
+          ...learnerLevelInstructions[learnerLevel],
+        ].join("\n")
+      : [
+          "Give progressive guidance for solving the challenge.",
+          "Start with one conceptual hint, then one more concrete nudge.",
+          "Do not reveal the full reference solution or provide a complete drop-in answer.",
+          ...learnerLevelInstructions[learnerLevel],
+        ].join("\n");
+
+  return [
+    "You are a JavaScript and TypeScript mentor embedded in a coding challenge app.",
+    reviewInstructions,
+    "Respond in concise Markdown.",
+    "Use this structure:",
+    "## Summary",
+    "## Feedback",
+    "## Next Step",
+    "",
+    `Topic: ${topicTitle}`,
+    "",
+    "Challenge:",
+    challengeMarkdown,
+    "",
+    "Reference solution:",
+    solutionMarkdown,
+    "",
+    "Learner code:",
+    userCode || "No code provided yet.",
+  ].join("\n");
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = (await request.json()) as ChallengeRequestBody;
+    const mode = body.mode;
+    const learnerLevel = body.learnerLevel;
+    const challengeMarkdown = truncate(body.challengeMarkdown);
+    const solutionMarkdown = truncate(body.solutionMarkdown);
+    const userCode = truncate(body.userCode);
+    const topicTitle = truncate(body.topicTitle);
+
+    if (!isValidMode(mode)) {
+      return NextResponse.json(
+        { error: "Invalid challenge mode." },
+        { status: 400 }
+      );
+    }
+
+    if (!isValidLearnerLevel(learnerLevel)) {
+      return NextResponse.json(
+        { error: "Invalid learner level." },
+        { status: 400 }
+      );
+    }
+
+    if (!challengeMarkdown || !solutionMarkdown || !topicTitle) {
+      return NextResponse.json(
+        { error: "Challenge context is incomplete." },
+        { status: 400 }
+      );
+    }
+
+    if (mode === "review" && !userCode) {
+      return NextResponse.json(
+        { error: "Paste your code before asking Copilot to review it." },
+        { status: 400 }
+      );
+    }
+
+    const githubToken =
+      process.env.COPILOT_GITHUB_TOKEN ||
+      process.env.GITHUB_TOKEN ||
+      process.env.GH_TOKEN;
+    const encoder = new TextEncoder();
+
+    const stream = new ReadableStream<Uint8Array>({
+      async start(controller) {
+        let client: CopilotClient | null = null;
+        let session: Awaited<
+          ReturnType<CopilotClient["createSession"]>
+        > | null = null;
+        let streamedFeedback = "";
+        let finalFeedback = "";
+        const updatedAt = new Date().toISOString();
+
+        const sendEvent = (event: Record<string, string>) => {
+          controller.enqueue(encoder.encode(`${JSON.stringify(event)}\n`));
+        };
+
+        try {
+          client = new CopilotClient({
+            githubToken,
+            useLoggedInUser: !githubToken,
+          });
+
+          session = await client.createSession({
+            model: DEFAULT_MODEL,
+            infiniteSessions: { enabled: false },
+            streaming: true,
+            onPermissionRequest: denyAllPermissions,
+            systemMessage: {
+              content: [
+                "You are evaluating learner-submitted JavaScript and TypeScript challenge answers.",
+                "Never execute code, modify files, browse the web, or rely on tools.",
+                "Prefer short, corrective feedback over long explanations.",
+              ].join("\n"),
+            },
+          });
+
+          session.on("assistant.message_delta", (event) => {
+            streamedFeedback += event.data.deltaContent;
+            sendEvent({
+              type: "delta",
+              delta: event.data.deltaContent,
+            });
+          });
+
+          session.on("assistant.message", (event) => {
+            finalFeedback = event.data.content.trim();
+          });
+
+          await session.sendAndWait(
+            {
+              prompt: buildPrompt({
+                mode,
+                learnerLevel,
+                topicTitle,
+                challengeMarkdown,
+                solutionMarkdown,
+                userCode,
+              }),
+            },
+            45000
+          );
+
+          const feedback = (finalFeedback || streamedFeedback).trim();
+
+          if (!feedback) {
+            throw new Error("Copilot returned an empty response.");
+          }
+
+          sendEvent({
+            type: "complete",
+            feedback,
+            model: DEFAULT_MODEL,
+            mode,
+            learnerLevel,
+            updatedAt,
+          });
+        } catch (error) {
+          const message =
+            error instanceof Error
+              ? error.message
+              : "Copilot challenge assistance failed.";
+
+          sendEvent({
+            type: "error",
+            error:
+              "Copilot challenge assistance is unavailable right now. Check your GitHub Copilot authentication or try again. " +
+              message,
+          });
+        } finally {
+          if (session) {
+            await session.disconnect().catch(() => undefined);
+          }
+
+          if (client) {
+            await client.stop().catch(() => []);
+          }
+
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "application/x-ndjson; charset=utf-8",
+        "Cache-Control": "no-cache, no-transform",
+      },
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Copilot challenge assistance failed.";
+
+    return NextResponse.json(
+      {
+        error:
+          "Copilot challenge assistance is unavailable right now. Check your GitHub Copilot authentication or try again. " +
+          message,
+      },
+      { status: 500 }
+    );
+  }
+}

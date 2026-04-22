@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import type { TopicChallenge } from "@/lib/content";
 import { Sidebar } from "./Sidebar";
 import { MarkdownRenderer } from "./MarkdownRenderer";
+import { ChallengeAssistant } from "./ChallengeAssistant";
 
 interface SidebarDay {
   id: string;
@@ -13,11 +15,12 @@ interface SidebarDay {
   topics: { id: string; title: string }[];
 }
 
-interface TopicViewProps {
+type TopicViewProps = Readonly<{
   dayId: string;
   topicId: string;
   topicTitle: string;
   topicContent: string;
+  topicChallenge: TopicChallenge | null;
   topicIndex: number;
   totalTopics: number;
   dayLabel: string;
@@ -25,12 +28,14 @@ interface TopicViewProps {
   prevTopic: { id: string; title: string } | null;
   nextTopic: { id: string; title: string } | null;
   sidebarDays: SidebarDay[];
-}
+}>;
 
 export function TopicView({
   dayId,
   topicId,
+  topicTitle,
   topicContent,
+  topicChallenge,
   topicIndex,
   totalTopics,
   dayLabel,
@@ -56,8 +61,8 @@ export function TopicView({
         setSidebarOpen(false);
       }
     };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
+    globalThis.addEventListener("keydown", handleKey);
+    return () => globalThis.removeEventListener("keydown", handleKey);
   }, [dayId, prevTopic, nextTopic, router]);
 
   return (
@@ -80,12 +85,25 @@ export function TopicView({
             className="rounded-lg p-2 text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-white transition-colors"
             aria-label="Open sidebar"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           </button>
 
-          <Link href="/" className="text-[var(--accent)] font-semibold text-sm hover:underline">
+          <Link
+            href="/"
+            className="text-[var(--accent)] font-semibold text-sm hover:underline"
+          >
             JS/TS Mentor
           </Link>
 
@@ -108,6 +126,15 @@ export function TopicView({
             </div>
           </article>
 
+          {topicChallenge ? (
+            <ChallengeAssistant
+              dayId={dayId}
+              topicId={topicId}
+              topicTitle={topicTitle}
+              challenge={topicChallenge}
+            />
+          ) : null}
+
           {/* Navigation */}
           <nav className="flex items-center justify-between mt-6 gap-4">
             {prevTopic ? (
@@ -115,8 +142,18 @@ export function TopicView({
                 href={`/day/${dayId}/${prevTopic.id}`}
                 className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 text-sm text-[var(--text-muted)] hover:border-[var(--accent-dim)] hover:text-white transition-all group max-w-[48%]"
               >
-                <svg className="w-4 h-4 shrink-0 group-hover:text-[var(--accent)] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <svg
+                  className="w-4 h-4 shrink-0 group-hover:text-[var(--accent)] transition-colors"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
                 </svg>
                 <span className="truncate">{prevTopic.title}</span>
               </Link>
@@ -130,8 +167,18 @@ export function TopicView({
                 className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 text-sm text-[var(--text-muted)] hover:border-[var(--accent-dim)] hover:text-white transition-all group max-w-[48%] ml-auto"
               >
                 <span className="truncate">{nextTopic.title}</span>
-                <svg className="w-4 h-4 shrink-0 group-hover:text-[var(--accent)] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg
+                  className="w-4 h-4 shrink-0 group-hover:text-[var(--accent)] transition-colors"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </Link>
             ) : (

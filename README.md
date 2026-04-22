@@ -12,6 +12,7 @@ Interactive JavaScript & TypeScript learning companion — installable, offline-
 - ⬅️➡️ **Navigation** — Next/prev buttons + keyboard arrows
 - 📑 **Sidebar** — Toggle sidebar to browse all days and topics
 - 💾 **Persistence** — Resumes where you left off
+- 🤖 **Copilot challenge coach** — Streams challenge reviews and hints inside coding challenge topics, remembers the last reply, and supports beginner-to-advanced feedback styles
 
 ## Getting Started
 
@@ -21,6 +22,30 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+## Copilot Challenge Assistant
+
+The coding challenge panel uses the GitHub Copilot SDK on the server.
+
+Set one of these before starting the app:
+
+```bash
+GITHUB_TOKEN=your_github_token
+```
+
+or
+
+```bash
+GH_TOKEN=your_github_token
+```
+
+Optional model override:
+
+```bash
+COPILOT_CHALLENGE_MODEL=gpt-4.1
+```
+
+The default is `gpt-4.1`, which is one of Copilot's included `0x` premium-cost models on paid plans.
 
 ## Build
 

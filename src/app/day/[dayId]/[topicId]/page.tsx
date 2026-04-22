@@ -24,11 +24,11 @@ export async function generateMetadata({ params }: PageProps) {
   const result = getTopic(dayId, topicId);
   if (!result) return { title: "Not Found" };
   return {
-    title: `${result.topic.title} — Day ${parseInt(dayId)} | JS/TS Mentor`,
+    title: `${result.topic.title} — Day ${Number.parseInt(dayId, 10)} | JS/TS Mentor`,
   };
 }
 
-export default async function TopicPage({ params }: PageProps) {
+export default async function TopicPage({ params }: Readonly<PageProps>) {
   const { dayId, topicId } = await params;
   const result = getTopic(dayId, topicId);
   if (!result) notFound();
@@ -52,13 +52,18 @@ export default async function TopicPage({ params }: PageProps) {
       dayId={dayId}
       topicId={topicId}
       topicTitle={topic.title}
-      topicContent={topic.content}
+      topicContent={topic.lessonContent}
+      topicChallenge={topic.challenge}
       topicIndex={topicIndex}
       totalTopics={day.topics.length}
       dayLabel={day.label}
       dayTitle={day.title}
-      prevTopic={prevTopic ? { id: prevTopic.id, title: prevTopic.title } : null}
-      nextTopic={nextTopic ? { id: nextTopic.id, title: nextTopic.title } : null}
+      prevTopic={
+        prevTopic ? { id: prevTopic.id, title: prevTopic.title } : null
+      }
+      nextTopic={
+        nextTopic ? { id: nextTopic.id, title: nextTopic.title } : null
+      }
       sidebarDays={sidebarDays}
     />
   );
