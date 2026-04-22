@@ -203,7 +203,7 @@ export async function POST(request: NextRequest) {
         const updatedAt = new Date().toISOString();
 
         const sendEvent = (event: Record<string, string>) => {
-          controller.enqueue(encoder.encode(`${JSON.stringify(event)}s\n`));
+          controller.enqueue(encoder.encode(`${JSON.stringify(event)}\n`));
         };
 
         try {
