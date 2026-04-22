@@ -43,19 +43,38 @@ function resolveCliPath(): string | undefined {
       );
     }
 
-    const copilotCliPath = path.join(
-      process.cwd(),
-      "node_modules",
-      "@github",
-      "copilot",
-      "npm-loader.js"
-    );
-    if (existsSync(copilotCliPath)) {
-      return copilotCliPath;
+    const candidatePaths = [
+      path.join(
+        process.cwd(),
+        "node_modules",
+        "@github",
+        "copilot-linux-x64",
+        "copilot"
+      ),
+      path.join(
+        process.cwd(),
+        "node_modules",
+        "@github",
+        "copilot-linux-arm64",
+        "copilot"
+      ),
+      path.join(
+        process.cwd(),
+        "node_modules",
+        "@github",
+        "copilot",
+        "npm-loader.js"
+      ),
+    ];
+
+    for (const candidatePath of candidatePaths) {
+      if (existsSync(candidatePath)) {
+        return candidatePath;
+      }
     }
 
     console.warn(
-      `[Copilot Challenge] @github/copilot CLI loader not found at: ${copilotCliPath}`
+      "[Copilot Challenge] Could not find a Copilot CLI executable or loader under node_modules/@github"
     );
   } catch {
     console.warn(
