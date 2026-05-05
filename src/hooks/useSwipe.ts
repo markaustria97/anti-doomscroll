@@ -34,7 +34,12 @@ export function useSwipe({
           const style = globalThis.getComputedStyle(node);
           const overflowX = style.overflowX;
           // treat 'auto', 'scroll', or 'overlay' as scrollable
-          if ((overflowX === "auto" || overflowX === "scroll" || overflowX === "overlay") && node.scrollWidth > node.clientWidth) {
+          if (
+            (overflowX === "auto" ||
+              overflowX === "scroll" ||
+              overflowX === "overlay") &&
+            node.scrollWidth > node.clientWidth
+          ) {
             ignoreSwipe.current = true;
             break;
           }
