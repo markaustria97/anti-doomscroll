@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSwipe } from "@/hooks/useSwipe";
 import Link from "next/link";
 import type { TopicChallenge } from "@/lib/content";
 import { Sidebar } from "./Sidebar";
@@ -81,6 +82,17 @@ export function TopicView({
     return () => globalThis.removeEventListener("keydown", handleKey);
   }, [groupId, dayId, prevTopic, nextTopic, router]);
 
+  const swipeHandlers = useSwipe({
+    onSwipeLeft: () => {
+      if (nextTopic)
+        router.push(`/group/${groupId}/day/${dayId}/${nextTopic.id}`);
+    },
+    onSwipeRight: () => {
+      if (prevTopic)
+        router.push(`/group/${groupId}/day/${dayId}/${prevTopic.id}`);
+    },
+  });
+
   return (
     <div className="min-h-screen flex">
       {/* Sidebar */}
@@ -146,7 +158,10 @@ export function TopicView({
 
         {/* Card content */}
         <main className="max-w-7xl mx-auto p-6 sm:p-8 lg:p-10">
-          <article className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 sm:p-8 lg:p-10">
+          <article
+            {...swipeHandlers}
+            className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 sm:p-8 lg:p-10"
+          >
             <div className="markdown-body">
               <MarkdownRenderer content={topicContent} />
             </div>
