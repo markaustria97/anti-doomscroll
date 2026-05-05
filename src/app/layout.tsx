@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { SerwistProvider } from "./serwist";
 import { SearchBox } from "@/components/SearchBox";
+import { SearchButton } from "@/components/SearchButton";
 
 export const metadata: Metadata = {
   title: "Anti-Doom Scroll",
@@ -42,7 +43,8 @@ export default function RootLayout({
           swUrl="/serwist/sw.js"
           disable={process.env.NODE_ENV === "development"}
         >
-          <div className="fixed top-4 right-4 z-50">
+          <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+            <SearchButton />
             <SearchBox />
           </div>
           {children}

@@ -92,6 +92,18 @@ export function SearchBox() {
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [visible]);
 
+  // Listen for a global 'open-search' event (dispatched from layout button)
+  useEffect(() => {
+    const onOpen = () => {
+      setVisible(true);
+      setTimeout(() => inputRef.current?.focus(), 0);
+    };
+
+    globalThis.addEventListener("open-search", onOpen as EventListener);
+    return () =>
+      globalThis.removeEventListener("open-search", onOpen as EventListener);
+  }, []);
+
   useEffect(() => {
     if (!q) {
       setResults([]);
@@ -132,7 +144,7 @@ export function SearchBox() {
       {visible && (
         <>
           <div className="flex items-center gap-2">
-            <svg
+            {/* <svg
               className="w-4 h-4 text-[var(--accent)]"
               viewBox="0 0 24 24"
               fill="none"
@@ -146,7 +158,7 @@ export function SearchBox() {
                 d="M21 21l-4.35-4.35"
               />
               <circle cx="11" cy="11" r="6" strokeWidth={2} />
-            </svg>
+            </svg> */}
             <input
               ref={inputRef}
               value={q}
