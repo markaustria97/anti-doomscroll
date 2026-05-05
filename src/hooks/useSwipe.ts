@@ -17,12 +17,34 @@ export function useSwipe({
   const startX = useRef<number | null>(null);
   const startY = useRef<number | null>(null);
   const startTime = useRef<number | null>(null);
+  const ignoreSwipe = useRef(false);
 
   const onTouchStart = useCallback((e: TouchEvent) => {
     const t = e.touches[0];
     startX.current = t.clientX;
     startY.current = t.clientY;
     startTime.current = Date.now();
+    // Detect if the touch started inside a horizontally-scrollable element
+    try {
+      ignoreSwipe.current = false;
+      let node = e.target as HTMLElement | null;
+      const boundary = e.currentTarget as HTMLElement | null;
+      while (node && node !== boundary) {
+        if (node instanceof HTMLElement) {
+          const style = globalThis.getComputedStyle(node);
+          const overflowX = style.overflowX;
+          // treat 'auto', 'scroll', or 'overlay' as scrollable
+          if ((overflowX === "auto" || overflowX === "scroll" || overflowX === "overlay") && node.scrollWidth > node.clientWidth) {
+            ignoreSwipe.current = true;
+            break;
+          }
+        }
+        node = node.parentElement;
+      }
+    } catch (err) {
+      // defensive: if anything goes wrong, don't block swipe
+      ignoreSwipe.current = false;
+    }
   }, []);
 
   const onTouchMove = useCallback((_e: TouchEvent) => {
@@ -31,6 +53,14 @@ export function useSwipe({
 
   const onTouchEnd = useCallback(
     (e: TouchEvent) => {
+      if (ignoreSwipe.current) {
+        // reset and skip swipe handling when interaction started in a scrollable child
+        startX.current = null;
+        startY.current = null;
+        startTime.current = null;
+        ignoreSwipe.current = false;
+        return;
+      }
       if (startX.current === null || startTime.current === null) return;
       const t = e.changedTouches[0];
       const dx = t.clientX - startX.current;

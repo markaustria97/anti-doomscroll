@@ -10,7 +10,7 @@ export function SearchButton() {
       onClick={() => globalThis.dispatchEvent(new CustomEvent("open-search"))}
     >
       <svg
-        className="w-5 h-5"
+        className="w-4 h-4"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"

@@ -108,7 +108,7 @@ export function TopicView({
       {/* Main content */}
       <div className="flex-1 min-w-0">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-[var(--border)] bg-[var(--bg)]/95 backdrop-blur px-4 py-3">
+        <header className="sticky top-0 z-30 flex flex-wrap items-center gap-3 border-b border-[var(--border)] bg-[var(--bg)]/95 backdrop-blur px-4 py-3">
           <button
             onClick={() => setSidebarOpen(true)}
             className="rounded-lg p-2 text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-white transition-colors"
