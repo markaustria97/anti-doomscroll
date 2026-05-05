@@ -144,7 +144,8 @@ export function TopicView({
     setShowBreadcrumb(!mq.matches ? true : window.scrollY <= 120);
 
     return () => {
-      if (mq.removeEventListener) mq.removeEventListener("change", updateIsMobile);
+      if (mq.removeEventListener)
+        mq.removeEventListener("change", updateIsMobile);
       else mq.removeListener(updateIsMobile as any);
       window.removeEventListener("scroll", onScroll);
     };
@@ -166,15 +167,13 @@ export function TopicView({
       <div className="flex-1 min-w-0">
         {/* Top bar */}
         <header
-          className={
-            `sticky top-0 z-30 flex flex-wrap items-center gap-3 border-b border-[var(--border)] bg-[var(--bg)]/95 backdrop-blur px-4 py-3 transition-transform duration-150 ease-in-out ${
-              isMobileView
-                ? showBreadcrumb
-                  ? "translate-y-0 opacity-100"
-                  : "-translate-y-12 opacity-0 pointer-events-none"
-                : ""
-            }`
-          }
+          className={`sticky top-0 z-30 flex flex-wrap items-center gap-3 border-b border-[var(--border)] bg-[var(--bg)]/95 backdrop-blur px-4 py-3 transition-transform duration-150 ease-in-out ${
+            isMobileView
+              ? showBreadcrumb
+                ? "translate-y-0 opacity-100"
+                : "-translate-y-12 opacity-0 pointer-events-none"
+              : ""
+          }`}
         >
           <button
             onClick={() => setSidebarOpen(true)}
