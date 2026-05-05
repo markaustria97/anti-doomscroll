@@ -59,6 +59,8 @@ export function TopicView({
   sidebarGroups,
 }: TopicViewProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false);
+  const [showBreadcrumb, setShowBreadcrumb] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -93,6 +95,61 @@ export function TopicView({
     },
   });
 
+  // Show breadcrumb only when scrolling up on mobile, or when near the top.
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    const updateIsMobile = () => setIsMobileView(mq.matches);
+
+    const onScroll = () => {
+      if (!mq.matches) {
+        // desktop: always show
+        setShowBreadcrumb(true);
+        lastY = window.scrollY;
+        return;
+      }
+
+      const currentY = window.scrollY;
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(() => {
+          const delta = currentY - lastY;
+          // always show when near the top
+          if (currentY <= 120) {
+            setShowBreadcrumb(true);
+          } else if (Math.abs(delta) > 5) {
+            if (delta < 0) {
+              // scrolling up
+              setShowBreadcrumb(true);
+            } else {
+              // scrolling down
+              setShowBreadcrumb(false);
+            }
+          }
+          lastY = currentY;
+          ticking = false;
+        });
+      }
+    };
+
+    // listen for media query and scroll
+    if (mq.addEventListener) mq.addEventListener("change", updateIsMobile);
+    else mq.addListener(updateIsMobile as any);
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    // initial state
+    updateIsMobile();
+    setShowBreadcrumb(!mq.matches ? true : window.scrollY <= 120);
+
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener("change", updateIsMobile);
+      else mq.removeListener(updateIsMobile as any);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen flex">
       {/* Sidebar */}
@@ -108,7 +165,17 @@ export function TopicView({
       {/* Main content */}
       <div className="flex-1 min-w-0">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex flex-wrap items-center gap-3 border-b border-[var(--border)] bg-[var(--bg)]/95 backdrop-blur px-4 py-3">
+        <header
+          className={
+            `sticky top-0 z-30 flex flex-wrap items-center gap-3 border-b border-[var(--border)] bg-[var(--bg)]/95 backdrop-blur px-4 py-3 transition-transform duration-150 ease-in-out ${
+              isMobileView
+                ? showBreadcrumb
+                  ? "translate-y-0 opacity-100"
+                  : "-translate-y-12 opacity-0 pointer-events-none"
+                : ""
+            }`
+          }
+        >
           <button
             onClick={() => setSidebarOpen(true)}
             className="rounded-lg p-2 text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-white transition-colors"
