@@ -1,0 +1,13 @@
+# Exclude uploaded large source files not needed at runtime
+
+files/
+_.docx
+_.doc
+tmp/
+.vscode/
+.DS_Store
+/\*.log
+
+# Optional: ignore local scripts and tooling
+
+scripts/ \*_/_.local

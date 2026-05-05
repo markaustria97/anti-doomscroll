@@ -180,9 +180,8 @@ function extractChallenge(content: string): ParsedTopicSections {
   // Match a section heading that signals a coding challenge. Be permissive
   // — accept headings that mention "Coding Challenge" (with or without
   // "with Solution") so legacy topic files are detected.
-  const headingMatch = /^##\s+(.+Coding Challenge(?: with Solution)?).*$/im.exec(
-    content
-  );
+  const headingMatch =
+    /^##\s+(.+Coding Challenge(?: with Solution)?).*$/im.exec(content);
 
   if (!headingMatch) {
     return {
@@ -226,9 +225,10 @@ function extractChallenge(content: string): ParsedTopicSections {
   // Fallback: many topic files use a bold 'Solution:' label rather than
   // subheadings. Capture everything before that label as the challenge and
   // everything after as the solution.
-  const altMatch = /([\s\S]*?)\n(?:\*\*Solution:\*\*|Solution:)\s*\n([\s\S]*?)(?:\n##\s+|$)/i.exec(
-    section
-  );
+  const altMatch =
+    /([\s\S]*?)\n(?:\*\*Solution:\*\*|Solution:)\s*\n([\s\S]*?)(?:\n##\s+|$)/i.exec(
+      section
+    );
 
   if (altMatch) {
     return {
