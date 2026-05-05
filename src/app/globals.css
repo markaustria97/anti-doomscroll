@@ -18,7 +18,10 @@ html {
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 /* Markdown content styling */
@@ -187,4 +190,96 @@ body {
 .sidebar-enter-active {
   transform: translateX(0);
   transition: transform 0.2s ease-out;
+}
+
+/* Responsive auto-fit grid for cards: use min 360px columns */
+.auto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+/* Larger card style for group/day cards to better use wide viewports */
+.card-large {
+  padding: 1rem;
+  min-height: 7.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 1rem;
+}
+
+.card-large h2 {
+  font-size: 1.4rem;
+  line-height: 1.15;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.card-large p {
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+/* Utility to make hero headings larger on wide screens */
+.hero-title-large {
+  font-size: 2.25rem;
+}
+
+@media (min-width: 768px) {
+  .hero-title-large {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-title-large {
+    font-size: 3.5rem;
+  }
+}
+
+/* Responsive adjustments for small screens */
+@media (max-width: 640px) {
+  .auto-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .card-large {
+    padding: 0.7rem;
+    min-height: 6.5rem;
+  }
+
+  /* Medium and large screens: slightly taller but compact */
+  @media (min-width: 1024px) {
+    .card-large {
+      padding: 1.1rem;
+      min-height: 9.5rem;
+    }
+  }
+
+  .hero-title-large {
+    font-size: 1.75rem;
+  }
+
+  .card-large h2 {
+    font-size: 1.125rem;
+  }
+}
+
+/* Slightly larger cards on very wide screens */
+@media (min-width: 1440px) {
+  .auto-grid {
+    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+  }
+
+  .card-large {
+    min-height: 10.5rem;
+    padding: 1.25rem;
+  }
+
+  .hero-title-large {
+    font-size: 4rem;
+  }
 }

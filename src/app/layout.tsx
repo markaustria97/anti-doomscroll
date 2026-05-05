@@ -3,14 +3,19 @@ import "./globals.css";
 import { SerwistProvider } from "./serwist";
 
 export const metadata: Metadata = {
-  title: "JS/TS Mentor",
+  title: "Anti-Doom Scroll",
   description:
-    "Interactive JavaScript & TypeScript learning companion — offline capable",
+    "A focused learning hub that turns tech study tracks into small, finishable daily lessons.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "JS Mentor",
+    title: "Anti-Doom Scroll",
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/icons/icon-192x192.png",
   },
 };
 

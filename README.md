@@ -1,4 +1,4 @@
-# anti-doomscroll
+# Anti-Doom Scroll
 
 Interactive JavaScript & TypeScript learning companion — installable, offline-capable PWA.
 

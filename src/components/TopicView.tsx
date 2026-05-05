@@ -8,6 +8,13 @@ import { Sidebar } from "./Sidebar";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 import { ChallengeAssistant } from "./ChallengeAssistant";
 
+interface SidebarGroup {
+  id: string;
+  label: string;
+  title: string;
+  days: SidebarDay[];
+}
+
 interface SidebarDay {
   id: string;
   label: string;
@@ -16,6 +23,9 @@ interface SidebarDay {
 }
 
 type TopicViewProps = Readonly<{
+  groupId: string;
+  groupLabel: string;
+  groupTitle: string;
   dayId: string;
   topicId: string;
   topicTitle: string;
@@ -27,10 +37,13 @@ type TopicViewProps = Readonly<{
   dayTitle: string;
   prevTopic: { id: string; title: string } | null;
   nextTopic: { id: string; title: string } | null;
-  sidebarDays: SidebarDay[];
+  sidebarGroups: SidebarGroup[];
 }>;
 
 export function TopicView({
+  groupId,
+  groupLabel,
+  groupTitle,
   dayId,
   topicId,
   topicTitle,
@@ -42,34 +55,38 @@ export function TopicView({
   dayTitle,
   prevTopic,
   nextTopic,
-  sidebarDays,
+  sidebarGroups,
 }: TopicViewProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    localStorage.setItem("lastVisited", `/day/${dayId}/${topicId}`);
-  }, [dayId, topicId]);
+    localStorage.setItem(
+      "lastVisited",
+      `/group/${groupId}/day/${dayId}/${topicId}`
+    );
+  }, [groupId, dayId, topicId]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft" && prevTopic) {
-        router.push(`/day/${dayId}/${prevTopic.id}`);
+        router.push(`/group/${groupId}/day/${dayId}/${prevTopic.id}`);
       } else if (e.key === "ArrowRight" && nextTopic) {
-        router.push(`/day/${dayId}/${nextTopic.id}`);
+        router.push(`/group/${groupId}/day/${dayId}/${nextTopic.id}`);
       } else if (e.key === "Escape") {
         setSidebarOpen(false);
       }
     };
     globalThis.addEventListener("keydown", handleKey);
     return () => globalThis.removeEventListener("keydown", handleKey);
-  }, [dayId, prevTopic, nextTopic, router]);
+  }, [groupId, dayId, prevTopic, nextTopic, router]);
 
   return (
     <div className="min-h-screen flex">
       {/* Sidebar */}
       <Sidebar
-        days={sidebarDays}
+        groups={sidebarGroups}
+        currentGroupId={groupId}
         currentDayId={dayId}
         currentTopicId={topicId}
         isOpen={sidebarOpen}
@@ -104,7 +121,16 @@ export function TopicView({
             href="/"
             className="text-[var(--accent)] font-semibold text-sm hover:underline"
           >
-            JS/TS Mentor
+            Anti-Doom Scroll
+          </Link>
+
+          <span className="text-[var(--text-muted)] text-sm">›</span>
+
+          <Link
+            href={`/group/${groupId}`}
+            className="text-sm text-[var(--text-muted)] truncate hover:text-white"
+          >
+            {groupLabel}: {groupTitle}
           </Link>
 
           <span className="text-[var(--text-muted)] text-sm">›</span>
@@ -119,8 +145,8 @@ export function TopicView({
         </header>
 
         {/* Card content */}
-        <main className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
-          <article className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5 sm:p-8">
+        <main className="max-w-7xl mx-auto p-6 sm:p-8 lg:p-10">
+          <article className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 sm:p-8 lg:p-10">
             <div className="markdown-body">
               <MarkdownRenderer content={topicContent} />
             </div>
@@ -139,7 +165,7 @@ export function TopicView({
           <nav className="flex items-center justify-between mt-6 gap-4">
             {prevTopic ? (
               <Link
-                href={`/day/${dayId}/${prevTopic.id}`}
+                href={`/group/${groupId}/day/${dayId}/${prevTopic.id}`}
                 prefetch={false}
                 className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 text-sm text-[var(--text-muted)] hover:border-[var(--accent-dim)] hover:text-white transition-all group max-w-[48%]"
               >
@@ -164,7 +190,7 @@ export function TopicView({
 
             {nextTopic ? (
               <Link
-                href={`/day/${dayId}/${nextTopic.id}`}
+                href={`/group/${groupId}/day/${dayId}/${nextTopic.id}`}
                 prefetch={false}
                 className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 text-sm text-[var(--text-muted)] hover:border-[var(--accent-dim)] hover:text-white transition-all group max-w-[48%] ml-auto"
               >

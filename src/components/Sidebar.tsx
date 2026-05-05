@@ -3,6 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 
+interface SidebarGroup {
+  id: string;
+  label: string;
+  title: string;
+  days: SidebarDay[];
+}
+
 interface SidebarDay {
   id: string;
   label: string;
@@ -11,7 +18,8 @@ interface SidebarDay {
 }
 
 interface SidebarProps {
-  days: SidebarDay[];
+  groups: SidebarGroup[];
+  currentGroupId: string;
   currentDayId: string;
   currentTopicId: string;
   isOpen: boolean;
@@ -19,13 +27,16 @@ interface SidebarProps {
 }
 
 export function Sidebar({
-  days,
+  groups,
+  currentGroupId,
   currentDayId,
   currentTopicId,
   isOpen,
   onClose,
 }: SidebarProps) {
-  const [expandedDay, setExpandedDay] = useState<string>(currentDayId);
+  const currentDayKey = `${currentGroupId}:${currentDayId}`;
+  const [expandedGroup, setExpandedGroup] = useState<string>(currentGroupId);
+  const [expandedDay, setExpandedDay] = useState<string>(currentDayKey);
 
   return (
     <>
@@ -50,7 +61,7 @@ export function Sidebar({
             onClick={onClose}
             className="text-lg font-bold text-[var(--accent)]"
           >
-            JS/TS Mentor
+            Anti-Doom Scroll
           </Link>
           <button
             onClick={onClose}
@@ -73,66 +84,140 @@ export function Sidebar({
           </button>
         </div>
 
-        {/* Day list */}
+        {/* Group and day list */}
         <nav className="p-2">
-          {days.map((day) => (
-            <div key={day.id} className="mb-1">
-              <button
-                onClick={() =>
-                  setExpandedDay(expandedDay === day.id ? "" : day.id)
-                }
-                className={`w-full flex items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-colors ${
-                  day.id === currentDayId
-                    ? "bg-[var(--accent-dim)]/15 text-[var(--accent)]"
-                    : "text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-white"
-                }`}
-              >
-                <span className="font-medium truncate text-left">
-                  {day.label} — {day.title}
-                </span>
-                <svg
-                  className={`w-4 h-4 shrink-0 ml-2 transition-transform ${
-                    expandedDay === day.id ? "rotate-90" : ""
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
+          {groups.map((group) => {
+            const isCurrentGroup = group.id === currentGroupId;
 
-              {/* Topics */}
-              {expandedDay === day.id && (
-                <div className="ml-2 mt-1 space-y-0.5">
-                  {day.topics.map((topic, idx) => {
-                    const isActive =
-                      day.id === currentDayId && topic.id === currentTopicId;
-                    return (
-                      <Link
-                        key={topic.id}
-                        href={`/day/${day.id}/${topic.id}`}
-                        prefetch={false}
-                        onClick={onClose}
-                        className={`flex items-start gap-2 rounded-md px-3 py-2 text-sm transition-colors ${
-                          isActive
-                            ? "bg-[var(--accent-dim)]/20 text-[var(--accent)] font-medium"
-                            : "text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-white"
-                        }`}
-                      >
-                        <span className="leading-snug">{topic.title}</span>
-                      </Link>
-                    );
-                  })}
+            return (
+              <div
+                key={group.id}
+                className="mb-2 rounded-xl border border-transparent"
+              >
+                <div className="flex items-stretch gap-2">
+                  <Link
+                    href={`/group/${group.id}`}
+                    onClick={onClose}
+                    className={`min-w-0 flex-1 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+                      isCurrentGroup
+                        ? "bg-[var(--accent-dim)]/15 text-[var(--accent)]"
+                        : "text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-white"
+                    }`}
+                  >
+                    <div className="text-[10px] font-mono uppercase tracking-widest opacity-80">
+                      {group.label}
+                    </div>
+                    <div className="mt-1 truncate font-medium">
+                      {group.title}
+                    </div>
+                  </Link>
+
+                  <button
+                    onClick={() =>
+                      setExpandedGroup(
+                        expandedGroup === group.id ? "" : group.id
+                      )
+                    }
+                    className={`rounded-lg px-3 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-card)] hover:text-white ${
+                      isCurrentGroup
+                        ? "bg-[var(--accent-dim)]/15 text-[var(--accent)]"
+                        : ""
+                    }`}
+                    aria-label={`Toggle ${group.title}`}
+                  >
+                    <svg
+                      className={`h-4 w-4 transition-transform ${
+                        expandedGroup === group.id ? "rotate-90" : ""
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
                 </div>
-              )}
-            </div>
-          ))}
+
+                {expandedGroup === group.id && (
+                  <div className="mt-1 ml-2 space-y-1">
+                    {group.days.map((day) => {
+                      const dayKey = `${group.id}:${day.id}`;
+
+                      return (
+                        <div key={day.id}>
+                          <button
+                            onClick={() =>
+                              setExpandedDay(
+                                expandedDay === dayKey ? "" : dayKey
+                              )
+                            }
+                            className={`w-full flex items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-colors ${
+                              isCurrentGroup && day.id === currentDayId
+                                ? "bg-[var(--accent-dim)]/15 text-[var(--accent)]"
+                                : "text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-white"
+                            }`}
+                          >
+                            <span className="font-medium truncate text-left">
+                              {day.label} — {day.title}
+                            </span>
+                            <svg
+                              className={`w-4 h-4 shrink-0 ml-2 transition-transform ${
+                                expandedDay === dayKey ? "rotate-90" : ""
+                              }`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 5l7 7-7 7"
+                              />
+                            </svg>
+                          </button>
+
+                          {expandedDay === dayKey && (
+                            <div className="ml-2 mt-1 space-y-0.5">
+                              {day.topics.map((topic) => {
+                                const isActive =
+                                  group.id === currentGroupId &&
+                                  day.id === currentDayId &&
+                                  topic.id === currentTopicId;
+
+                                return (
+                                  <Link
+                                    key={topic.id}
+                                    href={`/group/${group.id}/day/${day.id}/${topic.id}`}
+                                    prefetch={false}
+                                    onClick={onClose}
+                                    className={`flex items-start gap-2 rounded-md px-3 py-2 text-sm transition-colors ${
+                                      isActive
+                                        ? "bg-[var(--accent-dim)]/20 text-[var(--accent)] font-medium"
+                                        : "text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-white"
+                                    }`}
+                                  >
+                                    <span className="leading-snug">
+                                      {topic.title}
+                                    </span>
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </nav>
       </aside>
     </>

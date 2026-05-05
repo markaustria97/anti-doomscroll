@@ -1,48 +1,43 @@
-import { getAllDays } from "@/lib/content";
+import { getAllGroups } from "@/lib/content";
 import Link from "next/link";
 import { ResumeButton } from "@/components/ResumeButton";
 
 export default function Home() {
-  const days = getAllDays();
+  const groups = getAllGroups();
 
   return (
-    <main className="min-h-screen p-4 sm:p-8 max-w-4xl mx-auto">
+    <main className="min-h-screen px-6 sm:px-12 py-8 max-w-7xl mx-auto">
       <header className="mb-10">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-2">
-          <span className="text-[var(--accent)]">JS/TS</span> Mentor
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 hero-title-large">
+          <span className="text-[var(--accent)]">Anti-Doom</span> Scroll
         </h1>
         <p className="text-[var(--text-muted)] text-sm sm:text-base">
-          Interactive JavaScript & TypeScript learning companion
+          A structured study hub that replaces feed-scrolling with focused
+          tech-group tracks.
         </p>
         <ResumeButton />
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {days.map((day) => (
+      <div className="auto-grid">
+        {groups.map((group) => (
           <Link
-            key={day.id}
-            href={`/day/${day.id}/${day.topics[0]?.id || ""}`}
+            key={group.id}
+            href={`/group/${group.id}`}
             prefetch={false}
-            className="group block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5 transition-all hover:border-[var(--accent-dim)] hover:shadow-lg hover:shadow-purple-900/10"
+            className="group block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all hover:border-[var(--accent-dim)] hover:shadow-lg hover:shadow-purple-900/10 card-large"
           >
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-mono uppercase tracking-widest text-[var(--accent)]">
-                {day.label}
+                {group.label}
               </span>
               <span className="text-xs text-[var(--text-muted)]">
-                {day.topics.length} topics
+                {group.days.length} days
               </span>
             </div>
-            <h2 className="text-lg font-semibold text-[var(--text)] group-hover:text-white transition-colors">
-              {day.title}
+            <h2 className="text-2xl font-semibold text-[var(--text)] group-hover:text-white transition-colors">
+              {group.title}
             </h2>
-            <p className="text-sm text-[var(--text-muted)] mt-2 line-clamp-2">
-              {day.topics
-                .slice(0, 4)
-                .map((t) => t.title)
-                .join(" · ")}
-              {day.topics.length > 4 ? " …" : ""}
-            </p>
+            <p className="text-base mt-2 line-clamp-3">{group.description}</p>
           </Link>
         ))}
       </div>

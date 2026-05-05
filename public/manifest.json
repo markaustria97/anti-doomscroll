@@ -1,7 +1,7 @@
 {
-  "name": "JS/TS Mentor",
-  "short_name": "JS Mentor",
-  "description": "Interactive JavaScript & TypeScript learning companion — offline capable",
+  "name": "Anti-Doom Scroll",
+  "short_name": "Anti-Doom",
+  "description": "A focused learning hub for multi-track tech study, built to replace feed-scrolling with daily progress.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0a",
