@@ -6,7 +6,8 @@ import path from "node:path";
 
 export const runtime = "nodejs";
 
-const DEFAULT_MODEL = process.env.COPILOT_CHALLENGE_MODEL?.trim() || "gpt-4.1";
+const DEFAULT_MODEL =
+  process.env.COPILOT_CHALLENGE_MODEL?.trim() || "gpt-5-mini";
 const MAX_INPUT_LENGTH = 12000;
 const OAUTH_TOKEN_COOKIE = "copilot_github_token";
 

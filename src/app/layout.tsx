@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { SerwistProvider } from "./serwist";
+import { SearchBox } from "@/components/SearchBox";
 
 export const metadata: Metadata = {
   title: "Anti-Doom Scroll",
@@ -28,9 +29,9 @@ export const viewport: Viewport = {
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en">
       <head>
@@ -41,6 +42,9 @@ export default function RootLayout({
           swUrl="/serwist/sw.js"
           disable={process.env.NODE_ENV === "development"}
         >
+          <div className="fixed top-4 right-4 z-50">
+            <SearchBox />
+          </div>
           {children}
         </SerwistProvider>
       </body>

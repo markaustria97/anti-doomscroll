@@ -62,7 +62,7 @@ type ChallengeStreamEvent =
   | ErrorEvent
   | StreamEventBase;
 
-const DEFAULT_MODEL = "gpt-4.1";
+const DEFAULT_MODEL = "gpt-5-mini";
 
 const learnerLevelCopy: Record<
   LearnerLevel,
