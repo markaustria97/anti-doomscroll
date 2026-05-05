@@ -547,37 +547,60 @@ export function ChallengeAssistant({
         </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-3">
-        <button
-          type="button"
-          onClick={() => submit("review")}
-          disabled={isStreaming}
-          className="rounded-lg bg-[var(--accent-dim)] px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {isStreaming ? "Checking..." : "Check my solution"}
-        </button>
-        <button
-          type="button"
-          onClick={() => submit("hint")}
-          disabled={isStreaming}
-          className="rounded-lg border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--text)] transition-colors hover:border-[var(--accent-dim)] hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {isStreaming ? "Thinking..." : "Give me a hint"}
-        </button>
-        {isStreaming ? (
+      <div className="mt-4 flex flex-col gap-3">
+        <div className="flex gap-3 w-full">
           <button
             type="button"
-            onClick={() => abortControllerRef.current?.abort()}
-            className="rounded-lg border border-red-500/30 px-4 py-2 text-sm font-medium text-red-200 transition-colors hover:border-red-400/40 hover:text-red-100"
+            onClick={() => submit("review")}
+            disabled={isStreaming}
+            className="flex-1 rounded-lg bg-[var(--accent-dim)] px-4 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Stop
+            {isStreaming ? "Checking..." : "Check my solution"}
           </button>
+
+          <button
+            type="button"
+            onClick={() => submit("hint")}
+            disabled={isStreaming}
+            className="rounded-lg border border-[var(--border)] px-4 py-3 text-sm font-medium text-[var(--text)] transition-colors hover:border-[var(--accent-dim)] hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isStreaming ? "Thinking..." : "Give me a hint"}
+          </button>
+        </div>
+
+        {isStreaming ? (
+          <div>
+            <button
+              type="button"
+              onClick={() => abortControllerRef.current?.abort()}
+              className="mt-2 rounded-lg border border-red-500/30 px-4 py-2 text-sm font-medium text-red-200 transition-colors hover:border-red-400/40 hover:text-red-100 w-full"
+            >
+              Stop
+            </button>
+          </div>
         ) : null}
-        <details className="ml-auto rounded-lg border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-muted)]">
-          <summary className="cursor-pointer select-none">
-            Reveal reference solution
+
+        <details className="group open:shadow-lg rounded-xl border border-[var(--border)] bg-black/20 p-3">
+          <summary className="cursor-pointer select-none flex items-center justify-between gap-3 px-3 py-2">
+            <span className="text-sm font-medium text-[var(--text-muted)]">
+              Reveal reference solution
+            </span>
+            <svg
+              className="w-4 h-4 text-[var(--text-muted)]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
           </summary>
-          <div className="markdown-body mt-4">
+
+          <div className="markdown-body mt-3 max-h-72 overflow-auto rounded-md border border-[var(--border)] bg-[var(--bg-card)] p-4">
             <MarkdownRenderer content={challenge.solutionMarkdown} />
           </div>
         </details>
