@@ -580,7 +580,7 @@ export function ChallengeAssistant({
           </div>
         ) : null}
 
-        <details className="group open:shadow-lg rounded-xl border border-[var(--border)] bg-black/20 p-3">
+        <details className="group open:shadow-lg p-0">
           <summary className="cursor-pointer select-none flex items-center justify-between gap-3 px-3 py-2">
             <span className="text-sm font-medium text-[var(--text-muted)]">
               Reveal reference solution
@@ -600,7 +600,7 @@ export function ChallengeAssistant({
             </svg>
           </summary>
 
-          <div className="markdown-body mt-3 max-h-72 overflow-auto rounded-md border border-[var(--border)] bg-[var(--bg-card)] p-4">
+          <div className="markdown-body mt-3 max-h-72 overflow-auto p-0 [&_pre]:mb-0 [&_hr]:hidden">
             <MarkdownRenderer content={challenge.solutionMarkdown} />
           </div>
         </details>
