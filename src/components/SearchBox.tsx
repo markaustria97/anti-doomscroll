@@ -182,7 +182,15 @@ export function SearchBox() {
                       key={`${r.groupId}-${r.dayId}-${r.topicId}`}
                       className="p-3 hover:bg-[var(--bg-card)]/60 transition-colors"
                     >
-                      <Link href={r.url} className="block">
+                      <Link
+                        href={r.url}
+                        className="block"
+                        onClick={() => {
+                          setVisible(false);
+                          setOpen(false);
+                          inputRef.current?.blur();
+                        }}
+                      >
                         <div className="text-sm font-semibold text-[var(--text)]">
                           {r.topicTitle}
                         </div>
