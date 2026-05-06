@@ -97,14 +97,21 @@ export function TopicView({
 
   // Show breadcrumb only when scrolling up on mobile, or when near the top.
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
+    const widthMq = window.matchMedia("(max-width: 767px)");
+    const pointerMq = window.matchMedia("(pointer: coarse)");
+    const hasTouch = () =>
+      widthMq.matches ||
+      pointerMq.matches ||
+      (navigator.maxTouchPoints ?? 0) > 0 ||
+      "ontouchstart" in window;
+
     let lastY = window.scrollY;
     let ticking = false;
 
-    const updateIsMobile = () => setIsMobileView(mq.matches);
+    const updateIsMobile = () => setIsMobileView(hasTouch());
 
     const onScroll = () => {
-      if (!mq.matches) {
+      if (!hasTouch()) {
         // desktop: always show
         setShowBreadcrumb(true);
         lastY = window.scrollY;
@@ -134,19 +141,23 @@ export function TopicView({
       }
     };
 
-    // listen for media query and scroll
-    if (mq.addEventListener) mq.addEventListener("change", updateIsMobile);
-    else mq.addListener(updateIsMobile as any);
+    // listen for media queries and scroll
+    [widthMq, pointerMq].forEach((m) => {
+      if (m.addEventListener) m.addEventListener("change", updateIsMobile);
+      else m.addListener(updateIsMobile as any);
+    });
     window.addEventListener("scroll", onScroll, { passive: true });
 
     // initial state
     updateIsMobile();
-    setShowBreadcrumb(!mq.matches ? true : window.scrollY <= 120);
+    setShowBreadcrumb(!hasTouch() ? true : window.scrollY <= 120);
 
     return () => {
-      if (mq.removeEventListener)
-        mq.removeEventListener("change", updateIsMobile);
-      else mq.removeListener(updateIsMobile as any);
+      [widthMq, pointerMq].forEach((m) => {
+        if (m.removeEventListener)
+          m.removeEventListener("change", updateIsMobile);
+        else m.removeListener(updateIsMobile as any);
+      });
       window.removeEventListener("scroll", onScroll);
     };
   }, []);
@@ -222,7 +233,7 @@ export function TopicView({
             {dayLabel}: {dayTitle}
           </span>
 
-          <span className="ml-auto text-xs text-[var(--text-muted)] font-mono tabular-nums">
+          <span className="ml-auto text-xs text-[var(--text-muted)] font-mono tabular-nums md:mt-8">
             {topicIndex + 1}/{totalTopics}
           </span>
         </header>

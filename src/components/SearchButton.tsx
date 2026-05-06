@@ -7,14 +7,18 @@ export function SearchButton() {
   const [showButton, setShowButton] = useState(true);
 
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
+    const widthMq = window.matchMedia("(max-width: 767px)");
+    const pointerMq = window.matchMedia("(pointer: coarse)");
+    const isTouch = () =>
+      widthMq.matches || pointerMq.matches || (navigator.maxTouchPoints ?? 0) > 0 || ("ontouchstart" in window);
+
     let lastY = window.scrollY;
     let ticking = false;
 
-    const updateIsMobile = () => setIsMobileView(mq.matches);
+    const updateIsMobile = () => setIsMobileView(isTouch());
 
     const onScroll = () => {
-      if (!mq.matches) {
+      if (!isTouch()) {
         setShowButton(true);
         lastY = window.scrollY;
         return;
@@ -40,18 +44,21 @@ export function SearchButton() {
       }
     };
 
-    if (mq.addEventListener) mq.addEventListener("change", updateIsMobile);
-    else mq.addListener(updateIsMobile as any);
+    [widthMq, pointerMq].forEach((m) => {
+      if (m.addEventListener) m.addEventListener("change", updateIsMobile);
+      else m.addListener(updateIsMobile as any);
+    });
     window.addEventListener("scroll", onScroll, { passive: true });
 
     // initial state
     updateIsMobile();
-    setShowButton(!mq.matches ? true : window.scrollY <= 120);
+    setShowButton(!isTouch() ? true : window.scrollY <= 120);
 
     return () => {
-      if (mq.removeEventListener)
-        mq.removeEventListener("change", updateIsMobile);
-      else mq.removeListener(updateIsMobile as any);
+      [widthMq, pointerMq].forEach((m) => {
+        if (m.removeEventListener) m.removeEventListener("change", updateIsMobile);
+        else m.removeListener(updateIsMobile as any);
+      });
       window.removeEventListener("scroll", onScroll);
     };
   }, []);
