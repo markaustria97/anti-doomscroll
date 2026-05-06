@@ -59,9 +59,14 @@ export function Sidebar({
           <Link
             href="/"
             onClick={onClose}
-            className="text-lg font-bold text-[var(--accent)]"
+            className="inline-flex items-center gap-2 text-lg font-bold text-[var(--accent)]"
           >
-            Anti-Doom Scroll
+            <img
+              src="/icons/icon-192x192.png"
+              alt="Anti-Doom Scroll"
+              className="w-8 h-8 rounded-sm"
+            />
+            <span className="sr-only">Anti-Doom Scroll</span>
           </Link>
           <button
             onClick={onClose}

@@ -167,7 +167,7 @@ export function TopicView({
       <div className="flex-1 min-w-0">
         {/* Top bar */}
         <header
-          className={`sticky top-0 z-30 flex flex-wrap items-center gap-3 border-b border-[var(--border)] bg-[var(--bg)]/95 backdrop-blur px-4 py-3 transition-transform duration-150 ease-in-out ${
+          className={`sticky top-0 z-30 flex flex-wrap items-center gap-1 sm:gap-3 border-b border-[var(--border)] bg-[var(--bg)]/95 backdrop-blur px-4 py-1 sm:py-3 transition-transform duration-150 ease-in-out ${
             isMobileView
               ? showBreadcrumb
                 ? "translate-y-0 opacity-100"
@@ -197,9 +197,14 @@ export function TopicView({
 
           <Link
             href="/"
-            className="text-[var(--accent)] font-semibold text-sm hover:underline"
+            className="inline-flex items-center text-[var(--accent)] font-semibold text-sm hover:underline"
           >
-            Anti-Doom Scroll
+            <img
+              src="/icons/icon-192x192.png"
+              alt="Anti-Doom Scroll"
+              className="w-6 h-6 mr-2 rounded-sm"
+            />
+            <span className="sr-only">Anti-Doom Scroll</span>
           </Link>
 
           <span className="text-[var(--text-muted)] text-sm">›</span>

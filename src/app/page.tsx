@@ -8,8 +8,13 @@ export default function Home() {
   return (
     <main className="min-h-screen px-6 sm:px-12 py-8 max-w-7xl mx-auto">
       <header className="mb-10">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 hero-title-large">
-          <span className="text-[var(--accent)]">Anti-Doom</span> Scroll
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 hero-title-large flex items-center gap-4">
+          <img
+            src="/icons/icon-192x192.png"
+            alt="Anti-Doom Scroll"
+            className="w-14 h-14 rounded-md"
+          />
+          <span className="text-[var(--accent)]">Anti-Doom</span>Scroll
         </h1>
         <p className="text-[var(--text-muted)] text-sm sm:text-base">
           A structured study hub that replaces feed-scrolling with focused
