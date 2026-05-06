@@ -57,7 +57,7 @@ export function SearchButton() {
   }, []);
 
   const baseClass =
-    "md:hidden inline-flex items-center justify-center rounded-lg p-2  text-[var(--text)]";
+    "lg:hidden inline-flex items-center justify-center rounded-lg p-2  text-[var(--text)]";
 
   const visibilityClass = showButton
     ? "translate-y-0 opacity-100"
