@@ -37,7 +37,7 @@ export function ResumeButton() {
           d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
         />
       </svg>
-      Resume where you left off
+      Resume
     </Link>
   );
 }
