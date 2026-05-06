@@ -10,7 +10,10 @@ export function SearchButton() {
     const widthMq = window.matchMedia("(max-width: 767px)");
     const pointerMq = window.matchMedia("(pointer: coarse)");
     const isTouch = () =>
-      widthMq.matches || pointerMq.matches || (navigator.maxTouchPoints ?? 0) > 0 || ("ontouchstart" in window);
+      widthMq.matches ||
+      pointerMq.matches ||
+      (navigator.maxTouchPoints ?? 0) > 0 ||
+      "ontouchstart" in window;
 
     let lastY = window.scrollY;
     let ticking = false;
@@ -56,7 +59,8 @@ export function SearchButton() {
 
     return () => {
       [widthMq, pointerMq].forEach((m) => {
-        if (m.removeEventListener) m.removeEventListener("change", updateIsMobile);
+        if (m.removeEventListener)
+          m.removeEventListener("change", updateIsMobile);
         else m.removeListener(updateIsMobile as any);
       });
       window.removeEventListener("scroll", onScroll);
