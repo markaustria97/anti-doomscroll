@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Throttle ensures a function fires **at most once per time window**, no matter how many times it's triggered — ideal for scroll handlers, mouse movements, and game loops.[^10]
+Throttle ensures a function fires **at most once per time window**, no matter how many times it's triggered — ideal for scroll handlers, mouse movements, and game loops.
 
 ## K — Key Concepts
 
@@ -56,7 +56,7 @@ function throttleWithTrail(fn, limit) {
 
 ## W — Why It Matters
 
-Scroll and `mousemove` events fire 60+ times per second. Without throttle, attaching expensive handlers (layout reads, analytics pings, parallax calculations) to these events tanks performance. Throttle is the performance primitive for continuous events.[^10]
+Scroll and `mousemove` events fire 60+ times per second. Without throttle, attaching expensive handlers (layout reads, analytics pings, parallax calculations) to these events tanks performance. Throttle is the performance primitive for continuous events.
 
 ## I — Interview Q&A
 

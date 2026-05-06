@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Three cookie attributes form the security triple — `HttpOnly` blocks XSS token theft, `Secure` blocks MITM interception, and `SameSite` blocks CSRF attacks.[^3][^10]
+Three cookie attributes form the security triple — `HttpOnly` blocks XSS token theft, `Secure` blocks MITM interception, and `SameSite` blocks CSRF attacks.
 
 ## K — Key Concepts
 
@@ -59,15 +59,15 @@ res.cookie("crossSiteToken", value, {
 
 ## W — Why It Matters
 
-This is a mandatory security topic for backend and full-stack interviews. The combination of `HttpOnly + Secure + SameSite=Lax` is the modern baseline for session cookie security. Missing any one attribute opens a specific attack vector.[^10][^3]
+This is a mandatory security topic for backend and full-stack interviews. The combination of `HttpOnly + Secure + SameSite=Lax` is the modern baseline for session cookie security. Missing any one attribute opens a specific attack vector.
 
 ## I — Interview Q&A
 
 **Q: What is an `HttpOnly` cookie and what attack does it prevent?**
-A: An `HttpOnly` cookie cannot be accessed by JavaScript (`document.cookie` doesn't show it). It's set and read only by the server. This prevents XSS attacks from stealing the session token — even if malicious script runs, it can't read the cookie.[^10]
+A: An `HttpOnly` cookie cannot be accessed by JavaScript (`document.cookie` doesn't show it). It's set and read only by the server. This prevents XSS attacks from stealing the session token — even if malicious script runs, it can't read the cookie.
 
 **Q: What is `SameSite=Lax` and why is it the browser default?**
-A: `Lax` allows the cookie on top-level navigations (clicking a link to the site) but not on background cross-site requests (CSRF attack vector). It was made the default because `SameSite=None` cookies without CSRF protection caused widespread vulnerabilities, while `Strict` breaks legitimate OAuth flows.[^3]
+A: `Lax` allows the cookie on top-level navigations (clicking a link to the site) but not on background cross-site requests (CSRF attack vector). It was made the default because `SameSite=None` cookies without CSRF protection caused widespread vulnerabilities, while `Strict` breaks legitimate OAuth flows.
 
 ## C — Common Pitfalls
 

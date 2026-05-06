@@ -53,7 +53,7 @@ Good review comment structure:
 
 ## W — Why It Matters
 
-PR size is the single most predictive factor of review quality — research shows that reviewers find fewer defects per line in large PRs (>400 lines) because attention fatigue sets in. Small, focused PRs get faster, higher-quality reviews. The `[nit]` label convention prevents minor preferences from blocking important merges.[^3]
+PR size is the single most predictive factor of review quality — research shows that reviewers find fewer defects per line in large PRs (>400 lines) because attention fatigue sets in. Small, focused PRs get faster, higher-quality reviews. The `[nit]` label convention prevents minor preferences from blocking important merges.
 
 ## I — Interview Q&A
 

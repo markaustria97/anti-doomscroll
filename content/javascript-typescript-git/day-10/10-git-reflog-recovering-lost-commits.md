@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`git reflog` is Git's safety net — it logs every time HEAD moved in your local repo, keeping "lost" commits accessible for ~30 days even after reset, rebase, or branch deletion.[^11][^10]
+`git reflog` is Git's safety net — it logs every time HEAD moved in your local repo, keeping "lost" commits accessible for ~30 days even after reset, rebase, or branch deletion.
 
 ## K — Key Concepts
 
@@ -72,15 +72,15 @@ git reflog stash                # show all stash operations
 
 ## W — Why It Matters
 
-`git reflog` has saved countless engineers from "I just lost a week of work" moments. Unlike `git log` (only shows reachable commits), `reflog` shows every local HEAD movement — meaning commits "deleted" by `reset --hard`, wiped by a bad rebase, or on a force-deleted branch are all still there. It's local-only (not pushed to remotes), making it a private time machine.[^11][^10]
+`git reflog` has saved countless engineers from "I just lost a week of work" moments. Unlike `git log` (only shows reachable commits), `reflog` shows every local HEAD movement — meaning commits "deleted" by `reset --hard`, wiped by a bad rebase, or on a force-deleted branch are all still there. It's local-only (not pushed to remotes), making it a private time machine.
 
 ## I — Interview Q&A
 
 **Q: What's the difference between `git log` and `git reflog`?**
-A: `git log` shows commits reachable from the current HEAD — the history of your current branch. `git reflog` shows every time HEAD moved on your local machine — including to commits no longer reachable from any branch. Reflog is your undo history; log is your commit history.[^11]
+A: `git log` shows commits reachable from the current HEAD — the history of your current branch. `git reflog` shows every time HEAD moved on your local machine — including to commits no longer reachable from any branch. Reflog is your undo history; log is your commit history.
 
 **Q: How long are commits retained in the reflog?**
-A: Reachable commits (on a branch or tag): 90 days by default. Unreachable commits (from deleted branches, reset commits): 30 days. After that, `git gc` prunes them. You can extend with `git config gc.reflogExpireUnreachable "90 days"`.[^10]
+A: Reachable commits (on a branch or tag): 90 days by default. Unreachable commits (from deleted branches, reset commits): 30 days. After that, `git gc` prunes them. You can extend with `git config gc.reflogExpireUnreachable "90 days"`.
 
 ## C — Common Pitfalls
 

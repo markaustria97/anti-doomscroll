@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Well-known Symbols let your classes hook into built-in JS operations — `toPrimitive` controls coercion, `hasInstance` controls `instanceof`, `toStringTag` controls `Object.prototype.toString`.[^9][^8]
+Well-known Symbols let your classes hook into built-in JS operations — `toPrimitive` controls coercion, `hasInstance` controls `instanceof`, `toStringTag` controls `Object.prototype.toString`.
 
 ## K — Key Concepts
 
@@ -74,15 +74,15 @@ for await (const val of new AsyncStream()) {
 
 ## W — Why It Matters
 
-`Symbol.toPrimitive` is essential for building numeric or monetary value objects that work naturally in math expressions. `Symbol.toStringTag` is how you write proper type-checking utilities — the reliable type detection used by `lodash` and Axios. `Symbol.asyncIterator` is how Node.js readable streams and async generators implement `for await...of`.[^8][^9]
+`Symbol.toPrimitive` is essential for building numeric or monetary value objects that work naturally in math expressions. `Symbol.toStringTag` is how you write proper type-checking utilities — the reliable type detection used by `lodash` and Axios. `Symbol.asyncIterator` is how Node.js readable streams and async generators implement `for await...of`.
 
 ## I — Interview Q&A
 
 **Q: What are the three hints passed to `Symbol.toPrimitive`?**
-A: `"number"` (when a number is expected, e.g. `+obj`), `"string"` (when a string is expected, e.g. template literals), and `"default"` (ambiguous context, e.g. `==` or `+`).[^9]
+A: `"number"` (when a number is expected, e.g. `+obj`), `"string"` (when a string is expected, e.g. template literals), and `"default"` (ambiguous context, e.g. `==` or `+`).
 
 **Q: How does `Symbol.toStringTag` help with type checking?**
-A: `Object.prototype.toString.call(val)` returns `"[object Tag]"` where Tag comes from `Symbol.toStringTag`. It's more reliable than `typeof` or `instanceof` for built-in types like `Map`, `Set`, and `Promise` — and you can set it on your own classes.[^3]
+A: `Object.prototype.toString.call(val)` returns `"[object Tag]"` where Tag comes from `Symbol.toStringTag`. It's more reliable than `typeof` or `instanceof` for built-in types like `Map`, `Set`, and `Promise` — and you can set it on your own classes.
 
 ## C — Common Pitfalls
 

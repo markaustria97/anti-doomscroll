@@ -66,15 +66,15 @@ Annotated tag: a full Git object with its own SHA, tagger, message, GPG signatur
 
 ## W — Why It Matters
 
-The object model explains key Git behaviors: renaming a file doesn't create a new blob (same content = same SHA), identical files across branches share storage, and every commit is immutable (changing anything changes its SHA). This is why `git rebase` creates _new_ commits — it can't edit old ones.[^5]
+The object model explains key Git behaviors: renaming a file doesn't create a new blob (same content = same SHA), identical files across branches share storage, and every commit is immutable (changing anything changes its SHA). This is why `git rebase` creates _new_ commits — it can't edit old ones.
 
 ## I — Interview Q&A
 
 **Q: What is the difference between a blob and a tree in Git?**
-A: A blob stores raw file content with no metadata. A tree stores directory structure — mapping filenames and permissions to blob/tree SHAs. The filename lives in the tree, not the blob.[^6]
+A: A blob stores raw file content with no metadata. A tree stores directory structure — mapping filenames and permissions to blob/tree SHAs. The filename lives in the tree, not the blob.
 
 **Q: What is the difference between a lightweight tag and an annotated tag?**
-A: A lightweight tag is just a pointer (a file in `.git/refs/tags/`) to a commit SHA — like an immutable branch. An annotated tag is a full Git object with its own SHA, tagger identity, date, message, and optional GPG signature. Use annotated tags for releases; lightweight for personal bookmarks.[^7]
+A: A lightweight tag is just a pointer (a file in `.git/refs/tags/`) to a commit SHA — like an immutable branch. An annotated tag is a full Git object with its own SHA, tagger identity, date, message, and optional GPG signature. Use annotated tags for releases; lightweight for personal bookmarks.
 
 ## C — Common Pitfalls
 

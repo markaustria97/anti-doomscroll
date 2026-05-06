@@ -55,7 +55,7 @@ The event loop is the most-asked JavaScript interview concept at senior level. I
 ## I — Interview Q&A
 
 **Q: What is the event loop?**
-A: The event loop continuously checks: is the call stack empty? If yes, drain the entire microtask queue, then take one macrotask and push its callback onto the stack. This repeats indefinitely.[^5]
+A: The event loop continuously checks: is the call stack empty? If yes, drain the entire microtask queue, then take one macrotask and push its callback onto the stack. This repeats indefinitely.
 
 **Q: Why do microtasks run before macrotasks?**
 A: Microtasks represent continuations of the current operation (Promise resolutions, mutation observers). They have priority to complete before the engine yields control to the next external task. After every macrotask — and after every microtask — the engine drains the full microtask queue before moving on.

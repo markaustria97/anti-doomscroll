@@ -91,7 +91,7 @@ async function fetchUser(id: number): Promise<User> {
 
 ## W — Why It Matters
 
-`any` from `JSON.parse` or `res.json()` creates a type-safe looking codebase that crashes at runtime. The `unknown`-first + runtime validation pattern is what production TypeScript looks like — it's how tRPC, Next.js API routes, and any serious backend validates incoming data. Zod has become the standard library for this.[^5]
+`any` from `JSON.parse` or `res.json()` creates a type-safe looking codebase that crashes at runtime. The `unknown`-first + runtime validation pattern is what production TypeScript looks like — it's how tRPC, Next.js API routes, and any serious backend validates incoming data. Zod has become the standard library for this.
 
 ## I — Interview Q&A
 

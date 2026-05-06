@@ -80,7 +80,7 @@ git config --global pull.ff only        # only allow fast-forward
 
 ## W — Why It Matters
 
-`git fetch --prune` is a hygiene must — without it, your list of remote branches grows indefinitely with deleted branches nobody uses anymore. `pull --rebase` is the preferred strategy for most teams because it avoids cluttering history with "Merge branch 'main'" commits when integrating remote updates.[^7]
+`git fetch --prune` is a hygiene must — without it, your list of remote branches grows indefinitely with deleted branches nobody uses anymore. `pull --rebase` is the preferred strategy for most teams because it avoids cluttering history with "Merge branch 'main'" commits when integrating remote updates.
 
 ## I — Interview Q&A
 
