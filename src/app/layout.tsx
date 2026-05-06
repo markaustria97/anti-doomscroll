@@ -43,7 +43,7 @@ export default function RootLayout({
           swUrl="/serwist/sw.js"
           disable={process.env.NODE_ENV === "development"}
         >
-          <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+          <div className="fixed top-3 right-5 z-50 flex items-center gap-2">
             <SearchButton />
             <SearchBox />
           </div>
