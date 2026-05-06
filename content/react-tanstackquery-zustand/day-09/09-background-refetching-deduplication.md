@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Background refetching silently refreshes stale data while showing cached content; deduplication ensures only one network request fires no matter how many components subscribe to the same query key simultaneously.[^12][^3]
+Background refetching silently refreshes stale data while showing cached content; deduplication ensures only one network request fires no matter how many components subscribe to the same query key simultaneously.
 
 ## K — Key Concepts
 
-**Background refetching — the mechanics:**[^4]
+**Background refetching — the mechanics:**
 
 ```
 Scenario: 10 components all use queryKey: ["users"]
@@ -37,7 +37,7 @@ return (
 )
 ```
 
-**Deduplication — one request per key per render cycle:**[^12]
+**Deduplication — one request per key per render cycle:**
 
 ```jsx
 // 50 components using the same query key
@@ -92,18 +92,18 @@ function RefreshButton() {
 
 ## W — Why It Matters
 
-Deduplication means you can colocate queries close to the components that need them — no prop drilling, no "fetch high and pass down" architecture — without worrying about N+1 requests. Background refetching means users always see fresh data when they return to a tab, silently. Together these two behaviors make TanStack Query applications feel both fast and correct.[^12][^3]
+Deduplication means you can colocate queries close to the components that need them — no prop drilling, no "fetch high and pass down" architecture — without worrying about N+1 requests. Background refetching means users always see fresh data when they return to a tab, silently. Together these two behaviors make TanStack Query applications feel both fast and correct.
 
 ## I — Interview Q&A
 
 **Q: What is request deduplication in TanStack Query?**
-**A:** When multiple components subscribe to the same query key simultaneously, TanStack Query fires only one network request and shares the result with all subscribers. This happens both at initial mount (same render cycle) and during in-flight refetches (a second component mounting while a fetch is already in progress joins that fetch).[^12]
+**A:** When multiple components subscribe to the same query key simultaneously, TanStack Query fires only one network request and shares the result with all subscribers. This happens both at initial mount (same render cycle) and during in-flight refetches (a second component mounting while a fetch is already in progress joins that fetch).
 
 **Q: How do you show a background refresh indicator to the user?**
-**A:** Check `isFetching && !isPending`. `isFetching` is true during any fetch (including background). `!isPending` confirms cached data is already showing. Show a subtle non-blocking indicator (spinner in a corner, dimmed content) — not a full-page overlay.[^4]
+**A:** Check `isFetching && !isPending`. `isFetching` is true during any fetch (including background). `!isPending` confirms cached data is already showing. Show a subtle non-blocking indicator (spinner in a corner, dimmed content) — not a full-page overlay.
 
 **Q: Does `refetchInterval` run when the browser tab is in the background?**
-**A:** By default, no — polling pauses when the tab is not focused to conserve resources. Set `refetchIntervalInBackground: true` to override this and keep polling regardless of tab visibility. Use for critical real-time data like auction prices or live scores.[^4]
+**A:** By default, no — polling pauses when the tab is not focused to conserve resources. Set `refetchIntervalInBackground: true` to override this and keep polling regardless of tab visibility. Use for critical real-time data like auction prices or live scores.
 
 ## C — Common Pitfalls
 

@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-The `immer` middleware lets you write direct mutations inside `set()` — Immer converts them to safe immutable updates under the hood, eliminating all manual spreading for nested state.[^11]
+The `immer` middleware lets you write direct mutations inside `set()` — Immer converts them to safe immutable updates under the hood, eliminating all manual spreading for nested state.
 
 ## K — Key Concepts
 
-**Installing and enabling Immer:**[^11]
+**Installing and enabling Immer:**
 
 ```bash
 npm install immer
@@ -43,7 +43,7 @@ const useSettingsStore = create(
 )
 ```
 
-**Side-by-side comparison — without vs with Immer:**[^11]
+**Side-by-side comparison — without vs with Immer:**
 
 ```jsx
 // ❌ WITHOUT Immer — verbose spreading at every level
@@ -125,18 +125,18 @@ const useStore = create(
 
 ## W — Why It Matters
 
-At 2+ levels of nesting, manual spreading becomes the primary source of bugs — a missed spread deletes sibling data silently. Immer eliminates the entire class of spreading errors while keeping Zustand's simple `set` API. For any store with nested objects, Immer is the professional standard.[^11]
+At 2+ levels of nesting, manual spreading becomes the primary source of bugs — a missed spread deletes sibling data silently. Immer eliminates the entire class of spreading errors while keeping Zustand's simple `set` API. For any store with nested objects, Immer is the professional standard.
 
 ## I — Interview Q&A
 
 **Q: How does Immer middleware work with Zustand?**
-**A:** Immer wraps the `set` function. When you call `set(draft => { draft.x.y.z = value })`, Immer uses JavaScript Proxies to record your mutations against a draft copy of the state, then produces a new immutable object with only the changed parts updated. React sees a new reference and re-renders correctly.[^11]
+**A:** Immer wraps the `set` function. When you call `set(draft => { draft.x.y.z = value })`, Immer uses JavaScript Proxies to record your mutations against a draft copy of the state, then produces a new immutable object with only the changed parts updated. React sees a new reference and re-renders correctly.
 
 **Q: Does Immer mean you can mutate state anywhere in Zustand?**
-**A:** No — Immer only works inside the function passed to `set()`. The `draft` parameter inside the `set` callback is the Immer-proxied object. Outside of `set()`, the state object is still immutable and must not be mutated directly.[^11]
+**A:** No — Immer only works inside the function passed to `set()`. The `draft` parameter inside the `set` callback is the Immer-proxied object. Outside of `set()`, the state object is still immutable and must not be mutated directly.
 
 **Q: What is the performance cost of Immer?**
-**A:** Immer adds minimal overhead — Proxy-based mutation tracking is fast for typical app state sizes. The tradeoff in developer experience (no spreading errors) almost always outweighs the tiny runtime cost. For extremely performance-sensitive stores with gigantic state objects, manual spreading may be preferred.[^11]
+**A:** Immer adds minimal overhead — Proxy-based mutation tracking is fast for typical app state sizes. The tradeoff in developer experience (no spreading errors) almost always outweighs the tiny runtime cost. For extremely performance-sensitive stores with gigantic state objects, manual spreading may be preferred.
 
 ## C — Common Pitfalls
 

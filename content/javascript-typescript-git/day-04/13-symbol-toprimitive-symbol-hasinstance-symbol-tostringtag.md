@@ -10,67 +10,67 @@ Well-known Symbols let your classes hook into built-in JS operations — `toPrim
 // Symbol.toPrimitive — control type coercion
 class Money {
   constructor(amount, currency) {
-    this.amount = amount
-    this.currency = currency
+    this.amount = amount;
+    this.currency = currency;
   }
 
   [Symbol.toPrimitive](hint) {
-    if (hint === "number") return this.amount       // +money, math ops
-    if (hint === "string") return `${this.amount} ${this.currency}` // template literals
-    return this.amount  // "default" — == comparisons, +
+    if (hint === "number") return this.amount; // +money, math ops
+    if (hint === "string") return `${this.amount} ${this.currency}`; // template literals
+    return this.amount; // "default" — == comparisons, +
   }
 }
 
-const price = new Money(9.99, "USD")
-+price           // 9.99 (hint: "number")
-`Price: ${price}` // "Price: 9.99 USD" (hint: "string")
-price + 1        // 10.99 (hint: "default")
-price == 9.99    // true
+const price =
+  new Money(9.99, "USD") +
+  price // 9.99 (hint: "number")
+  `Price: ${price}`; // "Price: 9.99 USD" (hint: "string")
+price + 1; // 10.99 (hint: "default")
+price == 9.99; // true
 
 // Symbol.hasInstance — control instanceof behavior
 class EvenNumber {
   static [Symbol.hasInstance](num) {
-    return Number.isInteger(num) && num % 2 === 0
+    return Number.isInteger(num) && num % 2 === 0;
   }
 }
 
-2  instanceof EvenNumber  // true
-3  instanceof EvenNumber  // false
-4  instanceof EvenNumber  // true
-"2" instanceof EvenNumber // false
+2 instanceof EvenNumber; // true
+3 instanceof EvenNumber; // false
+4 instanceof EvenNumber; // true
+"2" instanceof EvenNumber; // false
 
 // Symbol.toStringTag — control Object.prototype.toString output
 class Database {
   get [Symbol.toStringTag]() {
-    return "Database"
+    return "Database";
   }
 }
 
-const db = new Database()
-Object.prototype.toString.call(db)  // "[object Database]"
+const db = new Database();
+Object.prototype.toString.call(db); // "[object Database]"
 // Without: "[object Object]"
 
 // Common built-in toStringTags
-Object.prototype.toString.call([])          // "[object Array]"
-Object.prototype.toString.call(new Map())   // "[object Map]"
-Object.prototype.toString.call(new Set())   // "[object Set]"
-Object.prototype.toString.call(Promise.resolve()) // "[object Promise]"
+Object.prototype.toString.call([]); // "[object Array]"
+Object.prototype.toString.call(new Map()); // "[object Map]"
+Object.prototype.toString.call(new Set()); // "[object Set]"
+Object.prototype.toString.call(Promise.resolve()); // "[object Promise]"
 
 // Symbol.asyncIterator — async iteration
 class AsyncStream {
   async *[Symbol.asyncIterator]() {
     for (let i = 0; i < 3; i++) {
-      await new Promise(r => setTimeout(r, 100))
-      yield i
+      await new Promise((r) => setTimeout(r, 100));
+      yield i;
     }
   }
 }
 
 for await (const val of new AsyncStream()) {
-  console.log(val)  // 0, 1, 2 — each 100ms apart
+  console.log(val); // 0, 1, 2 — each 100ms apart
 }
 ```
-
 
 ## W — Why It Matters
 
@@ -86,22 +86,23 @@ A: `Object.prototype.toString.call(val)` returns `"[object Tag]"` where Tag come
 
 ## C — Common Pitfalls
 
-| Pitfall | Fix |
-| :-- | :-- |
-| `Symbol.toPrimitive` not covering all hints | Always handle all three: `"number"`, `"string"`, `"default"` |
-| `Symbol.hasInstance` only works as static | Must be `static [Symbol.hasInstance]` — not an instance method |
+| Pitfall                                        | Fix                                                              |
+| :--------------------------------------------- | :--------------------------------------------------------------- |
+| `Symbol.toPrimitive` not covering all hints    | Always handle all three: `"number"`, `"string"`, `"default"`     |
+| `Symbol.hasInstance` only works as static      | Must be `static [Symbol.hasInstance]` — not an instance method   |
 | `Symbol.toStringTag` not appearing in `typeof` | It only affects `Object.prototype.toString.call()`, not `typeof` |
-| `for await...of` on non-async-iterable | Must implement `Symbol.asyncIterator`, not `Symbol.iterator` |
+| `for await...of` on non-async-iterable         | Must implement `Symbol.asyncIterator`, not `Symbol.iterator`     |
 
 ## K — Coding Challenge
 
 **Build a `Temperature` class that coerces correctly:**
 
 ```js
-const temp = new Temperature(100, "C")
-+temp             // 100 (numeric value)
-`${temp}`         // "100°C" (string display)
-temp > 50         // true (comparison uses number)
+const temp =
+  new Temperature(100, "C") +
+  temp // 100 (numeric value)
+  `${temp}`; // "100°C" (string display)
+temp > 50; // true (comparison uses number)
 ```
 
 **Solution:**
@@ -109,56 +110,17 @@ temp > 50         // true (comparison uses number)
 ```js
 class Temperature {
   constructor(value, unit) {
-    this.value = value
-    this.unit = unit
+    this.value = value;
+    this.unit = unit;
   }
 
   [Symbol.toPrimitive](hint) {
-    if (hint === "string") return `${this.value}°${this.unit}`
-    return this.value  // "number" and "default"
+    if (hint === "string") return `${this.value}°${this.unit}`;
+    return this.value; // "number" and "default"
   }
 
   get [Symbol.toStringTag]() {
-    return "Temperature"
+    return "Temperature";
   }
 }
 ```
-
-
-***
-
-> ✅ **Day 4 complete.**
-> Your tiny next action: implement `new` from scratch — write `myNew(Constructor, ...args)` in 4 lines from memory. That single function explains all of OOP in JavaScript.
-<span style="display:none">[^10][^11][^12][^13][^14][^15]</span>
-
-<div align="center">⁂</div>
-
-[^1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain
-
-[^2]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect
-
-[^3]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol
-
-[^4]: https://vipjavascript.com/blog/javascript-proxies-and-reflect-comprehensive-guide
-
-[^5]: https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Advanced_JavaScript_objects/Object_prototypes
-
-[^6]: https://www.linkedin.com/pulse/proxy-reflect-objects-javascript-sonu-tiwari-cxdnc
-
-[^7]: https://dev.to/italoqueiroz/the-secrets-of-proxies-intercepting-and-controlling-objects-in-javascript-14il
-
-[^8]: https://witch.work/en/posts/javascript-symbol-usage
-
-[^9]: https://www.javascripttutorial.net/symbol/
-
-[^10]: https://library.fridoverweij.com/docs/jstutorial/prototypes_and_inheritance.html
-
-[^11]: https://jsguides.dev/guides/javascript-prototypes/
-
-[^12]: https://javascript.info/prototype-methods
-
-[^13]: https://sandeep45.github.io/javascript/es6/2016/02/04/prototype-chain.html
-
-[^14]: https://udn.realityripple.com/docs/Learn/JavaScript/Objects/Object_prototypes
-
-[^15]: https://www.geeksforgeeks.org/javascript/understanding-the-prototype-chain-in-javascript/

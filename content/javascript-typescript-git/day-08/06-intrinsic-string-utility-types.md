@@ -53,7 +53,7 @@ type DirectionConst = Uppercase<Direction>
 
 ## W — Why It Matters
 
-These intrinsic types unlock string manipulation in the type system — essential for code generation, ORM type inference (e.g., Prisma generates typed `findByName`, `findByEmail`), and any API that follows naming conventions (React event props `onClick`, `onChange`, `onFocus`).[^7][^8]
+These intrinsic types unlock string manipulation in the type system — essential for code generation, ORM type inference (e.g., Prisma generates typed `findByName`, `findByEmail`), and any API that follows naming conventions (React event props `onClick`, `onChange`, `onFocus`).
 
 ## I — Interview Q&A
 
@@ -61,7 +61,7 @@ These intrinsic types unlock string manipulation in the type system — essentia
 A: It uppercases the first character of a string literal type. Combined with template literal types and mapped types, it generates camelCase property names — like turning `{ name, age }` into `{ getName, getAge }` at the type level.
 
 **Q: Are these types available at runtime?**
-A: No — `Uppercase`, `Capitalize`, etc. are purely compile-time constructs. At runtime, you'd use `str.toUpperCase()`, `str[^0].toUpperCase() + str.slice(1)`, etc.
+A: No — `Uppercase`, `Capitalize`, etc. are purely compile-time constructs. At runtime, you'd use `str.toUpperCase()`, `str.toUpperCase() + str.slice(1)`, etc.
 
 ## C — Common Pitfalls
 

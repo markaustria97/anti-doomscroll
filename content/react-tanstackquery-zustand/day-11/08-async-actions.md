@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Zustand actions are plain functions — async actions are just `async` functions inside the store that call `set()` multiple times to update loading, data, and error state throughout the async lifecycle.[^12]
+Zustand actions are plain functions — async actions are just `async` functions inside the store that call `set()` multiple times to update loading, data, and error state throughout the async lifecycle.
 
 ## K — Key Concepts
 
-**Async actions — no middleware needed:**[^12]
+**Async actions — no middleware needed:**
 
 ```jsx
 const usePostsStore = create((set) => ({
@@ -65,7 +65,7 @@ const useUserStore = create((set, get) => ({
 }))
 ```
 
-**IMPORTANT — but better with TanStack Query:**[^3][^12]
+**IMPORTANT — but better with TanStack Query:**
 
 ```jsx
 // ✅ Use Zustand async actions for:
@@ -124,18 +124,18 @@ const useUploadStore = create((set) => ({
 
 ## W — Why It Matters
 
-Zustand async actions are the cleanest pattern for client-driven async flows — auth, initialization, uploads — that don't benefit from TanStack Query's server-caching model. Multiple `set()` calls within a single async function give you granular loading state (loading, saving, uploading progress) that a `useQuery` `isPending` boolean can't express.[^12]
+Zustand async actions are the cleanest pattern for client-driven async flows — auth, initialization, uploads — that don't benefit from TanStack Query's server-caching model. Multiple `set()` calls within a single async function give you granular loading state (loading, saving, uploading progress) that a `useQuery` `isPending` boolean can't express.
 
 ## I — Interview Q&A
 
 **Q: Do Zustand async actions need special middleware like Redux thunks?**
-**A:** No — Zustand actions are plain JavaScript functions. Async functions just work. Call `set()` as many times as needed throughout the async flow. No special async middleware, no action creators, no dispatch.[^12]
+**A:** No — Zustand actions are plain JavaScript functions. Async functions just work. Call `set()` as many times as needed throughout the async flow. No special async middleware, no action creators, no dispatch.
 
 **Q: How do you read current state inside an async action after an `await`?**
-**A:** Use `get()` — it always returns the current state, even after awaited async operations. `set()` updater functions also receive current state, but between `await` calls, `get()` is the correct way to ensure you're reading the latest value (not a stale closure).[^1]
+**A:** Use `get()` — it always returns the current state, even after awaited async operations. `set()` updater functions also receive current state, but between `await` calls, `get()` is the correct way to ensure you're reading the latest value (not a stale closure).
 
 **Q: When should you use Zustand async actions vs TanStack Query?**
-**A:** Zustand for: auth flows, one-time initialization, client-only mutations (cart, UI preferences), and operations with complex loading stages. TanStack Query for: any data fetched from a server API that benefits from caching, background refetch, retry, or deduplication.[^3]
+**A:** Zustand for: auth flows, one-time initialization, client-only mutations (cart, UI preferences), and operations with complex loading stages. TanStack Query for: any data fetched from a server API that benefits from caching, background refetch, retry, or deduplication.
 
 ## C — Common Pitfalls
 

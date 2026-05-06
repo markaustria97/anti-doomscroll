@@ -93,7 +93,7 @@ git flow hotfix finish critical-bug   # merges to main + develop
 
 ## W — Why It Matters
 
-Signed commits are required by some organizations (financial, government, OSS) for supply chain security — verifying that a commit actually came from the claimed developer. Trunk-based development is the practice behind Google, Facebook, and Netflix's engineering velocity — short-lived branches eliminate the "merge hell" that kills team velocity at scale.[^7]
+Signed commits are required by some organizations (financial, government, OSS) for supply chain security — verifying that a commit actually came from the claimed developer. Trunk-based development is the practice behind Google, Facebook, and Netflix's engineering velocity — short-lived branches eliminate the "merge hell" that kills team velocity at scale.
 
 ## I — Interview Q&A
 

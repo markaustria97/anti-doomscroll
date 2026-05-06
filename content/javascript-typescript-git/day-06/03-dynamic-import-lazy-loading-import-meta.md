@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Dynamic `import()` returns a Promise — enabling code-splitting, conditional loading, and lazy loading of heavy modules only when needed.[^2]
+Dynamic `import()` returns a Promise — enabling code-splitting, conditional loading, and lazy loading of heavy modules only when needed.
 
 ## K — Key Concepts
 
@@ -58,7 +58,7 @@ const url = import.meta.resolve("./utils.js")
 
 ## W — Why It Matters
 
-Dynamic `import()` is what powers code splitting in Vite, Webpack, and Next.js — reducing initial bundle size by loading heavy modules only when actually needed. `import.meta.url` replaces the `__dirname`/`__filename` globals that don't exist in ES Modules.[^3]
+Dynamic `import()` is what powers code splitting in Vite, Webpack, and Next.js — reducing initial bundle size by loading heavy modules only when actually needed. `import.meta.url` replaces the `__dirname`/`__filename` globals that don't exist in ES Modules.
 
 ## I — Interview Q&A
 

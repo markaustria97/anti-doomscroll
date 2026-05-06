@@ -51,7 +51,6 @@ Good review comment structure:
 □ Separate refactoring from feature PRs — keeps changes focused
 ```
 
-
 ## W — Why It Matters
 
 PR size is the single most predictive factor of review quality — research shows that reviewers find fewer defects per line in large PRs (>400 lines) because attention fatigue sets in. Small, focused PRs get faster, higher-quality reviews. The `[nit]` label convention prevents minor preferences from blocking important merges.[^3]
@@ -66,11 +65,11 @@ A: Use `fixup!` or `squash!` prefixes: `git commit -m "fixup! feat(auth): add JW
 
 ## C — Common Pitfalls
 
-| Pitfall | Fix |
-| :-- | :-- |
-| Reviewing style/formatting in code review | Configure Prettier + ESLint in CI — auto-enforce, never manually review |
-| PRs >1000 lines — nobody reviews them properly | Break into multiple PRs; use feature flags to merge incomplete features safely |
-| Author resolving reviewer's threads before reviewer confirms | Only authors resolve their own threads; let reviewers resolve their own |
+| Pitfall                                                      | Fix                                                                            |
+| :----------------------------------------------------------- | :----------------------------------------------------------------------------- |
+| Reviewing style/formatting in code review                    | Configure Prettier + ESLint in CI — auto-enforce, never manually review        |
+| PRs >1000 lines — nobody reviews them properly               | Break into multiple PRs; use feature flags to merge incomplete features safely |
+| Author resolving reviewer's threads before reviewer confirms | Only authors resolve their own threads; let reviewers resolve their own        |
 
 ## K — Coding Challenge
 
@@ -93,42 +92,3 @@ A: Use `fixup!` or `squash!` prefixes: `git commit -m "fixup! feat(auth): add JW
 4. [question] Curious about approach vs existing helper — not required change
 5. [praise] Explicit positive feedback — acknowledge good decisions
 ```
-
-
-***
-
-> ✅ **Day 11 complete.**
-> Your tiny next action: open any repo you're actively working in and run `git log --oneline --graph --all --decorate`. Find the last merge or rebase, identify the tracking branch state with `git branch -vv`, and check if there are stale remote-tracking branches with `git remote show origin`. That 60-second inspection teaches you more about your repo's real state than a week of theory.
-<span style="display:none">[^11][^12][^13][^14][^15]</span>
-
-<div align="center">⁂</div>
-
-[^1]: https://git-scm.com/book/en/v2/Git-Branching-Remote-Branches
-
-[^2]: https://git-scm.com/book/ms/v2/Git-Basics-Working-with-Remotes
-
-[^3]: https://github.com/orgs/community/discussions/14866
-
-[^4]: https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
-
-[^5]: https://git-scm.com/docs/git-remote
-
-[^6]: https://stackoverflow.com/questions/4693588/what-is-a-tracking-branch
-
-[^7]: https://gist.github.com/71e36acbc3fd506f467e3287cc161135
-
-[^8]: https://www.linkedin.com/pulse/mastering-git-stash-rebase-squash-cherry-pick-reset-revert-r-pkfec
-
-[^9]: https://stackoverflow.com/questions/30986376/how-to-undo-a-successful-git-cherry-pick
-
-[^10]: https://www.youtube.com/watch?v=BBj5CrJBhaI
-
-[^11]: https://stackoverflow.com/questions/9537392/git-fetch-a-remote-branch
-
-[^12]: https://www.reddit.com/r/learnprogramming/comments/z2gsbh/using_git_remotely_what_does_it_mean_to_set_to/
-
-[^13]: https://stackoverflow.com/questions/41352043/is-there-any-difference-between-applying-stashed-changes-and-cherry-picking-cha
-
-[^14]: https://dev.to/ruqaiya_beguwala/git-branch-a-git-remote-show-origin-inspecting-remote-branches-10o2
-
-[^15]: https://dev.to/elayaraj31/day-5-git-rebase-git-stash-git-cherry-pick-2l06

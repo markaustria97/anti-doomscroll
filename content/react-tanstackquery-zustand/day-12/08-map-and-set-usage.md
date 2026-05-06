@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-`Map` and `Set` in Zustand require creating a new instance on every update — mutating in place doesn't change the reference, so React never re-renders.[^11]
+`Map` and `Set` in Zustand require creating a new instance on every update — mutating in place doesn't change the reference, so React never re-renders.
 
 ## K — Key Concepts
 
-**The core rule — always new instance:**[^11]
+**The core rule — always new instance:**
 
 ```jsx
 // ❌ WRONG — mutates in place, same Map reference → no re-render
@@ -21,7 +21,7 @@ set((state) => ({
 }))
 ```
 
-**Full Map CRUD pattern:**[^11]
+**Full Map CRUD pattern:**
 
 ```jsx
 const useUserMapStore = create((set) => ({
@@ -52,7 +52,7 @@ const useUserMapStore = create((set) => ({
 }))
 ```
 
-**Full Set CRUD pattern:**[^11]
+**Full Set CRUD pattern:**
 
 ```jsx
 const useSelectionStore = create((set) => ({
@@ -102,18 +102,18 @@ const useSelectionStore = create((set) => ({
 
 ## W — Why It Matters
 
-Map and Set are the most ergonomic data structures for key-value lookups and unique-value collections — but they're invisible to React's reference equality check when mutated in place. The `new Map(existing)` pattern is the idiomatic fix, and knowing when to use Map vs Object is a senior-level distinction.[^11]
+Map and Set are the most ergonomic data structures for key-value lookups and unique-value collections — but they're invisible to React's reference equality check when mutated in place. The `new Map(existing)` pattern is the idiomatic fix, and knowing when to use Map vs Object is a senior-level distinction.
 
 ## I — Interview Q&A
 
 **Q: Why do you need `new Map(state.map).set(key, value)` instead of `state.map.set(key, value)`?**
-**A:** `Map.prototype.set()` mutates the Map in place and returns the same Map instance. Zustand detects changes by reference equality — same reference means no re-render. `new Map(existing)` creates a new Map instance (triggering re-render) while copying all existing entries.[^11]
+**A:** `Map.prototype.set()` mutates the Map in place and returns the same Map instance. Zustand detects changes by reference equality — same reference means no re-render. `new Map(existing)` creates a new Map instance (triggering re-render) while copying all existing entries.
 
 **Q: Can you use `Map` with Zustand's `persist` middleware?**
-**A:** Not directly — `JSON.stringify(map)` produces `{}`. You need a custom storage serializer that converts the Map to an array of entries (`[...map.entries()]`) for storage and back to a `new Map(entries)` on rehydration.[^11]
+**A:** Not directly — `JSON.stringify(map)` produces `{}`. You need a custom storage serializer that converts the Map to an array of entries (`[...map.entries()]`) for storage and back to a `new Map(entries)` on rehydration.
 
 **Q: When should you use a `Map` instead of a plain object for store state?**
-**A:** When keys are dynamic IDs (string or number), when you need O(1) size, when you frequently add/delete entries by key, or when key order matters. For a fixed set of properties (like `{ theme, sidebar, user }`), plain objects are cleaner.[^11]
+**A:** When keys are dynamic IDs (string or number), when you need O(1) size, when you frequently add/delete entries by key, or when key order matters. For a fixed set of properties (like `{ theme, sidebar, user }`), plain objects are cleaner.
 
 ## C — Common Pitfalls
 

@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Cross-slice actions coordinate state changes across multiple slices in a single atomic operation — implemented using `get()` to read and call actions from other slices within the bounded store.[^5]
+Cross-slice actions coordinate state changes across multiple slices in a single atomic operation — implemented using `get()` to read and call actions from other slices within the bounded store.
 
 ## K — Key Concepts
 
-**3 patterns for cross-slice coordination:**[^1][^5]
+**3 patterns for cross-slice coordination:**
 
 ```jsx
 // PATTERN 1: Direct cross-slice call via get()
@@ -101,18 +101,18 @@ const createCartSlice = (set, get) => ({
 
 ## W — Why It Matters
 
-Cross-slice actions are what make the bounded store model genuinely powerful versus just having multiple independent stores. A logout that clears cart, resets filters, adds a notification, and cancels pending requests — happens atomically in one action call. With separate stores, you'd need to coordinate all of this in a component or service layer, which couples your UI code to state coordination logic.[^5]
+Cross-slice actions are what make the bounded store model genuinely powerful versus just having multiple independent stores. A logout that clears cart, resets filters, adds a notification, and cancels pending requests — happens atomically in one action call. With separate stores, you'd need to coordinate all of this in a component or service layer, which couples your UI code to state coordination logic.
 
 ## I — Interview Q&A
 
 **Q: How do you call an action from Slice A inside Slice B?**
-**A:** Use `get()` — it returns the entire combined store state including all other slices' actions. Inside Slice B's action, call `get().someActionFromSliceA()`. This works because all slices share the same store reference and their functions are merged into one state object.[^1][^5]
+**A:** Use `get()` — it returns the entire combined store state including all other slices' actions. Inside Slice B's action, call `get().someActionFromSliceA()`. This works because all slices share the same store reference and their functions are merged into one state object.
 
 **Q: What is an "orchestration slice" and when do you use one?**
-**A:** An orchestration slice (often `appSlice`) owns complex actions that coordinate multiple domains — initialization, checkout, full reset. It reads and updates state across all slices in a single operation. Use it when a workflow is too complex to belong to a single domain slice.[^5]
+**A:** An orchestration slice (often `appSlice`) owns complex actions that coordinate multiple domains — initialization, checkout, full reset. It reads and updates state across all slices in a single operation. Use it when a workflow is too complex to belong to a single domain slice.
 
 **Q: What's the difference between multiple `get()` calls vs a single `set()` with all changes?**
-**A:** Multiple sequential `set()` calls trigger one re-render per call — potentially inefficient. A single `set({ ...allChanges })` is atomic — one state update, one re-render cycle. For cross-slice updates, batch into one `set()` call whenever possible.[^2]
+**A:** Multiple sequential `set()` calls trigger one re-render per call — potentially inefficient. A single `set({ ...allChanges })` is atomic — one state update, one re-render cycle. For cross-slice updates, batch into one `set()` call whenever possible.
 
 ## C — Common Pitfalls
 

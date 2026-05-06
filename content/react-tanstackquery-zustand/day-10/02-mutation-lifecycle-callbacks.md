@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-`useMutation` provides four lifecycle callbacks — `onMutate`, `onSuccess`, `onError`, `onSettled` — that fire in sequence and share a `context` object for coordinating optimistic updates and rollbacks.[^2]
+`useMutation` provides four lifecycle callbacks — `onMutate`, `onSuccess`, `onError`, `onSettled` — that fire in sequence and share a `context` object for coordinating optimistic updates and rollbacks.
 
 ## K — Key Concepts
 
-**Callback execution order and signatures:**[^2]
+**Callback execution order and signatures:**
 
 ```jsx
 useMutation({
@@ -64,7 +64,7 @@ mutate(postData, {
 // Both fire: global first, then per-call
 ```
 
-**Awaiting invalidation in `onSettled`:**[^4]
+**Awaiting invalidation in `onSettled`:**
 
 ```jsx
 // ✅ Return the Promise from invalidateQueries
@@ -83,18 +83,18 @@ onSettled: () => {
 
 ## W — Why It Matters
 
-The lifecycle callback sequence — and especially the `context` object that flows from `onMutate` through `onError` — is the entire mechanism for optimistic updates and rollbacks. Understanding the order and signatures is what separates correctly implemented optimistic UI from buggy, race-condition-prone implementations.[^2]
+The lifecycle callback sequence — and especially the `context` object that flows from `onMutate` through `onError` — is the entire mechanism for optimistic updates and rollbacks. Understanding the order and signatures is what separates correctly implemented optimistic UI from buggy, race-condition-prone implementations.
 
 ## I — Interview Q&A
 
 **Q: What is the purpose of returning a value from `onMutate`?**
-**A:** The return value becomes the `context` argument in `onSuccess`, `onError`, and `onSettled`. This is how you pass a snapshot of the previous cache state from `onMutate` to `onError` for rollback — without this mechanism, you'd have no way to undo the optimistic update on failure.[^2]
+**A:** The return value becomes the `context` argument in `onSuccess`, `onError`, and `onSettled`. This is how you pass a snapshot of the previous cache state from `onMutate` to `onError` for rollback — without this mechanism, you'd have no way to undo the optimistic update on failure.
 
 **Q: When would you put invalidation in `onSuccess` vs `onSettled`?**
-**A:** `onSettled` is safer for invalidation — it fires regardless of success or error, ensuring the cache is always synced with the server even on failure. Use `onSuccess` only for side effects that should only happen on success (navigation, success toasts). For optimistic updates, always invalidate in `onSettled` to reconcile the cache.[^4][^2]
+**A:** `onSettled` is safer for invalidation — it fires regardless of success or error, ensuring the cache is always synced with the server even on failure. Use `onSuccess` only for side effects that should only happen on success (navigation, success toasts). For optimistic updates, always invalidate in `onSettled` to reconcile the cache.
 
 **Q: What happens if both global and per-call `onSuccess` callbacks are defined?**
-**A:** Both fire — the global callback first, then the per-call callback. This lets you define shared behavior (invalidation) globally and call-specific behavior (navigation, component-level state) per call.[^2]
+**A:** Both fire — the global callback first, then the per-call callback. This lets you define shared behavior (invalidation) globally and call-specific behavior (navigation, component-level state) per call.
 
 ## C — Common Pitfalls
 

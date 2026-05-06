@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`git revert` safely undoes a commit by creating a new "undo" commit — safe for shared branches; `git cherry-pick` copies a specific commit from any branch onto your current branch.[^9][^8]
+`git revert` safely undoes a commit by creating a new "undo" commit — safe for shared branches; `git cherry-pick` copies a specific commit from any branch onto your current branch.
 
 ## K — Key Concepts
 
@@ -63,7 +63,7 @@ git cherry-pick --abort            # cancel entirely
 
 ## W — Why It Matters
 
-`git revert` is the only correct way to undo commits on shared branches (`main`, `release`) — it doesn't rewrite history, so teammates aren't affected. `cherry-pick` is how release engineering works — a bug fix lands on `main` first, then gets cherry-picked to supported release branches.[^9]
+`git revert` is the only correct way to undo commits on shared branches (`main`, `release`) — it doesn't rewrite history, so teammates aren't affected. `cherry-pick` is how release engineering works — a bug fix lands on `main` first, then gets cherry-picked to supported release branches.
 
 ## I — Interview Q&A
 
@@ -71,7 +71,7 @@ git cherry-pick --abort            # cancel entirely
 A: Use `git revert` on any branch that has been pushed and shared — it creates a new undo commit without rewriting history. Use `git reset` only on local commits that haven't been pushed, or on personal branches where you're OK with force-pushing.
 
 **Q: What does `git revert -m 1` do when reverting a merge commit?**
-A: Merge commits have two parents. `-m 1` tells Git to treat parent 1 (the branch you were on when you merged) as the "mainline" — the state to revert TO. Without `-m`, Git doesn't know which side of the merge to keep.[^9]
+A: Merge commits have two parents. `-m 1` tells Git to treat parent 1 (the branch you were on when you merged) as the "mainline" — the state to revert TO. Without `-m`, Git doesn't know which side of the merge to keep.
 
 ## C — Common Pitfalls
 

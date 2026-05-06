@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Every query key has a single cache entry that moves through a defined lifecycle — from fetching to fresh to stale to inactive to garbage collected — and every observer (component) subscribes to the same entry.[^8][^9]
+Every query key has a single cache entry that moves through a defined lifecycle — from fetching to fresh to stale to inactive to garbage collected — and every observer (component) subscribes to the same entry.
 
 ## K — Key Concepts
 
-**The 5 stages of the cache lifecycle:**[^8][^9]
+**The 5 stages of the cache lifecycle:**
 
 ```
 1. LOADING (no cached data)
@@ -62,47 +62,46 @@ Mount #1       Mount #2 (later)    All unmount      gcTime expires
          ←staleTime→   ←─────────────────────gcTime──────────►
 ```
 
-**Cache invalidation — forcing a lifecycle reset:**[^6]
+**Cache invalidation — forcing a lifecycle reset:**
 
 ```jsx
 // Mark as stale immediately (overrides staleTime)
-queryClient.invalidateQueries({ queryKey: ["users"] })
+queryClient.invalidateQueries({ queryKey: ["users"] });
 // → Any mounted observer fires a background refetch immediately
 // → Unmounted observers will refetch on next mount
 
 // Remove from cache entirely (skips gcTime, immediate deletion)
-queryClient.removeQueries({ queryKey: ["users"] })
+queryClient.removeQueries({ queryKey: ["users"] });
 // → Next mount = cache MISS = full loading cycle
 
 // Reset (clear data + refetch active observers)
-queryClient.resetQueries({ queryKey: ["users"] })
+queryClient.resetQueries({ queryKey: ["users"] });
 // → Clears cached data + triggers fresh fetch on all active observers
 ```
 
-
 ## W — Why It Matters
 
-Understanding the lifecycle is what lets you reason confidently about cache behavior in complex scenarios: why does data appear instantly? Why does a spinner show after long inactivity? Why does a mutation need to invalidate queries? Every TanStack Query behavior maps to a specific lifecycle transition. It's the mental model that unifies all other cache concepts.[^9][^8]
+Understanding the lifecycle is what lets you reason confidently about cache behavior in complex scenarios: why does data appear instantly? Why does a spinner show after long inactivity? Why does a mutation need to invalidate queries? Every TanStack Query behavior maps to a specific lifecycle transition. It's the mental model that unifies all other cache concepts.
 
 ## I — Interview Q&A
 
 **Q: What happens to a cache entry when all its observing components unmount?**
-**A:** It transitions to `inactive` state — all refetch triggers stop, and the `gcTime` countdown begins. The data remains in memory until `gcTime` expires, then it's garbage collected. If a new component mounts before `gcTime` expires, it reuses the cached data (which may be stale, triggering a background refetch).[^8]
+**A:** It transitions to `inactive` state — all refetch triggers stop, and the `gcTime` countdown begins. The data remains in memory until `gcTime` expires, then it's garbage collected. If a new component mounts before `gcTime` expires, it reuses the cached data (which may be stale, triggering a background refetch).
 
 **Q: What is the difference between `invalidateQueries` and `removeQueries`?**
-**A:** `invalidateQueries` marks entries as stale and triggers background refetches for active observers — data stays in cache and is visible to users while refetching. `removeQueries` deletes entries from cache immediately — next mount is a cache miss with `isPending: true`.[^6]
+**A:** `invalidateQueries` marks entries as stale and triggers background refetches for active observers — data stays in cache and is visible to users while refetching. `removeQueries` deletes entries from cache immediately — next mount is a cache miss with `isPending: true`.
 
 **Q: Can two different components share the same cache entry?**
-**A:** Yes — this is TanStack Query's deduplication. Any number of components using the same `queryKey` all subscribe to the same cache entry. Only one network request fires regardless of how many observers there are, and all observers update simultaneously when the data changes.[^9]
+**A:** Yes — this is TanStack Query's deduplication. Any number of components using the same `queryKey` all subscribe to the same cache entry. Only one network request fires regardless of how many observers there are, and all observers update simultaneously when the data changes.
 
 ## C — Common Pitfalls
 
-| Pitfall | Fix |
-| :-- | :-- |
-| Calling `removeQueries` when you want to trigger a refresh | Use `invalidateQueries` — removes then refetch active observers; `removeQueries` causes a spinner |
-| Not invalidating queries after mutations | After write operations, call `invalidateQueries` with the affected key to sync server truth |
+| Pitfall                                                               | Fix                                                                                                                  |
+| :-------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| Calling `removeQueries` when you want to trigger a refresh            | Use `invalidateQueries` — removes then refetch active observers; `removeQueries` causes a spinner                    |
+| Not invalidating queries after mutations                              | After write operations, call `invalidateQueries` with the affected key to sync server truth                          |
 | Expecting re-render from `queryClient.setQueryData` without observers | `setQueryData` updates the cache, but only mounted observers re-render — unmounted ones get fresh data on next mount |
-| Long gcTime causing stale data to appear after long inactivity | Tune gcTime to match your data's acceptable age; use `refetchOnMount: "always"` for critical data |
+| Long gcTime causing stale data to appear after long inactivity        | Tune gcTime to match your data's acceptable age; use `refetchOnMount: "always"` for critical data                    |
 
 ## K — Coding Challenge
 
@@ -161,41 +160,3 @@ t=6:10  UserList mounts → CACHE MISS
         → isPending: true (full loading spinner shown)
         → Fresh fetch fires from scratch
 ```
-
-
-***
-
-> **Your tiny action right now:** Pick subtopic 7 or 9. Read the TL;DR and trace the timeline diagram mentally. Try the coding challenge on paper. You're done for this session.
-<span style="display:none">[^10][^11][^12][^13][^14][^15]</span>
-
-<div align="center">⁂</div>
-
-[^1]: https://tanstack.com/query/v5/docs/framework/solid/guides/important-defaults
-
-[^2]: https://github.com/TanStack/query/discussions/1685
-
-[^3]: https://tanstack.com/query/v4/docs/framework/react/guides/query-keys
-
-[^4]: https://www.wisp.blog/blog/managing-query-keys-for-cache-invalidation-in-react-query
-
-[^5]: https://tanstack.com/query/v3/docs/framework/react/guides/query-keys
-
-[^6]: https://github.com/TanStack/query/issues/4456
-
-[^7]: https://tanstack.com/query/v5/docs/framework/react/guides/migrating-to-v5
-
-[^8]: https://mintlify.wiki/TanStack/query/concepts/caching
-
-[^9]: https://www.mintlify.com/tanstack/query/essentials/overview
-
-[^10]: https://github.com/TanStack/query/blob/main/docs/framework/react/guides/important-defaults.md
-
-[^11]: https://github.com/TanStack/query/discussions/5695
-
-[^12]: https://zh-hant.tanstack.dev/query/v5/docs/framework/react/guides/important-defaults
-
-[^13]: https://github.com/TanStack/query/discussions/4107
-
-[^14]: https://blogflow.kr/tanstack-query-staletime-gctime/
-
-[^15]: https://wagmi.sh/react/guides/tanstack-query

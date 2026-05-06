@@ -74,7 +74,7 @@ const anything = whatever.you.want  // no errors anywhere in file
 ## I — Interview Q&A
 
 **Q: What's the difference between `@ts-ignore` and `@ts-expect-error`?**
-A: Both suppress the next line's TypeScript error. But `@ts-expect-error` will itself error if there's *no* TypeScript error on the next line — it forces you to remove it when it's no longer needed. `@ts-ignore` stays silently forever, even when the underlying issue is fixed. Always prefer `@ts-expect-error`.[^1]
+A: Both suppress the next line's TypeScript error. But `@ts-expect-error` will itself error if there's *no* TypeScript error on the next line — it forces you to remove it when it's no longer needed. `@ts-ignore` stays silently forever, even when the underlying issue is fixed. Always prefer `@ts-expect-error`.
 
 **Q: Why is `as unknown as T` dangerous?**
 A: It bypasses TypeScript's structural overlap check — even completely unrelated types can be double-cast. At runtime, the actual value is still the original type; the assertion is a compile-time lie. If the shape doesn't match at runtime, you get undetected crashes.

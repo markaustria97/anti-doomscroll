@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`useReducer` manages complex state with a pure reducer function — use it when state has multiple sub-values, transitions follow rules, or the next state depends on the previous state in non-trivial ways.[^1]
+`useReducer` manages complex state with a pure reducer function — use it when state has multiple sub-values, transitions follow rules, or the next state depends on the previous state in non-trivial ways.
 
 ## K — Key Concepts
 
@@ -82,7 +82,7 @@ function SignupForm() {
 
 ## W — Why It Matters
 
-`useReducer` is the right tool when state transitions need to be predictable, testable, and readable — especially for forms, wizards, data-fetching states, and game logic. It also unlocks the **reducer + context** pattern (covered next), which is the React-native alternative to Redux for app-wide state.[^4][^1]
+`useReducer` is the right tool when state transitions need to be predictable, testable, and readable — especially for forms, wizards, data-fetching states, and game logic. It also unlocks the **reducer + context** pattern (covered next), which is the React-native alternative to Redux for app-wide state.
 
 ## I — Interview Q&A
 

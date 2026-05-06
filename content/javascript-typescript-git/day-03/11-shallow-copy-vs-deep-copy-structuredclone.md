@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Shallow copy duplicates only the top level — nested objects are still shared references. `structuredClone` is the modern way to deep copy, handling `Date`, `Map`, `Set`, and circular references. [^2]
+Shallow copy duplicates only the top level — nested objects are still shared references. `structuredClone` is the modern way to deep copy, handling `Date`, `Map`, `Set`, and circular references. 
 
 ## K — Key Concepts
 
@@ -66,15 +66,15 @@ JSON.stringify({
 
 ## W — Why It Matters
 
-Shallow copy bugs are one of the most common React/Redux bugs — updating nested state in place causes silent rendering failures. `structuredClone` (available in Node 17+ and all modern browsers) replaces the fragile `JSON.parse/stringify` pattern for most use cases. [^9][^2]
+Shallow copy bugs are one of the most common React/Redux bugs — updating nested state in place causes silent rendering failures. `structuredClone` (available in Node 17+ and all modern browsers) replaces the fragile `JSON.parse/stringify` pattern for most use cases. 
 
 ## I — Interview Q&A
 
 **Q: What does `structuredClone` handle that `JSON.parse(JSON.stringify())` doesn't?**
-A: `structuredClone` preserves `Date` objects as Dates (not strings), copies `Map`/`Set` correctly, handles circular references without crashing, and preserves `undefined`, `NaN`, and `Infinity`. [^1][^2]
+A: `structuredClone` preserves `Date` objects as Dates (not strings), copies `Map`/`Set` correctly, handles circular references without crashing, and preserves `undefined`, `NaN`, and `Infinity`. 
 
 **Q: Can `structuredClone` clone functions?**
-A: No — it throws a `DataCloneError`. Functions are not part of the Structured Clone Algorithm. Use libraries like Lodash's `_.cloneDeep` if you need to copy objects with functions. [^11]
+A: No — it throws a `DataCloneError`. Functions are not part of the Structured Clone Algorithm. Use libraries like Lodash's `_.cloneDeep` if you need to copy objects with functions. 
 
 ## C — Common Pitfalls
 

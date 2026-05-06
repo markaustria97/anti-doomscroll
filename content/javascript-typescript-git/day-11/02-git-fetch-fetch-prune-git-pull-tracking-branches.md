@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`fetch` downloads remote changes without touching your working directory; `pull` is `fetch` + merge (or rebase); tracking branches are the local-to-remote links that make `git pull` know where to pull from.[^1][^2]
+`fetch` downloads remote changes without touching your working directory; `pull` is `fetch` + merge (or rebase); tracking branches are the local-to-remote links that make `git pull` know where to pull from.
 
 ## K — Key Concepts
 
@@ -81,7 +81,7 @@ git config --global pull.ff only        # only allow fast-forward
 
 ## W — Why It Matters
 
-`git fetch --prune` is a hygiene must — without it, your list of remote branches grows indefinitely with deleted branches nobody uses anymore. `pull --rebase` is the preferred strategy for most teams because it avoids cluttering history with "Merge branch 'main'" commits when integrating remote updates.[^7][^1]
+`git fetch --prune` is a hygiene must — without it, your list of remote branches grows indefinitely with deleted branches nobody uses anymore. `pull --rebase` is the preferred strategy for most teams because it avoids cluttering history with "Merge branch 'main'" commits when integrating remote updates.
 
 ## I — Interview Q&A
 

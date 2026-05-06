@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-`useImperativeHandle` lets you customize what a parent receives when it holds a ref to your component — expose a minimal, controlled API instead of the raw DOM node.[^6][^1]
+`useImperativeHandle` lets you customize what a parent receives when it holds a ref to your component — expose a minimal, controlled API instead of the raw DOM node.
 
 ## K — Key Concepts
 
-**The problem it solves:**[^6]
+**The problem it solves:**
 
 By default, `forwardRef` gives the parent *full access* to the raw DOM node — they can call any method or mutate any style. `useImperativeHandle` lets you expose only the methods you choose.
 
@@ -52,7 +52,7 @@ function Form() {
 }
 ```
 
-**React 19 note:** In React 19, function components accept `ref` as a regular prop — `forwardRef` is no longer required. But `useImperativeHandle` still works the same way for customizing the exposed handle.[^5]
+**React 19 note:** In React 19, function components accept `ref` as a regular prop — `forwardRef` is no longer required. But `useImperativeHandle` still works the same way for customizing the exposed handle.
 
 **When to use it:**
 
@@ -66,15 +66,15 @@ function Form() {
 
 ## W — Why It Matters
 
-`useImperativeHandle` enforces encapsulation at the ref level. Without it, any component holding a ref can reach in and mutate any DOM property — breaking your component's internal invariants. With it, you define a clean, minimal imperative API — the same principle as information hiding in OOP.[^7][^6]
+`useImperativeHandle` enforces encapsulation at the ref level. Without it, any component holding a ref can reach in and mutate any DOM property — breaking your component's internal invariants. With it, you define a clean, minimal imperative API — the same principle as information hiding in OOP.
 
 ## I — Interview Q&A
 
 **Q: What is `useImperativeHandle` and why would you use it?**
-**A:** It customizes what a parent component receives when it holds a `ref` to your component. Instead of exposing the raw DOM node, you expose only the methods you explicitly define — giving you encapsulation and a controlled imperative API.[^1]
+**A:** It customizes what a parent component receives when it holds a `ref` to your component. Instead of exposing the raw DOM node, you expose only the methods you explicitly define — giving you encapsulation and a controlled imperative API.
 
 **Q: What is the relationship between `forwardRef` and `useImperativeHandle`?**
-**A:** `forwardRef` passes a ref from parent to child so the child can attach it. `useImperativeHandle` takes that forwarded ref and replaces what it points to with a custom object. You use both together: `forwardRef` to receive the ref, `useImperativeHandle` to customize what gets exposed through it.[^6]
+**A:** `forwardRef` passes a ref from parent to child so the child can attach it. `useImperativeHandle` takes that forwarded ref and replaces what it points to with a custom object. You use both together: `forwardRef` to receive the ref, `useImperativeHandle` to customize what gets exposed through it.
 
 **Q: When should you NOT use `useImperativeHandle`?**
 **A:** Avoid it when you can solve the problem declaratively with props and state. It's an escape hatch — if you find yourself needing it frequently in app code (not library code), it's a signal to rethink your component architecture.

@@ -85,7 +85,7 @@ git push origin --delete feature/user-onboarding  # clean up remote (GitHub does
 
 ## W — Why It Matters
 
-GitHub Flow's core principle — `main` is always deployable — forces teams to practice continuous integration. Small, short-lived branches reduce merge conflict frequency. PRs create a documented record of every decision, making `git blame` actually useful when you ask "why was this code written this way?"[^4]
+GitHub Flow's core principle — `main` is always deployable — forces teams to practice continuous integration. Small, short-lived branches reduce merge conflict frequency. PRs create a documented record of every decision, making `git blame` actually useful when you ask "why was this code written this way?"
 
 ## I — Interview Q&A
 

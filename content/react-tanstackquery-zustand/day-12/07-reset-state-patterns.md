@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Reset patterns in Zustand — resetting one slice, all state, or returning to initial values — are implemented by storing the initial state outside the store and using `set(initialState, true)` for full replacement.[^9]
+Reset patterns in Zustand — resetting one slice, all state, or returning to initial values — are implemented by storing the initial state outside the store and using `set(initialState, true)` for full replacement.
 
 ## K — Key Concepts
 
@@ -119,18 +119,18 @@ beforeEach(() => useTestableStore.reset())  // ← clean state before each test 
 
 ## W — Why It Matters
 
-Reset patterns are critical for three scenarios: logout (clear all user data), testing (fresh state per test), and error recovery (return to safe state after a failure). Without a deliberate reset strategy, you risk stale auth data persisting after logout, test contamination, and no clean way to recover from corrupted state.[^9]
+Reset patterns are critical for three scenarios: logout (clear all user data), testing (fresh state per test), and error recovery (return to safe state after a failure). Without a deliberate reset strategy, you risk stale auth data persisting after logout, test contamination, and no clean way to recover from corrupted state.
 
 ## I — Interview Q&A
 
 **Q: What is the cleanest way to implement a logout that resets all store state?**
-**A:** Define initial state constants outside the store, then call `set({ ...initialAuthState, ...initialCartState, ...initialUIState }, true)` with `replace: true` in the logout action. The `true` replaces the entire store atomically — no stale values remain.[^9]
+**A:** Define initial state constants outside the store, then call `set({ ...initialAuthState, ...initialCartState, ...initialUIState }, true)` with `replace: true` in the logout action. The `true` replaces the entire store atomically — no stale values remain.
 
 **Q: Why do you store initial state outside `create()`?**
-**A:** To make it accessible from the reset action without re-creating the store. If initial state is only inside `create()`, the reset action has no reference to it. Storing it as a module-level constant means both the initial spread AND the reset action can use the same source of truth.[^9]
+**A:** To make it accessible from the reset action without re-creating the store. If initial state is only inside `create()`, the reset action has no reference to it. Storing it as a module-level constant means both the initial spread AND the reset action can use the same source of truth.
 
 **Q: How do you reset Zustand stores between tests?**
-**A:** Use the factory pattern — wrap `create()` to capture initial state and expose a `.reset()` method. Call `store.reset()` in `beforeEach()`. This ensures each test starts with a known state. For simpler cases, call `store.setState(initialState, true)` directly in test setup.[^9]
+**A:** Use the factory pattern — wrap `create()` to capture initial state and expose a `.reset()` method. Call `store.reset()` in `beforeEach()`. This ensures each test starts with a known state. For simpler cases, call `store.setState(initialState, true)` directly in test setup.
 
 ## C — Common Pitfalls
 

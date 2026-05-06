@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`useContext` reads a value from the nearest matching Context provider above it in the tree — eliminating prop drilling for values needed by many components at different depths.[^4]
+`useContext` reads a value from the nearest matching Context provider above it in the tree — eliminating prop drilling for values needed by many components at different depths.
 
 ## K — Key Concepts
 
@@ -36,7 +36,7 @@ function Button() {
 }
 ```
 
-**Context does NOT replace all state:**[^5]
+**Context does NOT replace all state:**
 
 
 | Scenario | Best Tool |
@@ -66,7 +66,7 @@ function App() {
 
 ## W — Why It Matters
 
-Context solves prop drilling — but it's also commonly overused, causing performance issues when high-frequency values (like mouse position) are put in context. Knowing *what* belongs in context and *how* to split it by update frequency is a critical senior skill.[^5][^4]
+Context solves prop drilling — but it's also commonly overused, causing performance issues when high-frequency values (like mouse position) are put in context. Knowing *what* belongs in context and *how* to split it by update frequency is a critical senior skill.
 
 ## I — Interview Q&A
 

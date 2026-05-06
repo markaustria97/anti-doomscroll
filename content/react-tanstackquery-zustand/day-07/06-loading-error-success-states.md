@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-TanStack Query gives you granular boolean flags for every fetch state — use `isPending` for first load, `isFetching` for background refresh, and `isError` for failures, with structured error objects.[^2]
+TanStack Query gives you granular boolean flags for every fetch state — use `isPending` for first load, `isFetching` for background refresh, and `isError` for failures, with structured error objects.
 
 ## K — Key Concepts
 
-**The full status matrix:**[^2]
+**The full status matrix:**
 
 ```jsx
 // Status: the primary state machine
@@ -96,7 +96,7 @@ queryFn: async () => {
 
 ## W — Why It Matters
 
-Handling all three states — loading, error, success — is what separates polished production apps from prototypes. Missing the error state means users see blank screens. Missing the `isFetching` vs `isPending` distinction means either unnecessary full-page loading spinners or no feedback during background refreshes.[^3][^2]
+Handling all three states — loading, error, success — is what separates polished production apps from prototypes. Missing the error state means users see blank screens. Missing the `isFetching` vs `isPending` distinction means either unnecessary full-page loading spinners or no feedback during background refreshes.
 
 ## I — Interview Q&A
 
@@ -107,7 +107,7 @@ Handling all three states — loading, error, success — is what separates poli
 **A:** An error UI with the error message, a retry button (call `refetch()`), and — if the query has stale cached data — optionally still show it with a warning. Always render something meaningful rather than a blank screen.
 
 **Q: What is `placeholderData` and how does it differ from `initialData`?**
-**A:** `placeholderData` shows synthetic placeholder content while the real data loads — it's not cached and doesn't affect the cache. `initialData` pre-populates the cache with real data (from SSR or another query) — it counts as real data and respects `staleTime`.[^9]
+**A:** `placeholderData` shows synthetic placeholder content while the real data loads — it's not cached and doesn't affect the cache. `initialData` pre-populates the cache with real data (from SSR or another query) — it counts as real data and respects `staleTime`.
 
 ## C — Common Pitfalls
 

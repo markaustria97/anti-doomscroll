@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`AbortController` lets you cancel any `fetch` request (or any async operation that accepts a `signal`) — critical for preventing stale responses in React and implementing request timeouts.[^4]
+`AbortController` lets you cancel any `fetch` request (or any async operation that accepts a `signal`) — critical for preventing stale responses in React and implementing request timeouts.
 
 ## K — Key Concepts
 
@@ -76,7 +76,7 @@ async function fetchWithRetry(url, { signal, retries = 3 } = {}) {
 
 ## W — Why It Matters
 
-In React, every data-fetching `useEffect` should return a cleanup function that aborts the fetch — otherwise a component unmounted mid-fetch can still call `setState` on an unmounted component (warning) or process stale data. `AbortSignal.timeout` replaces the manual `race` + `setTimeout` timeout pattern.[^8][^4]
+In React, every data-fetching `useEffect` should return a cleanup function that aborts the fetch — otherwise a component unmounted mid-fetch can still call `setState` on an unmounted component (warning) or process stale data. `AbortSignal.timeout` replaces the manual `race` + `setTimeout` timeout pattern.
 
 ## I — Interview Q&A
 
@@ -84,7 +84,7 @@ In React, every data-fetching `useEffect` should return a cleanup function that 
 A: Use `AbortSignal.timeout(ms)` (modern) or `const id = setTimeout(() => controller.abort(), ms)` (legacy). The fetch rejects with an `AbortError` when the signal fires. Always check `err.name === "AbortError"` to distinguish from network errors.
 
 **Q: Why does every React `useEffect` fetch need an AbortController?**
-A: If the component unmounts or the effect re-runs (e.g., a prop changed) before the fetch completes, you'll call `setState` on a stale or unmounted component. Aborting in the cleanup function prevents this and cancels the unnecessary network request.[^9]
+A: If the component unmounts or the effect re-runs (e.g., a prop changed) before the fetch completes, you'll call `setState` on a stale or unmounted component. Aborting in the cleanup function prevents this and cancels the unnecessary network request.
 
 ## C — Common Pitfalls
 

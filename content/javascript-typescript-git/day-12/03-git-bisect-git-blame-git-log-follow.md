@@ -73,7 +73,7 @@ git log -S "getUser" --all --oneline  # commits that added/removed "getUser"
 
 ## W — Why It Matters
 
-`git bisect run` is the most underused Git feature — it can find which commit introduced a bug across 1000 commits in 10 automated test runs. Without it, developers spend hours reading git log trying to guess. `git blame -C` (detect moved code) prevents false accusations — line moved from another file doesn't make that author the bug author.[^1]
+`git bisect run` is the most underused Git feature — it can find which commit introduced a bug across 1000 commits in 10 automated test runs. Without it, developers spend hours reading git log trying to guess. `git blame -C` (detect moved code) prevents false accusations — line moved from another file doesn't make that author the bug author.
 
 ## I — Interview Q&A
 

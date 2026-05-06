@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Symbols are unique, non-string, non-enumerable keys — use them to add metadata or extension hooks to objects without any risk of name collision.[^3]
+Symbols are unique, non-string, non-enumerable keys — use them to add metadata or extension hooks to objects without any risk of name collision.
 
 ## K — Key Concepts
 
@@ -58,7 +58,7 @@ Symbols are how library authors add non-interfering hooks to user objects. `Symb
 A: Symbols are guaranteed unique — you can't accidentally collide with existing string keys. They're also non-enumerable, so they don't appear in `Object.keys`, `for...in`, or `JSON.stringify`. Perfect for metadata and extension points.
 
 **Q: What's the difference between `Symbol()` and `Symbol.for()`?**
-A: `Symbol()` always creates a new unique symbol — even with the same description. `Symbol.for(key)` looks up or creates a symbol in the global registry — the same string key always returns the same symbol, making it shareable across modules.[^3]
+A: `Symbol()` always creates a new unique symbol — even with the same description. `Symbol.for(key)` looks up or creates a symbol in the global registry — the same string key always returns the same symbol, making it shareable across modules.
 
 ## C — Common Pitfalls
 

@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Mapped types iterate over a union to produce a new object type — `+`/`-` modifiers add/remove `readonly`/`?`; `as` clause renames keys using template literals.[^8][^7]
+Mapped types iterate over a union to produce a new object type — `+`/`-` modifiers add/remove `readonly`/`?`; `as` clause renames keys using template literals.
 
 ## K — Key Concepts
 
@@ -69,7 +69,7 @@ type MethodGetters<T> = {
 
 ## W — Why It Matters
 
-Key remapping with `as` + `never` is how you build type-level filters. It's how Prisma generates `findByName`, `findByEmail` typed methods, how form libraries auto-generate error types matching your schema shape, and how type-safe event systems work.[^7][^8]
+Key remapping with `as` + `never` is how you build type-level filters. It's how Prisma generates `findByName`, `findByEmail` typed methods, how form libraries auto-generate error types matching your schema shape, and how type-safe event systems work.
 
 ## I — Interview Q&A
 

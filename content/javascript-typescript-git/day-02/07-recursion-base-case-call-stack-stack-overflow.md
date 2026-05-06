@@ -31,7 +31,7 @@ function flatten(arr) {
   return arr.reduce((flat, item) =>
     flat.concat(Array.isArray(item) ? flatten(item) : item), [])
 }
-flatten([1, [2, [3, [^4]]]])  // [1, 2, 3, 4]
+flatten([1, [2, [3, ]]])  // [1, 2, 3, 4]
 
 // Tree traversal (classic recursive use case)
 function sumTree(node) {

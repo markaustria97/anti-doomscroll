@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-`useMutation` is TanStack Query's hook for write operations — create, update, delete — giving you mutation lifecycle states, callbacks, and error handling without managing a single piece of `useState`.[^2]
+`useMutation` is TanStack Query's hook for write operations — create, update, delete — giving you mutation lifecycle states, callbacks, and error handling without managing a single piece of `useState`.
 
 ## K — Key Concepts
 
-**Full anatomy of `useMutation` (v5):**[^2]
+**Full anatomy of `useMutation` (v5):**
 
 ```jsx
 import { useMutation } from "@tanstack/react-query"
@@ -91,18 +91,18 @@ idle → pending (mutate() called)
 
 ## W — Why It Matters
 
-Before `useMutation`, developers hand-wrote `isLoading` booleans, `try/catch` blocks, and success/error toast logic inside every event handler. `useMutation` centralizes the write contract — one hook owns the mutation state, callbacks provide clean lifecycle hooks, and `variables` enables instant optimistic UI before the response arrives.[^2]
+Before `useMutation`, developers hand-wrote `isLoading` booleans, `try/catch` blocks, and success/error toast logic inside every event handler. `useMutation` centralizes the write contract — one hook owns the mutation state, callbacks provide clean lifecycle hooks, and `variables` enables instant optimistic UI before the response arrives.
 
 ## I — Interview Q&A
 
 **Q: What is the difference between `mutate` and `mutateAsync`?**
-**A:** `mutate` is fire-and-forget — errors are caught by `onError` and won't propagate as unhandled rejections. `mutateAsync` returns a Promise — you `await` it and handle errors with `try/catch`. Use `mutateAsync` when you need the server response (e.g., to navigate to the created resource's page).[^2]
+**A:** `mutate` is fire-and-forget — errors are caught by `onError` and won't propagate as unhandled rejections. `mutateAsync` returns a Promise — you `await` it and handle errors with `try/catch`. Use `mutateAsync` when you need the server response (e.g., to navigate to the created resource's page).
 
 **Q: Why do mutations default to `retry: 0` while queries default to `retry: 3`?**
-**A:** Queries are idempotent reads — retrying is always safe. Mutations have side effects — retrying a failed `POST /orders` could create duplicate orders. Mutations should only retry when you're certain they're idempotent (e.g., a PUT with an idempotency key).[^2]
+**A:** Queries are idempotent reads — retrying is always safe. Mutations have side effects — retrying a failed `POST /orders` could create duplicate orders. Mutations should only retry when you're certain they're idempotent (e.g., a PUT with an idempotency key).
 
 **Q: What does `variables` on the mutation result contain?**
-**A:** The exact argument passed to the last `mutate()` call. This is available immediately — even before the server responds — making it useful for optimistic UI: render the pending state using `variables` while the request is in flight.[^4][^2]
+**A:** The exact argument passed to the last `mutate()` call. This is available immediately — even before the server responds — making it useful for optimistic UI: render the pending state using `variables` while the request is in flight.
 
 ## C — Common Pitfalls
 

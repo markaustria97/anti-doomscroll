@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`useCallback` memoizes a function definition so its reference stays stable between renders — primarily used to prevent unnecessary re-renders in `React.memo` children that receive the function as a prop.[^1]
+`useCallback` memoizes a function definition so its reference stays stable between renders — primarily used to prevent unnecessary re-renders in `React.memo` children that receive the function as a prop.
 
 ## K — Key Concepts
 
@@ -72,7 +72,7 @@ Without either half → optimization has no effect
 
 ## W — Why It Matters
 
-`useCallback` without `React.memo` on the child is completely useless — the child re-renders anyway. `React.memo` without stable callback props is also useless — the "new" function reference breaks the memo. Understanding this two-part contract is what separates surface-level optimization knowledge from real understanding.[^1]
+`useCallback` without `React.memo` on the child is completely useless — the child re-renders anyway. `React.memo` without stable callback props is also useless — the "new" function reference breaks the memo. Understanding this two-part contract is what separates surface-level optimization knowledge from real understanding.
 
 ## I — Interview Q&A
 

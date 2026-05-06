@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-`staleTime` controls when data needs refreshing; `gcTime` controls when unused cache entries are deleted from memory — they operate on completely different dimensions.[^7][^8][^2]
+`staleTime` controls when data needs refreshing; `gcTime` controls when unused cache entries are deleted from memory — they operate on completely different dimensions.
 
 ## K — Key Concepts
 
-**The critical distinction:**[^7][^2]
+**The critical distinction:**
 
 ```
 staleTime: How long data is "fresh" → controls REFETCH behavior
@@ -43,7 +43,7 @@ Fetch     staleTime       gcTime (from when inactive)
                                (unmounted)
 ```
 
-**Common configurations by use case:**[^8][^2]
+**Common configurations by use case:**
 
 ```jsx
 // High-frequency live data (notifications, prices)
@@ -63,24 +63,24 @@ staleTime: 1000 * 60 * 5     // 5 min fresh
 gcTime: 1000 * 60 * 30       // 30 min in memory — preserves back navigation cache
 ```
 
-**Why `gcTime` was renamed from `cacheTime` in v5:**[^7]
+**Why `gcTime` was renamed from `cacheTime` in v5:**
 
 The old name `cacheTime` implied "how long data is cached" — misleading because data IS in the cache during `staleTime` too. The rename to `gcTime` (garbage collection time) accurately describes what it does: it's the delay before unused entries are garbage-collected.
 
 ## W — Why It Matters
 
-Confusing `staleTime` with `gcTime` is the most common TanStack Query misconception. Setting `gcTime: 0` doesn't prevent refetches — it just deletes data from memory faster. Setting `staleTime: Infinity` doesn't keep data in memory forever — `gcTime` still controls deletion. Getting these two right is the foundation of intelligent cache design.[^7][^2]
+Confusing `staleTime` with `gcTime` is the most common TanStack Query misconception. Setting `gcTime: 0` doesn't prevent refetches — it just deletes data from memory faster. Setting `staleTime: Infinity` doesn't keep data in memory forever — `gcTime` still controls deletion. Getting these two right is the foundation of intelligent cache design.
 
 ## I — Interview Q&A
 
 **Q: What is the difference between `staleTime` and `gcTime`?**
-**A:** `staleTime` defines the freshness window — during it, no background refetch fires regardless of triggers. `gcTime` defines how long an unused (inactive, no observers) cache entry stays in memory before being garbage collected. They control different things: refetch behavior vs. memory management.[^8][^7]
+**A:** `staleTime` defines the freshness window — during it, no background refetch fires regardless of triggers. `gcTime` defines how long an unused (inactive, no observers) cache entry stays in memory before being garbage collected. They control different things: refetch behavior vs. memory management.
 
 **Q: Can data be stale but still in the cache?**
 **A:** Yes — stale means "eligible for background refetch," not "deleted." Data can be stale for the entire `gcTime` duration. It's only removed from cache when `gcTime` expires AND no components are observing it.
 
 **Q: If I set `staleTime: Infinity`, will data ever leave the cache?**
-**A:** Yes — `staleTime: Infinity` prevents automatic background refetches but doesn't affect `gcTime`. Once all observers unmount, the `gcTime` countdown starts and the entry is eventually garbage collected. Use `invalidateQueries` to manually trigger a refetch when you know the data has changed.[^7]
+**A:** Yes — `staleTime: Infinity` prevents automatic background refetches but doesn't affect `gcTime`. Once all observers unmount, the `gcTime` countdown starts and the entry is eventually garbage collected. Use `invalidateQueries` to manually trigger a refetch when you know the data has changed.
 
 ## C — Common Pitfalls
 

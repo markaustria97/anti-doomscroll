@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-`QueryClient` is the central cache and config store for all queries in your app — `QueryClientProvider` makes it available to every component through React Context.[^9][^10]
+`QueryClient` is the central cache and config store for all queries in your app — `QueryClientProvider` makes it available to every component through React Context.
 
 ## K — Key Concepts
 
-**Creating and providing the `QueryClient`:**[^10][^9]
+**Creating and providing the `QueryClient`:**
 
 ```jsx
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
@@ -34,7 +34,7 @@ function App() {
 }
 ```
 
-**`QueryClient` key concepts:**[^11][^10]
+**`QueryClient` key concepts:**
 
 ```jsx
 // staleTime: how long data is considered "fresh"
@@ -83,18 +83,18 @@ function Component() {
 
 ## W — Why It Matters
 
-The `QueryClient` is the engine behind every `useQuery` call. Understanding its configuration — especially `staleTime` vs `gcTime` — is what separates developers who use TanStack Query as a simple fetch wrapper from those who design intelligent caching strategies. Every performance decision in TanStack Query traces back to `QueryClient` config.[^11][^10]
+The `QueryClient` is the engine behind every `useQuery` call. Understanding its configuration — especially `staleTime` vs `gcTime` — is what separates developers who use TanStack Query as a simple fetch wrapper from those who design intelligent caching strategies. Every performance decision in TanStack Query traces back to `QueryClient` config.
 
 ## I — Interview Q&A
 
 **Q: What is the `QueryClient` and why is it created outside the component tree?**
-**A:** It's the central cache store for all queries. It's created outside React's component tree so it's a singleton — shared across the entire app and not recreated on re-renders. Placing it inside a component would recreate the cache on every render.[^10]
+**A:** It's the central cache store for all queries. It's created outside React's component tree so it's a singleton — shared across the entire app and not recreated on re-renders. Placing it inside a component would recreate the cache on every render.
 
 **Q: What is the difference between `staleTime` and `gcTime`?**
-**A:** `staleTime` controls how long data is considered "fresh" — during this window, no background refetch occurs. `gcTime` controls how long unused (no active observers) cache entries survive before being garbage collected. Data can be stale but still in cache; it's only deleted after `gcTime` expires with no active subscribers.[^11][^10]
+**A:** `staleTime` controls how long data is considered "fresh" — during this window, no background refetch occurs. `gcTime` controls how long unused (no active observers) cache entries survive before being garbage collected. Data can be stale but still in cache; it's only deleted after `gcTime` expires with no active subscribers.
 
 **Q: What does `refetchOnWindowFocus` do?**
-**A:** When `true` (the default), TanStack Query refetches all active queries when the user focuses the browser tab. This keeps data fresh when users switch between tabs. Disable it for APIs with rate limits or when data changes infrequently.[^9]
+**A:** When `true` (the default), TanStack Query refetches all active queries when the user focuses the browser tab. This keeps data fresh when users switch between tabs. Disable it for APIs with rate limits or when data changes infrequently.
 
 ## C — Common Pitfalls
 

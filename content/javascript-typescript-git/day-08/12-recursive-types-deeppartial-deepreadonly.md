@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Recursive types reference themselves — enabling types that apply transformations to arbitrarily nested object structures like `DeepPartial` and `DeepReadonly`.[^4][^10]
+Recursive types reference themselves — enabling types that apply transformations to arbitrarily nested object structures like `DeepPartial` and `DeepReadonly`.
 
 ## K — Key Concepts
 
@@ -66,7 +66,7 @@ type C = Flatten<string>        // string
 
 ## W — Why It Matters
 
-`DeepPartial` is used for configuration merging, test fixture builders, and patch update objects. `DeepReadonly` enforces immutability throughout a Redux state tree. The `JsonValue` recursive type is how TypeScript can model the full JSON data structure — used internally by `JSON.parse` return-type libraries.[^10][^4]
+`DeepPartial` is used for configuration merging, test fixture builders, and patch update objects. `DeepReadonly` enforces immutability throughout a Redux state tree. The `JsonValue` recursive type is how TypeScript can model the full JSON data structure — used internally by `JSON.parse` return-type libraries.
 
 ## I — Interview Q&A
 
@@ -74,7 +74,7 @@ type C = Flatten<string>        // string
 A: `Partial` applies `?` to the top-level properties only — it's a single-pass mapped type. Nested object properties are left as-is. `DeepPartial` recurses into every nested object, making properties optional at every level.
 
 **Q: Why do recursive types check for `Function` first?**
-A: Without it, `DeepReadonly` would add `readonly` to function properties and their return types — breaking callable types. `T extends Function ? T` acts as a short-circuit: functions pass through unchanged.[^10]
+A: Without it, `DeepReadonly` would add `readonly` to function properties and their return types — breaking callable types. `T extends Function ? T` acts as a short-circuit: functions pass through unchanged.
 
 ## C — Common Pitfalls
 

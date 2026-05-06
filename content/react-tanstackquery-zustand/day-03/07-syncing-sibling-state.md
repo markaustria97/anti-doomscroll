@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Siblings never communicate directly — they sync through their parent: sibling A calls a parent callback, parent updates state, parent re-renders both siblings with new props.[^7]
+Siblings never communicate directly — they sync through their parent: sibling A calls a parent callback, parent updates state, parent re-renders both siblings with new props.
 
 ## K — Key Concepts
 
@@ -64,7 +64,7 @@ function Tab({ label, isActive, onSelect }) {
 
 ## W — Why It Matters
 
-React's one-way data flow means sibling communication always goes through the parent. Developers who try to make siblings communicate directly (via `ref`, module-level variables, or event emitters) end up fighting React's model. Understanding this flow makes you architect components correctly from the start.[^7]
+React's one-way data flow means sibling communication always goes through the parent. Developers who try to make siblings communicate directly (via `ref`, module-level variables, or event emitters) end up fighting React's model. Understanding this flow makes you architect components correctly from the start.
 
 ## I — Interview Q&A
 

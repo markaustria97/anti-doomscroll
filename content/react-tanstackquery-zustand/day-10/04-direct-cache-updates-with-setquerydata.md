@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`setQueryData` writes directly into the cache without a network request — use it when the server's mutation response already contains the updated data, eliminating a redundant refetch.[^1][^2]
+`setQueryData` writes directly into the cache without a network request — use it when the server's mutation response already contains the updated data, eliminating a redundant refetch.
 
 ## K — Key Concepts
 
@@ -71,7 +71,7 @@ onSuccess: async (updatedUser) => {
 
 ## W — Why It Matters
 
-`setQueryData` eliminates the "update → invalidate → refetch" round trip for resources where the mutation response is the complete updated entity. This is common in REST APIs that return the full resource on PATCH/PUT. Knowing when to use direct cache writes vs. invalidation is the difference between snappy instant updates and a loading flash after every save.[^1]
+`setQueryData` eliminates the "update → invalidate → refetch" round trip for resources where the mutation response is the complete updated entity. This is common in REST APIs that return the full resource on PATCH/PUT. Knowing when to use direct cache writes vs. invalidation is the difference between snappy instant updates and a loading flash after every save.
 
 ## I — Interview Q&A
 
@@ -79,10 +79,10 @@ onSuccess: async (updatedUser) => {
 **A:** `setQueryData` writes data directly into the cache from a local value (like the mutation response) — no network request. `invalidateQueries` marks the cache as stale and triggers a server refetch. Use `setQueryData` when the mutation response contains the full updated entity; use `invalidateQueries` when it doesn't.
 
 **Q: How do you update a specific item inside a cached list with `setQueryData`?**
-**A:** Use the updater function form: `queryClient.setQueryData(["items"], (prev) => prev?.map(item => item.id === updatedItem.id ? updatedItem : item))`. Always use optional chaining on `prev` — the list may not be in the cache yet.[^2]
+**A:** Use the updater function form: `queryClient.setQueryData(["items"], (prev) => prev?.map(item => item.id === updatedItem.id ? updatedItem : item))`. Always use optional chaining on `prev` — the list may not be in the cache yet.
 
 **Q: Does `setQueryData` reset the `staleTime` timer?**
-**A:** Yes — `setQueryData` counts as a successful data update. The `dataUpdatedAt` timestamp is set to `Date.now()`, and the freshness window restarts from that point. Use `queryClient.setQueryData` with `updatedAt` option to control the exact freshness timestamp if needed.[^2]
+**A:** Yes — `setQueryData` counts as a successful data update. The `dataUpdatedAt` timestamp is set to `Date.now()`, and the freshness window restarts from that point. Use `queryClient.setQueryData` with `updatedAt` option to control the exact freshness timestamp if needed.
 
 ## C — Common Pitfalls
 

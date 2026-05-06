@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Build React UIs by starting from the data model, breaking UI into a component hierarchy, and letting data flow in one direction — top down.[^1]
+Build React UIs by starting from the data model, breaking UI into a component hierarchy, and letting data flow in one direction — top down.
 
 ## K — Key Concepts
 
-**The 5-Step Mental Model**[^4]
+**The 5-Step Mental Model**
 
 1. Break the UI into a component hierarchy
 2. Build a static version first (no state yet)
@@ -14,11 +14,11 @@ Build React UIs by starting from the data model, breaking UI into a component hi
 4. Identify where state should live
 5. Add inverse data flow (lifting state up)
 
-**One-way data flow** means data flows *down* from parent → child via props. Children cannot directly modify parent state — they must call a callback passed as a prop.[^1]
+**One-way data flow** means data flows *down* from parent → child via props. Children cannot directly modify parent state — they must call a callback passed as a prop.
 
 ## W — Why It Matters
 
-This mental model prevents you from over-engineering state too early. Developers who skip "Thinking in React" often scatter state everywhere, making apps hard to debug. Every React interview assumes you understand component-driven architecture.[^4]
+This mental model prevents you from over-engineering state too early. Developers who skip "Thinking in React" often scatter state everywhere, making apps hard to debug. Every React interview assumes you understand component-driven architecture.
 
 ## I — Interview Q&A
 

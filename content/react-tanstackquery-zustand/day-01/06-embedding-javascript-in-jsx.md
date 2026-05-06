@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Use `{}` to escape into JavaScript anywhere inside JSX — for values, expressions, and dynamic attributes.[^6]
+Use `{}` to escape into JavaScript anywhere inside JSX — for values, expressions, and dynamic attributes.
 
 ## K — Key Concepts
 
@@ -42,7 +42,7 @@ Use `{}` to escape into JavaScript anywhere inside JSX — for values, expressio
 
 ## W — Why It Matters
 
-Everything dynamic in a React UI flows through `{}`. Mastering this syntax is the foundation of building any real React interface — conditionals, loops, formatting, and event bindings all use it.[^6]
+Everything dynamic in a React UI flows through `{}`. Mastering this syntax is the foundation of building any real React interface — conditionals, loops, formatting, and event bindings all use it.
 
 ## I — Interview Q&A
 

@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Currying transforms a multi-arg function into a chain of single-arg functions; partial application pre-fills some arguments — both make functions more reusable and composable.[^3]
+Currying transforms a multi-arg function into a chain of single-arg functions; partial application pre-fills some arguments — both make functions more reusable and composable.
 
 ## K — Key Concepts
 
@@ -54,7 +54,7 @@ authError("Token expired")  // [ERROR][AUTH] Token expired
 
 ## W — Why It Matters
 
-Currying makes functions composable in pipelines (each function is unary). It's the core pattern behind React's higher-order components, Redux middleware, and functional libraries like Ramda. Partial application reduces boilerplate in event handlers and API calls.[^3]
+Currying makes functions composable in pipelines (each function is unary). It's the core pattern behind React's higher-order components, Redux middleware, and functional libraries like Ramda. Partial application reduces boilerplate in event handlers and API calls.
 
 ## I — Interview Q&A
 

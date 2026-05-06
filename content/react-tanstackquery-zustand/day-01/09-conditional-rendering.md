@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Conditionally render JSX using `if`, ternary `? :`, or logical `&&` — choose based on complexity.[^8]
+Conditionally render JSX using `if`, ternary `? :`, or logical `&&` — choose based on complexity.
 
 ## K — Key Concepts
 
@@ -40,7 +40,7 @@ function Notifications({ count }) {
 
 ## W — Why It Matters
 
-Conditional rendering is in every React component. The `&&` zero bug is a classic interview trap and a real production bug. Knowing which pattern to reach for keeps code readable and avoids subtle bugs.[^8]
+Conditional rendering is in every React component. The `&&` zero bug is a classic interview trap and a real production bug. Knowing which pattern to reach for keeps code readable and avoids subtle bugs.
 
 ## I — Interview Q&A
 

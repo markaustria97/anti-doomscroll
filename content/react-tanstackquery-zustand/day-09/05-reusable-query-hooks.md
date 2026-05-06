@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Wrapping `useQuery` calls in custom hooks — one per resource — centralizes query keys, fetch logic, and configuration in a single place, making queries reusable, testable, and easy to change.[^3]
+Wrapping `useQuery` calls in custom hooks — one per resource — centralizes query keys, fetch logic, and configuration in a single place, making queries reusable, testable, and easy to change.
 
 ## K — Key Concepts
 
@@ -92,7 +92,7 @@ export { productKeys, useProductList, useProduct }
 
 ## W — Why It Matters
 
-Without custom hooks, every component knows about endpoints, query keys, and cache config — a single endpoint change requires updating every component. Custom query hooks are the "repository pattern" for TanStack Query: one place to change the data contract, zero impact on consumers.[^3]
+Without custom hooks, every component knows about endpoints, query keys, and cache config — a single endpoint change requires updating every component. Custom query hooks are the "repository pattern" for TanStack Query: one place to change the data contract, zero impact on consumers.
 
 ## I — Interview Q&A
 
@@ -103,7 +103,7 @@ Without custom hooks, every component knows about endpoints, query keys, and cac
 **A:** In a dedicated `queries/` or `hooks/` directory, organized by domain resource (`useUser`, `useProducts`, `useOrders`). Export the key factories alongside the hooks so mutations can invalidate the correct keys without hardcoding strings.
 
 **Q: Should you export the query key from a custom query hook?**
-**A:** Yes — or better, export a Key Factory alongside the hook. Mutations need to call `invalidateQueries` with the same key. If the key is only inside the hook, mutations have no way to reference it, leading to hardcoded key duplication.[^6]
+**A:** Yes — or better, export a Key Factory alongside the hook. Mutations need to call `invalidateQueries` with the same key. If the key is only inside the hook, mutations have no way to reference it, leading to hardcoded key duplication.
 
 ## C — Common Pitfalls
 

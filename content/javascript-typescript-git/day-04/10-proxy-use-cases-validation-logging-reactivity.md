@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-The three killer use cases for `Proxy` are runtime validation, transparent logging, and reactivity — triggering callbacks when data changes, which is exactly how Vue 3 works.[^6]
+The three killer use cases for `Proxy` are runtime validation, transparent logging, and reactivity — triggering callbacks when data changes, which is exactly how Vue 3 works.
 
 ## K — Key Concepts
 
@@ -74,7 +74,7 @@ state.count = 2   // "count: 1 → 2"
 
 ## W — Why It Matters
 
-Vue 3 replaced `Object.defineProperty` with `Proxy` for its entire reactivity system because `Proxy` can intercept new property additions, array length changes, and deletions — things `defineProperty` couldn't handle. Understanding this makes Vue 3 internals intuitive.[^4]
+Vue 3 replaced `Object.defineProperty` with `Proxy` for its entire reactivity system because `Proxy` can intercept new property additions, array length changes, and deletions — things `defineProperty` couldn't handle. Understanding this makes Vue 3 internals intuitive.
 
 ## I — Interview Q&A
 
@@ -82,7 +82,7 @@ Vue 3 replaced `Object.defineProperty` with `Proxy` for its entire reactivity sy
 A: Vue 3 wraps reactive data in a `Proxy`. The `get` trap tracks which components depend on which properties (dependency tracking). The `set` trap triggers re-renders when those properties change (dependency notification). This replaces Vue 2's per-property `Object.defineProperty` approach.
 
 **Q: What can Proxy intercept that `Object.defineProperty` cannot?**
-A: `Proxy` can intercept adding new properties, deleting properties, and array index/length changes. `Object.defineProperty` only intercepts pre-defined properties — you can't intercept `obj.newProp = value` reactively with it.[^6]
+A: `Proxy` can intercept adding new properties, deleting properties, and array index/length changes. `Object.defineProperty` only intercepts pre-defined properties — you can't intercept `obj.newProp = value` reactively with it.
 
 ## C — Common Pitfalls
 

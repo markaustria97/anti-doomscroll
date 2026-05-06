@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Zustand's `set()` performs a shallow merge by default — it only merges top-level properties, not nested objects, so nested state updates require explicit spreading or Immer.[^9][^1]
+Zustand's `set()` performs a shallow merge by default — it only merges top-level properties, not nested objects, so nested state updates require explicit spreading or Immer.
 
 ## K — Key Concepts
 
-**What shallow merge means:**[^9][^1]
+**What shallow merge means:**
 
 ```jsx
 // Store state:
@@ -40,7 +40,7 @@ const resetStore = () =>
   set({ count: 0, user: null, theme: "light" }, true)  // replace all
 ```
 
-**Why shallow merge is a smart default:**[^1]
+**Why shallow merge is a smart default:**
 
 ```jsx
 // ✅ Shallow merge means you only need to specify what changed
@@ -67,18 +67,18 @@ Result: { a: 1, b: { c: 99 }, e: 5 }           ← b.d is GONE ❌
 
 ## W — Why It Matters
 
-Shallow merge is the most common source of accidental data loss in Zustand. Developers new to Zustand often update a nested object — `set({ user: { name: "Bob" } })` — not realizing they've deleted all other user properties. Understanding the merge depth boundary is essential before touching any nested state.[^9][^1]
+Shallow merge is the most common source of accidental data loss in Zustand. Developers new to Zustand often update a nested object — `set({ user: { name: "Bob" } })` — not realizing they've deleted all other user properties. Understanding the merge depth boundary is essential before touching any nested state.
 
 ## I — Interview Q&A
 
 **Q: What does "shallow merge" mean in Zustand's `set()` function?**
-**A:** `set()` merges the provided object with the existing state at the top level only. Top-level properties not mentioned are preserved. But if you pass a nested object, the entire nested object replaces the previous one — no deep merging occurs.[^9][^1]
+**A:** `set()` merges the provided object with the existing state at the top level only. Top-level properties not mentioned are preserved. But if you pass a nested object, the entire nested object replaces the previous one — no deep merging occurs.
 
 **Q: How do you safely update a nested property without losing other nested values?**
-**A:** Spread the existing nested object: `set(s => ({ user: { ...s.user, name: "Bob" } }))`. This merges your update into the existing object instead of replacing it.[^10]
+**A:** Spread the existing nested object: `set(s => ({ user: { ...s.user, name: "Bob" } }))`. This merges your update into the existing object instead of replacing it.
 
 **Q: What does `set(newState, true)` do in Zustand?**
-**A:** The second argument `true` enables `replace` mode — the entire store state is replaced with `newState`, no merging. Any properties not in `newState` are deleted. Use for full resets or when you need complete state replacement.[^9][^1]
+**A:** The second argument `true` enables `replace` mode — the entire store state is replaced with `newState`, no merging. Any properties not in `newState` are deleted. Use for full resets or when you need complete state replacement.
 
 ## C — Common Pitfalls
 

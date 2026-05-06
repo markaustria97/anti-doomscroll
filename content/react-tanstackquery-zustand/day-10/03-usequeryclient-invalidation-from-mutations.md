@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`useQueryClient` gives you direct access to the cache inside components and hooks — use it in mutation callbacks to invalidate stale queries, force refetches, and keep server state synchronized after writes.[^2]
+`useQueryClient` gives you direct access to the cache inside components and hooks — use it in mutation callbacks to invalidate stale queries, force refetches, and keep server state synchronized after writes.
 
 ## K — Key Concepts
 
@@ -24,7 +24,7 @@ function useCreatePost() {
 }
 ```
 
-**`invalidateQueries` — the primary post-mutation tool:**[^2]
+**`invalidateQueries` — the primary post-mutation tool:**
 
 ```jsx
 // Invalidate all queries starting with ["posts"]
@@ -40,11 +40,11 @@ queryClient.invalidateQueries({
 // Invalidate with a predicate function
 queryClient.invalidateQueries({
   predicate: (query) =>
-    query.queryKey[^0] === "posts" && query.queryKey[^1]?.page > 2,
+    query.queryKey === "posts" && query.queryKey?.page > 2,
 })
 ```
 
-**What invalidation actually does:**[^2]
+**What invalidation actually does:**
 
 ```
 Mounted observers (components currently using the query):
@@ -82,18 +82,18 @@ function useCreateOrder() {
 
 ## W — Why It Matters
 
-Invalidation is what closes the loop between writes and reads. Without it, a user creates a post and sees the old list — the UI is out of sync with the server. Invalidation is the explicit signal that says "this cache region is no longer trustworthy — refresh it." Understanding which queries to invalidate — and using hierarchical keys to target them precisely — is what keeps complex apps consistent.[^2]
+Invalidation is what closes the loop between writes and reads. Without it, a user creates a post and sees the old list — the UI is out of sync with the server. Invalidation is the explicit signal that says "this cache region is no longer trustworthy — refresh it." Understanding which queries to invalidate — and using hierarchical keys to target them precisely — is what keeps complex apps consistent.
 
 ## I — Interview Q&A
 
 **Q: What does `queryClient.invalidateQueries` actually do?**
-**A:** It marks matching cache entries as stale. For entries with active observers (mounted components), it immediately triggers a background refetch — the component shows cached data and silently updates. For inactive entries, it just marks them stale so the next mount triggers a fresh fetch.[^2]
+**A:** It marks matching cache entries as stale. For entries with active observers (mounted components), it immediately triggers a background refetch — the component shows cached data and silently updates. For inactive entries, it just marks them stale so the next mount triggers a fresh fetch.
 
 **Q: How do you invalidate all queries related to a resource after a mutation?**
-**A:** Use the hierarchical key structure — `invalidateQueries({ queryKey: ["posts"] })` invalidates every key starting with `"posts"`. This is why Key Factories use nested arrays: a single broad invalidation covers the resource and all its sub-queries.[^2]
+**A:** Use the hierarchical key structure — `invalidateQueries({ queryKey: ["posts"] })` invalidates every key starting with `"posts"`. This is why Key Factories use nested arrays: a single broad invalidation covers the resource and all its sub-queries.
 
 **Q: Should you `await` `invalidateQueries` in mutation callbacks?**
-**A:** Yes, in `onSettled` — `await`ing it keeps the mutation in `isPending: true` until the refetch completes, ensuring the UI updates with fresh data at the same time as the mutation resolves. In `onSuccess`, `await` if you need the UI to show fresh data before navigating away.[^4]
+**A:** Yes, in `onSettled` — `await`ing it keeps the mutation in `isPending: true` until the refetch completes, ensuring the UI updates with fresh data at the same time as the mutation resolves. In `onSuccess`, `await` if you need the UI to show fresh data before navigating away.
 
 ## C — Common Pitfalls
 

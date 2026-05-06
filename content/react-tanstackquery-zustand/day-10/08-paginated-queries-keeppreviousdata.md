@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Paginated queries store each page as a separate cache entry by key — use `placeholderData: keepPreviousData` to keep the current page visible while the next one loads, eliminating pagination loading flicker.[^9][^10]
+Paginated queries store each page as a separate cache entry by key — use `placeholderData: keepPreviousData` to keep the current page visible while the next one loads, eliminating pagination loading flicker.
 
 ## K — Key Concepts
 
@@ -94,18 +94,18 @@ function ProductList() {
 
 ## W — Why It Matters
 
-Pagination without `keepPreviousData` causes a blank screen between every page navigation — every page change throws away visible content and replaces it with a skeleton. `keepPreviousData` is the single-option fix that makes pagination feel instant and polished. Combined with prefetching the next page, navigation feels as fast as a client-side navigation.[^10][^9]
+Pagination without `keepPreviousData` causes a blank screen between every page navigation — every page change throws away visible content and replaces it with a skeleton. `keepPreviousData` is the single-option fix that makes pagination feel instant and polished. Combined with prefetching the next page, navigation feels as fast as a client-side navigation.
 
 ## I — Interview Q&A
 
 **Q: Why does pagination need `keepPreviousData`?**
-**A:** Without it, every page change clears `data` (cache miss for the new page) and sets `isPending: true`, causing a full loading state. `keepPreviousData` returns the previous page's data while the new page loads, setting `isPlaceholderData: true` so you can dim the UI without clearing it.[^10]
+**A:** Without it, every page change clears `data` (cache miss for the new page) and sets `isPending: true`, causing a full loading state. `keepPreviousData` returns the previous page's data while the new page loads, setting `isPlaceholderData: true` so you can dim the UI without clearing it.
 
 **Q: How do you disable the "Next" button correctly during a page transition?**
-**A:** Disable when `isPlaceholderData` is true (still showing previous page's data, new page loading) OR when `!data?.hasNextPage`. This prevents double navigation and makes it obvious a load is in progress.[^9]
+**A:** Disable when `isPlaceholderData` is true (still showing previous page's data, new page loading) OR when `!data?.hasNextPage`. This prevents double navigation and makes it obvious a load is in progress.
 
 **Q: How do you prefetch the next page before the user clicks "Next"?**
-**A:** In a `useEffect` watching `data`, call `queryClient.prefetchQuery` for `page + 1` when `data?.hasNextPage` is true. By the time the user clicks, the next page is already in cache — navigation feels instant.[^11]
+**A:** In a `useEffect` watching `data`, call `queryClient.prefetchQuery` for `page + 1` when `data?.hasNextPage` is true. By the time the user clicks, the next page is already in cache — navigation feels instant.
 
 ## C — Common Pitfalls
 

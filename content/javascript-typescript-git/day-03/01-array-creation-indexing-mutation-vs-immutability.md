@@ -16,8 +16,8 @@ const e = Array.of(1, 2, 3)               // [1, 2, 3] — avoids new Array() qu
 
 // Indexing
 const arr = ["a", "b", "c"]
-arr[^0]       // "a"
-arr[^2]       // "c"
+arr       // "a"
+arr       // "c"
 arr[-1]      // undefined — negative indexing doesn't work directly
 arr.at(-1)   // "c" ✅ ES2022 — negative indexing!
 arr.at(-2)   // "b"
@@ -70,7 +70,7 @@ A: A sparse array with 3 empty slots — not `[undefined, undefined, undefined]`
 
 ## K — Coding Challenge
 
-**Create an array of squares [^5][^6][^7][^8] without mutation:**
+**Create an array of squares  without mutation:**
 
 ```js
 // Starting point:

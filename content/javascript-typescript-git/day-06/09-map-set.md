@@ -104,7 +104,7 @@ function topN(words, n) {
     map.set(word, (map.get(word) ?? 0) + 1), new Map())
 
   return [...freq.entries()]
-    .sort((a, b) => b[^1] - a[^1])
+    .sort((a, b) => b - a)
     .slice(0, n)
 }
 ```

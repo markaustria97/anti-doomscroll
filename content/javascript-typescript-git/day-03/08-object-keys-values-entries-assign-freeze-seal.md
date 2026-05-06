@@ -62,7 +62,7 @@ Object.isSealed(sealed)  // true
 A: `const` prevents reassigning the variable binding. `Object.freeze` prevents modifying the object's properties. You can mutate a `const` object; you can reassign a `let` frozen object reference.
 
 **Q: Is `Object.freeze` deep?**
-A: No — it's shallow. Only the top-level properties are frozen. Nested objects remain mutable. For deep freeze, recursively call `Object.freeze` on all nested objects. [^9]
+A: No — it's shallow. Only the top-level properties are frozen. Nested objects remain mutable. For deep freeze, recursively call `Object.freeze` on all nested objects. 
 
 ## C — Common Pitfalls
 

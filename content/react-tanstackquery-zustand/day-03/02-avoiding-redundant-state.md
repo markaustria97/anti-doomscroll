@@ -2,13 +2,13 @@
 
 ## T — TL;DR
 
-If a value can be computed from existing state or props during render, it is redundant state — store only the source, derive the rest.[^4][^1]
+If a value can be computed from existing state or props during render, it is redundant state — store only the source, derive the rest.
 
 ## K — Key Concepts
 
 **What is redundant state?**
 
-Redundant state is any variable stored in `useState` whose value could be calculated from other state or props that already exist.[^1]
+Redundant state is any variable stored in `useState` whose value could be calculated from other state or props that already exist.
 
 ```jsx
 // ❌ Redundant — fullName is derived from firstName + lastName
@@ -52,7 +52,7 @@ const count = items.length
 
 ## W — Why It Matters
 
-Redundant state always leads to sync bugs — whenever you update the source, you must remember to update every derived copy. Miss one update and the UI shows inconsistent data. Eliminating redundant state removes entire categories of bugs.[^2][^4]
+Redundant state always leads to sync bugs — whenever you update the source, you must remember to update every derived copy. Miss one update and the UI shows inconsistent data. Eliminating redundant state removes entire categories of bugs.
 
 ## I — Interview Q&A
 

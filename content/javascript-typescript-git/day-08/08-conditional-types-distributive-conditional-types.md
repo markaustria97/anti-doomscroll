@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Conditional types (`T extends U ? X : Y`) are the ternary operator for the type system — they distribute over unions automatically, enabling powerful per-member transformations.[^3][^9]
+Conditional types (`T extends U ? X : Y`) are the ternary operator for the type system — they distribute over unions automatically, enabling powerful per-member transformations.
 
 ## K — Key Concepts
 
@@ -62,7 +62,7 @@ type OptionalFunctions<T> = {
 
 ## W — Why It Matters
 
-Understanding distributive conditional types is the key to understanding why `Exclude<"a" | "b", "a">` works the way it does — it's just the built-in conditional type distributing over the union. This mental model unlocks every advanced utility type you'll build or read in library source code. [^3][^9]
+Understanding distributive conditional types is the key to understanding why `Exclude<"a" | "b", "a">` works the way it does — it's just the built-in conditional type distributing over the union. This mental model unlocks every advanced utility type you'll build or read in library source code. 
 
 ## I — Interview Q&A
 

@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-When a query's result depends on a variable (ID, filter, page), that variable must live in the query key — key changes automatically trigger a new fetch for the new variable's cache entry.[^3]
+When a query's result depends on a variable (ID, filter, page), that variable must live in the query key — key changes automatically trigger a new fetch for the new variable's cache entry.
 
 ## K — Key Concepts
 
-**Variables drive key changes, which drive refetches:**[^2]
+**Variables drive key changes, which drive refetches:**
 
 ```jsx
 function ProductPage({ productId }) {
@@ -21,7 +21,7 @@ function ProductPage({ productId }) {
 }
 ```
 
-**Object params as keys — deterministic:**[^4][^3]
+**Object params as keys — deterministic:**
 
 ```jsx
 // All filter state goes in the key as an object
@@ -35,7 +35,7 @@ function useProductSearch({ category, minPrice, maxPrice, sort, page }) {
 // Navigate back to same filters → instant cache hit, no refetch needed
 ```
 
-**Derived/computed keys:**[^3]
+**Derived/computed keys:**
 
 ```jsx
 // Key derived from multiple props
@@ -73,7 +73,7 @@ New key: ["product", 2]
 
 ## W — Why It Matters
 
-Variable-dependent keys are how TanStack Query implements per-resource caching automatically. Navigate back to a product you've already seen — it loads instantly from cache. Navigate to a new one — it fetches. This behavior is the core of TanStack Query's UX advantage and it's entirely driven by how you structure your keys.[^2][^3]
+Variable-dependent keys are how TanStack Query implements per-resource caching automatically. Navigate back to a product you've already seen — it loads instantly from cache. Navigate to a new one — it fetches. This behavior is the core of TanStack Query's UX advantage and it's entirely driven by how you structure your keys.
 
 ## I — Interview Q&A
 
@@ -81,10 +81,10 @@ Variable-dependent keys are how TanStack Query implements per-resource caching a
 **A:** TanStack Query treats it as a new query. It immediately looks up the new key in the cache — returning cached data if available (and triggering a background refetch if stale) or fetching fresh data if it's a cache miss. The previous key's entry becomes inactive.
 
 **Q: Should you put the entire filter object or individual params in the key?**
-**A:** Both work — TanStack Query deep-serializes objects. Prefer the object form when there are many params: `queryKey: ["products", { category, sort, page }]`. This is cleaner than listing 5+ primitives and scales as filters grow.[^3]
+**A:** Both work — TanStack Query deep-serializes objects. Prefer the object form when there are many params: `queryKey: ["products", { category, sort, page }]`. This is cleaner than listing 5+ primitives and scales as filters grow.
 
 **Q: How do you avoid a query firing when its key variable is undefined?**
-**A:** Use `enabled: !!variable`. When `false`, the query stays in "paused" state — no fetch fires, `isPending` stays true but no network activity occurs.[^1]
+**A:** Use `enabled: !!variable`. When `false`, the query stays in "paused" state — no fetch fires, `isPending` stays true but no network activity occurs.
 
 ## C — Common Pitfalls
 

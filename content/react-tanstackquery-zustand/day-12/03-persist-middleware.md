@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-The `persist` middleware saves Zustand state to a storage backend (localStorage, sessionStorage, AsyncStorage) and rehydrates it automatically on page load — with optional field selection, versioning, and migration.[^3][^6]
+The `persist` middleware saves Zustand state to a storage backend (localStorage, sessionStorage, AsyncStorage) and rehydrates it automatically on page load — with optional field selection, versioning, and migration.
 
 ## K — Key Concepts
 
-**Basic `persist` setup:**[^6][^3]
+**Basic `persist` setup:**
 
 ```jsx
 import { create } from "zustand"
@@ -28,7 +28,7 @@ const useThemeStore = create(
 // On page reload: theme and fontSize are read from localStorage automatically ✅
 ```
 
-**`partialize` — only persist specific fields:**[^3][^6]
+**`partialize` — only persist specific fields:**
 
 ```jsx
 const useAuthStore = create(
@@ -52,7 +52,7 @@ const useAuthStore = create(
 // isLoading and error are always initialized to their defaults on reload ✅
 ```
 
-**Storage choices:**[^7]
+**Storage choices:**
 
 ```jsx
 // localStorage — default, synchronous, survives page close
@@ -83,18 +83,18 @@ storage: createJSONStorage(() => ({
 
 ## W — Why It Matters
 
-Without `persist`, every page reload loses all client state — the user's theme resets to light, their cart empties, their filter settings disappear. `persist` is a one-middleware solution that handles serialization, storage, and rehydration automatically. The `partialize` option is critical for not storing sensitive or transient data like error messages, loading flags, or temporary UI state.[^6][^3]
+Without `persist`, every page reload loses all client state — the user's theme resets to light, their cart empties, their filter settings disappear. `persist` is a one-middleware solution that handles serialization, storage, and rehydration automatically. The `partialize` option is critical for not storing sensitive or transient data like error messages, loading flags, or temporary UI state.
 
 ## I — Interview Q&A
 
 **Q: How does the `persist` middleware work in Zustand?**
-**A:** It wraps the store's `set` function — whenever state changes, it serializes the state (or the `partialize` subset) to JSON and writes it to the storage backend. On initialization, it reads from storage and merges the persisted state with the store's defaults before the first render.[^3][^6]
+**A:** It wraps the store's `set` function — whenever state changes, it serializes the state (or the `partialize` subset) to JSON and writes it to the storage backend. On initialization, it reads from storage and merges the persisted state with the store's defaults before the first render.
 
 **Q: What is `partialize` and why is it important?**
-**A:** `partialize` is a function that receives the full state and returns only the portion to persist. It prevents storing transient state (loading flags, error messages, session-only data) that shouldn't survive a page reload. Without it, everything is persisted — including data you never want stored.[^6]
+**A:** `partialize` is a function that receives the full state and returns only the portion to persist. It prevents storing transient state (loading flags, error messages, session-only data) that shouldn't survive a page reload. Without it, everything is persisted — including data you never want stored.
 
 **Q: What's the difference between `localStorage` and `sessionStorage` for Zustand persist?**
-**A:** `localStorage` persists indefinitely until explicitly cleared — good for preferences, auth tokens. `sessionStorage` is cleared when the browser tab closes — good for short-lived session data like current filters or view state that shouldn't survive a fresh session.[^7]
+**A:** `localStorage` persists indefinitely until explicitly cleared — good for preferences, auth tokens. `sessionStorage` is cleared when the browser tab closes — good for short-lived session data like current filters or view state that shouldn't survive a fresh session.
 
 ## C — Common Pitfalls
 

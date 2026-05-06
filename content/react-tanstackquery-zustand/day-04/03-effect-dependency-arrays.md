@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-The dependency array tells React *when* to re-run the effect — include every reactive value the effect reads, or you'll get stale closures and bugs.[^5][^6]
+The dependency array tells React *when* to re-run the effect — include every reactive value the effect reads, or you'll get stale closures and bugs.
 
 ## K — Key Concepts
 
-**The exhaustive-deps rule:** Every state variable, prop, or context value used inside `useEffect` must be listed in the dependency array. This isn't a convention — it's how React keeps effects synchronized.[^6][^4]
+**The exhaustive-deps rule:** Every state variable, prop, or context value used inside `useEffect` must be listed in the dependency array. This isn't a convention — it's how React keeps effects synchronized.
 
 ```jsx
 function Profile({ userId }) {
@@ -56,7 +56,7 @@ useEffect(() => { ... }, [userId])
 
 ## W — Why It Matters
 
-Wrong dependencies are the most common `useEffect` bug. Missing deps cause stale closures — the effect reads old values forever. Extra deps cause infinite loops or unnecessary re-runs. The `exhaustive-deps` ESLint rule catches both — treat its warnings as errors, not suggestions.[^4][^5][^6]
+Wrong dependencies are the most common `useEffect` bug. Missing deps cause stale closures — the effect reads old values forever. Extra deps cause infinite loops or unnecessary re-runs. The `exhaustive-deps` ESLint rule catches both — treat its warnings as errors, not suggestions.
 
 ## I — Interview Q&A
 
@@ -64,10 +64,10 @@ Wrong dependencies are the most common `useEffect` bug. Missing deps cause stale
 **A:** When a `useEffect` captures a variable in its closure but that variable isn't in the dependency array. The effect always reads the initial value — even as the variable changes — because React never re-runs it. Fix: add the variable to the deps array.
 
 **Q: When is an empty dependency array `[]` correct?**
-**A:** Only when the effect has *zero* reactive dependencies — it doesn't read any props, state, or context. Examples: one-time analytics calls, one-time event listener setup. If you're adding `[]` to suppress re-runs when you *do* use reactive values inside, that's a bug.[^6]
+**A:** Only when the effect has *zero* reactive dependencies — it doesn't read any props, state, or context. Examples: one-time analytics calls, one-time event listener setup. If you're adding `[]` to suppress re-runs when you *do* use reactive values inside, that's a bug.
 
 **Q: Why do objects and arrays in dependency arrays cause infinite loops?**
-**A:** Because `{} !== {}` — objects and arrays are compared by reference in JavaScript. Every render creates a new object/array reference, even if contents are identical. React sees a changed dependency and re-runs the effect, which triggers another render, looping forever. Use primitive values or `useMemo` to stabilize the reference.[^4]
+**A:** Because `{} !== {}` — objects and arrays are compared by reference in JavaScript. Every render creates a new object/array reference, even if contents are identical. React sees a changed dependency and re-runs the effect, which triggers another render, looping forever. Use primitive values or `useMemo` to stabilize the reference.
 
 ## C — Common Pitfalls
 

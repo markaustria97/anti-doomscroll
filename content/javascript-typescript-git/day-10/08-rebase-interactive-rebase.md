@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Rebase replays your commits on top of another base — creating a linear history; interactive rebase (`-i`) is your history editor — reorder, squash, edit, drop, or reword any commits.[^9]
+Rebase replays your commits on top of another base — creating a linear history; interactive rebase (`-i`) is your history editor — reorder, squash, edit, drop, or reword any commits.
 
 ## K — Key Concepts
 
@@ -87,12 +87,12 @@ git push --force              # dangerous — overwrites without checking
 
 ## W — Why It Matters
 
-Interactive rebase is the most powerful Git skill for maintaining a clean PR history. Squashing WIP commits before review, rewording misleading commit messages, and dropping "debug log" commits are daily operations for senior engineers. The golden rule — never rebase shared branches — is the most important Git rule to internalize.[^9]
+Interactive rebase is the most powerful Git skill for maintaining a clean PR history. Squashing WIP commits before review, rewording misleading commit messages, and dropping "debug log" commits are daily operations for senior engineers. The golden rule — never rebase shared branches — is the most important Git rule to internalize.
 
 ## I — Interview Q&A
 
 **Q: What does `git rebase` actually do to commits?**
-A: It detaches each commit from the current base and replays them — one by one — on top of the new base. Each replayed commit gets a new SHA (new parent = new hash). The changes are the same, but the commits are new objects. This is "rewriting history."[^9]
+A: It detaches each commit from the current base and replays them — one by one — on top of the new base. Each replayed commit gets a new SHA (new parent = new hash). The changes are the same, but the commits are new objects. This is "rewriting history."
 
 **Q: What is `--force-with-lease` and why is it safer than `--force`?**
 A: `--force-with-lease` checks that the remote branch hasn't been updated since your last fetch. If someone else pushed to the branch, it fails — preventing you from overwriting their work. `--force` blindly overwrites regardless of remote state.

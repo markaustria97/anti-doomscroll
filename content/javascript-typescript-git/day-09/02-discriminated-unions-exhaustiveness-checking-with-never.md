@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Discriminated unions use a shared literal field to let TypeScript narrow each variant; `never` in the `default` branch guarantees you've handled all cases — if you add a new variant, TypeScript errors everywhere you forgot to update.[^1]
+Discriminated unions use a shared literal field to let TypeScript narrow each variant; `never` in the `default` branch guarantees you've handled all cases — if you add a new variant, TypeScript errors everywhere you forgot to update.
 
 ## K — Key Concepts
 
@@ -74,7 +74,7 @@ function reducer(state: number, action: Action): number {
 
 ## W — Why It Matters
 
-The `assertNever` pattern is the TypeScript equivalent of a compile-time test for completeness. When a business model grows (new payment method, new order status), TypeScript enforces that every handler is updated — before the code ships. This is the pattern that prevents "we forgot to handle the new case" bugs.[^1]
+The `assertNever` pattern is the TypeScript equivalent of a compile-time test for completeness. When a business model grows (new payment method, new order status), TypeScript enforces that every handler is updated — before the code ships. This is the pattern that prevents "we forgot to handle the new case" bugs.
 
 ## I — Interview Q&A
 

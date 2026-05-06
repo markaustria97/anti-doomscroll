@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Props are the read-only inputs passed from parent to child — they are how components communicate.[^6]
+Props are the read-only inputs passed from parent to child — they are how components communicate.
 
 ## K — Key Concepts
 
@@ -18,7 +18,7 @@ function UserCard({ name, age, isAdmin }) {
 }
 ```
 
-**Key prop behaviors:**[^6]
+**Key prop behaviors:**
 
 - Props are **read-only** — never mutate `props` directly
 - Any value can be a prop: strings, numbers, booleans, arrays, objects, functions, JSX
@@ -45,7 +45,7 @@ function Card({ children, title }) {
 
 ## W — Why It Matters
 
-Props are the primary mechanism of React's component model. Every pattern — composition, render props, compound components — is built on props. Understanding them deeply means you can design flexible, reusable component APIs.[^6]
+Props are the primary mechanism of React's component model. Every pattern — composition, render props, compound components — is built on props. Understanding them deeply means you can design flexible, reusable component APIs.
 
 ## I — Interview Q&A
 

@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Memoization wraps any pure function to cache results — first call computes, every subsequent call with identical arguments returns the cached value instantly.[^3]
+Memoization wraps any pure function to cache results — first call computes, every subsequent call with identical arguments returns the cached value instantly.
 
 ## K — Key Concepts
 

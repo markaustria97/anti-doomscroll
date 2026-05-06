@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`Symbol.iterator` makes any object work with `for...of`, spread, and destructuring — implement it to make your custom classes iterable.[^8]
+`Symbol.iterator` makes any object work with `for...of`, spread, and destructuring — implement it to make your custom classes iterable.
 
 ## K — Key Concepts
 

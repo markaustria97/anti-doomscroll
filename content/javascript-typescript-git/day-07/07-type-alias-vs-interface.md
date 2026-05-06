@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`interface` is for describing object shapes (especially public APIs, class contracts, and things that need declaration merging); `type` is for everything else — unions, intersections, mapped types, conditional types.[^4][^12]
+`interface` is for describing object shapes (especially public APIs, class contracts, and things that need declaration merging); `type` is for everything else — unions, intersections, mapped types, conditional types.
 
 ## K — Key Concepts
 
@@ -87,7 +87,7 @@ class User implements Serializable {
 
 ## W — Why It Matters
 
-The rule of thumb: use `interface` for object shapes that might be extended or augmented (library types, React component props, API response shapes) and `type` for everything else. TypeScript's error messages tend to be clearer for `interface` because it can display the shape directly, whereas `type` intersections may appear as opaque types in errors.[^12][^4]
+The rule of thumb: use `interface` for object shapes that might be extended or augmented (library types, React component props, API response shapes) and `type` for everything else. TypeScript's error messages tend to be clearer for `interface` because it can display the shape directly, whereas `type` intersections may appear as opaque types in errors.
 
 ## I — Interview Q&A
 

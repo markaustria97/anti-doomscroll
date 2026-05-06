@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-`useQuery` is the core hook — give it a key and a fetch function, and it returns data, loading state, error state, and refetch utilities, fully managed by TanStack Query's cache.[^2]
+`useQuery` is the core hook — give it a key and a fetch function, and it returns data, loading state, error state, and refetch utilities, fully managed by TanStack Query's cache.
 
 ## K — Key Concepts
 
-**Full `useQuery` anatomy (v5):**[^2]
+**Full `useQuery` anatomy (v5):**
 
 ```jsx
 const {
@@ -37,7 +37,7 @@ const {
 })
 ```
 
-**`isPending` vs `isFetching` — the critical distinction:**[^2]
+**`isPending` vs `isFetching` — the critical distinction:**
 
 ```jsx
 // isPending: true ONLY on the FIRST load (no cached data yet)
@@ -84,7 +84,7 @@ const { data: adminUsers } = useQuery({
 
 ## W — Why It Matters
 
-`useQuery` replaces the entire `useEffect` + `useState` data fetching pattern with a single, declarative API. The `enabled` option enables dependency chains without `useEffect` choreography. The `select` option eliminates derived state `useEffect` patterns. Mastering `useQuery`'s full API surface eliminates entire categories of hand-written code.[^3][^2]
+`useQuery` replaces the entire `useEffect` + `useState` data fetching pattern with a single, declarative API. The `enabled` option enables dependency chains without `useEffect` choreography. The `select` option eliminates derived state `useEffect` patterns. Mastering `useQuery`'s full API surface eliminates entire categories of hand-written code.
 
 ## I — Interview Q&A
 
@@ -92,10 +92,10 @@ const { data: adminUsers } = useQuery({
 **A:** `isPending` is `true` only on the very first load when there's no cached data yet — use it to show a full skeleton. `isFetching` is `true` anytime a network request is in flight, including background refetches when cached data is already showing. Use it for subtle "refreshing" indicators.
 
 **Q: What does the `enabled` option do?**
-**A:** It controls whether the query runs. When `false`, the query is paused — no network request fires. Use it for conditional or dependent queries — e.g., `enabled: !!userId` waits until a user ID exists before fetching.[^9]
+**A:** It controls whether the query runs. When `false`, the query is paused — no network request fires. Use it for conditional or dependent queries — e.g., `enabled: !!userId` waits until a user ID exists before fetching.
 
 **Q: What is the `select` option?**
-**A:** A function to transform the cached data before it's returned to the component. The full dataset stays in the cache; `select` applies a memoized transformation per component. Use it to filter, map, or reshape data without introducing additional state.[^9]
+**A:** A function to transform the cached data before it's returned to the component. The full dataset stays in the cache; `select` applies a memoized transformation per component. Use it to filter, map, or reshape data without introducing additional state.
 
 ## C — Common Pitfalls
 

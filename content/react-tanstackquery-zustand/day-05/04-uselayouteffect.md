@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-`useLayoutEffect` runs synchronously after DOM mutations but *before* the browser paints — use it when you need to measure the DOM and update state without the user seeing a visual flicker.[^2][^8]
+`useLayoutEffect` runs synchronously after DOM mutations but *before* the browser paints — use it when you need to measure the DOM and update state without the user seeing a visual flicker.
 
 ## K — Key Concepts
 
-**The timing difference:**[^8][^2]
+**The timing difference:**
 
 ```
 Render → Commit DOM → useLayoutEffect → Browser Paint → useEffect
@@ -40,7 +40,7 @@ useLayoutEffect(() => {
 | SSR safe? | ✅ Yes | ⚠️ No (warns on server) |
 | Performance risk | None | Can block paint if slow |
 
-**Classic tooltip positioning example:**[^9]
+**Classic tooltip positioning example:**
 
 ```jsx
 function Tooltip({ targetRef, text }) {
@@ -68,7 +68,7 @@ function Tooltip({ targetRef, text }) {
 
 ## W — Why It Matters
 
-The difference between `useEffect` and `useLayoutEffect` is exactly one user experience detail: does the user see a flash of wrong content? For tooltip positioning, popover placement, scroll restoration, and animation setup, that flash is the difference between polished and janky. Use `useEffect` by default and reach for `useLayoutEffect` only when you have a visible flicker to fix.[^10][^2][^9]
+The difference between `useEffect` and `useLayoutEffect` is exactly one user experience detail: does the user see a flash of wrong content? For tooltip positioning, popover placement, scroll restoration, and animation setup, that flash is the difference between polished and janky. Use `useEffect` by default and reach for `useLayoutEffect` only when you have a visible flicker to fix.
 
 ## I — Interview Q&A
 
@@ -76,7 +76,7 @@ The difference between `useEffect` and `useLayoutEffect` is exactly one user exp
 **A:** Both run after the DOM is committed, but `useLayoutEffect` runs synchronously *before* the browser paints while `useEffect` runs asynchronously *after* the paint. Use `useLayoutEffect` when you need to measure the DOM and update state without the user seeing a flicker.
 
 **Q: What's the performance risk of `useLayoutEffect`?**
-**A:** It blocks the browser from painting until it finishes. If your layout effect does expensive work, the user sees a frozen/delayed UI. Always keep layout effects fast — only DOM measurements and immediate state updates.[^8]
+**A:** It blocks the browser from painting until it finishes. If your layout effect does expensive work, the user sees a frozen/delayed UI. Always keep layout effects fast — only DOM measurements and immediate state updates.
 
 **Q: Does `useLayoutEffect` work in Server-Side Rendering (SSR)?**
 **A:** No — it causes a warning in SSR because the DOM doesn't exist on the server. Use `useEffect` for SSR-compatible code, or conditionally apply `useLayoutEffect` only in browser environments.

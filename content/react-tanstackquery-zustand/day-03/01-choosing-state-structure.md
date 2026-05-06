@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Good state structure means storing the *minimum* amount of state needed — everything else should be derived, grouped, or removed.[^1]
+Good state structure means storing the *minimum* amount of state needed — everything else should be derived, grouped, or removed.
 
 ## K — Key Concepts
 
-**The 5 principles for state structure:**[^1]
+**The 5 principles for state structure:**
 
 1. **Group related state** — if two variables always update together, merge them into one object
 2. **Avoid contradictions** — don't have two state variables that can disagree with each other
@@ -36,7 +36,7 @@ const [status, setStatus] = useState("idle") // "idle" | "sending" | "sent"
 
 ## W — Why It Matters
 
-Poor state structure is the root cause of most React bugs — contradictory states cause impossible UI conditions (e.g., "sending" and "sent" both true), and redundant state causes sync bugs where the UI shows stale data. Getting structure right upfront saves hours of debugging.[^4][^1]
+Poor state structure is the root cause of most React bugs — contradictory states cause impossible UI conditions (e.g., "sending" and "sent" both true), and redundant state causes sync bugs where the UI shows stale data. Getting structure right upfront saves hours of debugging.
 
 ## I — Interview Q&A
 

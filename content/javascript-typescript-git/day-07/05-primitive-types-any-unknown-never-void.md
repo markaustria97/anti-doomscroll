@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`unknown` is the safe `any` — you must narrow before using it; `never` is the impossible type (empty union, exhausted switch); `void` means "intentionally returns nothing."[^11]
+`unknown` is the safe `any` — you must narrow before using it; `never` is the impossible type (empty union, exhausted switch); `void` means "intentionally returns nothing."
 
 ## K — Key Concepts
 
@@ -86,12 +86,12 @@ type GetUndef = () => undefined  // must explicitly return undefined
 
 ## W — Why It Matters
 
-`unknown` is the correct type for values from external sources (API responses, `JSON.parse`, error objects, user input) — it forces validation before use. `never` enables exhaustive switch checking — add a case to a union and TypeScript will error in every switch that doesn't handle it.[^11]
+`unknown` is the correct type for values from external sources (API responses, `JSON.parse`, error objects, user input) — it forces validation before use. `never` enables exhaustive switch checking — add a case to a union and TypeScript will error in every switch that doesn't handle it.
 
 ## I — Interview Q&A
 
 **Q: What's the difference between `any` and `unknown`?**
-A: Both accept any value. But `any` disables all type checking — you can do anything with it. `unknown` keeps type safety — you must narrow the type (with `typeof`, `instanceof`, or type guards) before performing operations. Use `unknown` for values you don't control; avoid `any`.[^11]
+A: Both accept any value. But `any` disables all type checking — you can do anything with it. `unknown` keeps type safety — you must narrow the type (with `typeof`, `instanceof`, or type guards) before performing operations. Use `unknown` for values you don't control; avoid `any`.
 
 **Q: When does TypeScript infer a type as `never`?**
 A: In three situations: (1) a function that always throws or loops forever, (2) an empty union type (`string & number`), and (3) a narrowed variable where all union members have been eliminated (e.g., `if typeof x === "string"` then `else if typeof x === "number"` — in a final `else`, x is `never`).

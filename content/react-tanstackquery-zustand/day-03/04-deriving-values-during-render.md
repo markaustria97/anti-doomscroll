@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Any value computable from state or props should be a plain variable declared during render — not state, not `useEffect`, not `useMemo` (unless expensive).[^2]
+Any value computable from state or props should be a plain variable declared during render — not state, not `useEffect`, not `useMemo` (unless expensive).
 
 ## K — Key Concepts
 
@@ -47,7 +47,7 @@ const sortedItems = useMemo(
 
 ## W — Why It Matters
 
-A common anti-pattern is using `useEffect` to sync derived state — this causes an extra render cycle (render → effect fires → setState → re-render) and makes code much harder to follow. Deriving during render is always one render, always in sync, and always simpler.[^2]
+A common anti-pattern is using `useEffect` to sync derived state — this causes an extra render cycle (render → effect fires → setState → re-render) and makes code much harder to follow. Deriving during render is always one render, always in sync, and always simpler.
 
 ## I — Interview Q&A
 

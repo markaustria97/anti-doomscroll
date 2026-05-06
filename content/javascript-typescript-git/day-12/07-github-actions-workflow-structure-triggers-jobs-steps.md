@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-A GitHub Actions workflow is a YAML file in `.github/workflows/` — it defines `on:` (triggers), `jobs:` (parallel units), and `steps:` (sequential tasks within a job); understanding this hierarchy unlocks the entire CI/CD model.[^3][^9]
+A GitHub Actions workflow is a YAML file in `.github/workflows/` — it defines `on:` (triggers), `jobs:` (parallel units), and `steps:` (sequential tasks within a job); understanding this hierarchy unlocks the entire CI/CD model.
 
 ## K — Key Concepts
 
@@ -116,7 +116,7 @@ jobs:
 
 ## W — Why It Matters
 
-The jobs-as-DAG model (directed acyclic graph via `needs:`) is what separates good CI from great CI. Running lint, test, and typecheck in parallel and only blocking build on all three cuts pipeline time from sequential (3 min each = 9 min) to parallel (3 min = 3 min + 1 min build = 4 min total).[^3]
+The jobs-as-DAG model (directed acyclic graph via `needs:`) is what separates good CI from great CI. Running lint, test, and typecheck in parallel and only blocking build on all three cuts pipeline time from sequential (3 min each = 9 min) to parallel (3 min = 3 min + 1 min build = 4 min total).
 
 ## I — Interview Q&A
 
@@ -124,7 +124,7 @@ The jobs-as-DAG model (directed acyclic graph via `needs:`) is what separates go
 A: `push:` fires when commits land on a branch (after merge). `pull_request:` fires on PR events (opened, updated) and runs against the merge result of the PR + target branch. Both are needed: `pull_request:` for pre-merge validation, `push:` to trigger deployments after merge.
 
 **Q: What does `needs: [lint, test]` do in a job definition?**
-A: It declares that the `build` job depends on both `lint` and `test` jobs completing successfully. `lint` and `test` run in parallel. `build` only starts when both finish successfully. If either fails, `build` is skipped.[^3]
+A: It declares that the `build` job depends on both `lint` and `test` jobs completing successfully. `lint` and `test` run in parallel. `build` only starts when both finish successfully. If either fails, `build` is skipped.
 
 ## C — Common Pitfalls
 

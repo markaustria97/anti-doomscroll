@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Prefetching loads data into the cache before a component needs it — on hover, on navigation, or on the server — so the component renders instantly with zero loading state.[^2][^10]
+Prefetching loads data into the cache before a component needs it — on hover, on navigation, or on the server — so the component renders instantly with zero loading state.
 
 ## K — Key Concepts
 
-**`queryClient.prefetchQuery` — the core API:**[^2]
+**`queryClient.prefetchQuery` — the core API:**
 
 ```jsx
 const queryClient = useQueryClient()
@@ -65,7 +65,7 @@ function ProductPage() {
 }
 ```
 
-**Server-side prefetching (Next.js App Router):**[^11]
+**Server-side prefetching (Next.js App Router):**
 
 ```jsx
 // app/products/[id]/page.tsx — Server Component
@@ -108,18 +108,18 @@ function ProductDetail({ productId }) {
 
 ## W — Why It Matters
 
-Prefetching is the difference between "instant" navigation and loading spinners. A hover-prefetch on a product card means the product page loads instantly when clicked. Server prefetching means users see content immediately with no client-side waterfall. It's one of the highest-impact performance techniques in TanStack Query — and it's only possible because queries are identified by keys and cached centrally.[^10][^2]
+Prefetching is the difference between "instant" navigation and loading spinners. A hover-prefetch on a product card means the product page loads instantly when clicked. Server prefetching means users see content immediately with no client-side waterfall. It's one of the highest-impact performance techniques in TanStack Query — and it's only possible because queries are identified by keys and cached centrally.
 
 ## I — Interview Q&A
 
 **Q: What is prefetching in TanStack Query and how does it work?**
-**A:** Calling `queryClient.prefetchQuery` loads data into the cache before any component requests it. When a component later mounts and calls `useQuery` with the same key, it finds data in the cache and skips the loading state. The fetch happens once; the component renders immediately.[^2]
+**A:** Calling `queryClient.prefetchQuery` loads data into the cache before any component requests it. When a component later mounts and calls `useQuery` with the same key, it finds data in the cache and skips the loading state. The fetch happens once; the component renders immediately.
 
 **Q: Does `prefetchQuery` re-fetch if the data is already fresh in the cache?**
-**A:** No — `prefetchQuery` respects `staleTime`. If the cache entry exists and is still within its `staleTime`, the prefetch is a no-op. This makes it safe to call aggressively (e.g., on hover) without triggering unnecessary requests.[^2]
+**A:** No — `prefetchQuery` respects `staleTime`. If the cache entry exists and is still within its `staleTime`, the prefetch is a no-op. This makes it safe to call aggressively (e.g., on hover) without triggering unnecessary requests.
 
 **Q: How do you prefetch data on the server in a Next.js App Router app?**
-**A:** In the Server Component, create a `QueryClient`, call `prefetchQuery` with an async server-side fetch function, then serialize and pass the cache state via `dehydrate` + `HydrationBoundary`. The client `useQuery` hook finds the data already in cache — zero loading state on first render.[^11]
+**A:** In the Server Component, create a `QueryClient`, call `prefetchQuery` with an async server-side fetch function, then serialize and pass the cache state via `dehydrate` + `HydrationBoundary`. The client `useQuery` hook finds the data already in cache — zero loading state on first render.
 
 ## C — Common Pitfalls
 

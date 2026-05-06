@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Microtasks (Promises, `queueMicrotask`) run to completion after every task before any macrotask (setTimeout, I/O) gets a turn — a starved macrotask queue is a real production risk.[^6][^1]
+Microtasks (Promises, `queueMicrotask`) run to completion after every task before any macrotask (setTimeout, I/O) gets a turn — a starved macrotask queue is a real production risk.
 
 ## K — Key Concepts
 
@@ -50,12 +50,12 @@ queueMicrotask(() => console.log("microtask"))
 
 ## W — Why It Matters
 
-Understanding this ordering prevents bugs in code that mixes Promises and `setTimeout`. It's also why you should never create infinite Promise chains — they can fully starve I/O and rendering. In Node.js, `process.nextTick` has even higher priority than Promises, making it dangerous in recursion.[^6]
+Understanding this ordering prevents bugs in code that mixes Promises and `setTimeout`. It's also why you should never create infinite Promise chains — they can fully starve I/O and rendering. In Node.js, `process.nextTick` has even higher priority than Promises, making it dangerous in recursion.
 
 ## I — Interview Q&A
 
 **Q: What's the difference between a microtask and a macrotask?**
-A: Microtasks are high-priority callbacks (Promise handlers, `queueMicrotask`) that run after the current code and before the next macrotask. Macrotasks (`setTimeout`, I/O) run one per event loop turn, only after the microtask queue is fully empty.[^7][^1]
+A: Microtasks are high-priority callbacks (Promise handlers, `queueMicrotask`) that run after the current code and before the next macrotask. Macrotasks (`setTimeout`, I/O) run one per event loop turn, only after the microtask queue is fully empty.
 
 **Q: What happens if a microtask queues another microtask?**
 A: The new microtask is added to the microtask queue and runs immediately after the current microtask — before any macrotask. This can chain indefinitely and starve macrotasks/rendering.

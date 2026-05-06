@@ -77,7 +77,7 @@ type Brand2<T, Tag> = T & { readonly [__brand]: Tag }
 
 ## W — Why It Matters
 
-Branded types are the TypeScript equivalent of new-type idioms in Rust/Haskell. In payment systems, mixing `amount in dollars` and `amount in cents` both being `number` causes catastrophic bugs. Branding prevents passing a `ProductId` where a `UserId` is expected — both being `string` — without any runtime overhead.[^3]
+Branded types are the TypeScript equivalent of new-type idioms in Rust/Haskell. In payment systems, mixing `amount in dollars` and `amount in cents` both being `number` causes catastrophic bugs. Branding prevents passing a `ProductId` where a `UserId` is expected — both being `string` — without any runtime overhead.
 
 ## I — Interview Q&A
 

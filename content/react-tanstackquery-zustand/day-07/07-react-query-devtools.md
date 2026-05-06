@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-React Query DevTools is a built-in debugging panel that shows every query's cache key, status, data, and timing — making cache behavior visible and debuggable in real time.[^9]
+React Query DevTools is a built-in debugging panel that shows every query's cache key, status, data, and timing — making cache behavior visible and debuggable in real time.
 
 ## K — Key Concepts
 
-**Installation and setup (v5):**[^9]
+**Installation and setup (v5):**
 
 ```bash
 npm install @tanstack/react-query-devtools
@@ -69,7 +69,7 @@ For each query in the cache:
 
 ## W — Why It Matters
 
-TanStack Query's cache is invisible without DevTools — you can't tell if data is fresh or stale, how many components are subscribed, or whether invalidation is working correctly. DevTools transforms the cache from a black box into a fully inspectable, interactive dashboard. It's the single biggest productivity tool when working with TanStack Query.[^9]
+TanStack Query's cache is invisible without DevTools — you can't tell if data is fresh or stale, how many components are subscribed, or whether invalidation is working correctly. DevTools transforms the cache from a black box into a fully inspectable, interactive dashboard. It's the single biggest productivity tool when working with TanStack Query.
 
 ## I — Interview Q&A
 
@@ -77,7 +77,7 @@ TanStack Query's cache is invisible without DevTools — you can't tell if data 
 **A:** Every query in the cache with its key, current status (fresh/stale/fetching/inactive), cached data, last updated timestamp, observer count, and action buttons to manually refetch, invalidate, or remove queries.
 
 **Q: Does ReactQueryDevtools add bundle size to production?**
-**A:** No — it's automatically excluded in production (`process.env.NODE_ENV !== "production"`). You can also use the `lazy` import for explicit code splitting if needed.[^9]
+**A:** No — it's automatically excluded in production (`process.env.NODE_ENV !== "production"`). You can also use the `lazy` import for explicit code splitting if needed.
 
 **Q: How do you use DevTools to debug a mutation that's not updating the UI?**
 **A:** After the mutation fires, open DevTools and check if the affected query key is still showing old data. If it is, your mutation's `onSuccess` callback is missing `queryClient.invalidateQueries({ queryKey: [...] })`. The cache is stale but no refetch was triggered.

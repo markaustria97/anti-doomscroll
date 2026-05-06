@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Parallel queries fire multiple independent fetches simultaneously — simply call multiple `useQuery` hooks at the top level and they execute concurrently with no extra configuration.[^3]
+Parallel queries fire multiple independent fetches simultaneously — simply call multiple `useQuery` hooks at the top level and they execute concurrently with no extra configuration.
 
 ## K — Key Concepts
 
-**Automatic parallelism — just call multiple `useQuery` hooks:**[^3]
+**Automatic parallelism — just call multiple `useQuery` hooks:**
 
 ```jsx
 function Dashboard() {
@@ -70,7 +70,7 @@ function Dashboard() {
 
 ## W — Why It Matters
 
-The waterfall anti-pattern — fetching A, waiting, then fetching B — doubles or triples load time. Parallel queries eliminate this. Every dashboard, profile page, or multi-section view should fire independent queries simultaneously. This is one of the biggest performance wins in data fetching architecture.[^3]
+The waterfall anti-pattern — fetching A, waiting, then fetching B — doubles or triples load time. Parallel queries eliminate this. Every dashboard, profile page, or multi-section view should fire independent queries simultaneously. This is one of the biggest performance wins in data fetching architecture.
 
 ## I — Interview Q&A
 
@@ -81,7 +81,7 @@ The waterfall anti-pattern — fetching A, waiting, then fetching B — doubles 
 **A:** Combine the `isPending` flags: `const isPending = queryA.isPending || queryB.isPending`. Show a combined skeleton until both are done, or render sections independently as each one resolves.
 
 **Q: What is the difference between parallel queries and `useQueries`?**
-**A:** `useQuery` called multiple times handles a fixed, known number of parallel queries. `useQueries` is for a dynamic array of queries — when the number of queries is determined at runtime (e.g., fetch details for each item in a list of unknown length).[^1]
+**A:** `useQuery` called multiple times handles a fixed, known number of parallel queries. `useQueries` is for a dynamic array of queries — when the number of queries is determined at runtime (e.g., fetch details for each item in a list of unknown length).
 
 ## C — Common Pitfalls
 

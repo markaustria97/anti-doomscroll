@@ -84,7 +84,8 @@ function splitMarkdownIntoTopics(content) {
       index + 1 < matches.length ? matches[index + 1].index : content.length;
     const body = content.slice(startIndex, endIndex).trimStart();
     const paddedNumber = String(Number(topicNumber)).padStart(2, "0");
-    const slug = toKebabCase(topicTitle);
+    const cleanTitle = topicTitle.replace(/\[\^\d+\]/g, "").trim();
+    const slug = toKebabCase(cleanTitle);
 
     if (!slug) {
       throw new Error(`Unable to create a filename for heading: ${fullMatch}`);
@@ -92,7 +93,7 @@ function splitMarkdownIntoTopics(content) {
 
     return {
       filename: `${paddedNumber}-${slug}.md`,
-      content: `${body.trimEnd()}\n`,
+      content: `${body.trimEnd().replace(/\[\^\d+\]/g, "")}\n`,
     };
   });
 }
@@ -150,7 +151,7 @@ function generateIndex(outputBase, sourceName, dayTitleMap) {
     for (const f of files) {
       const content = fs.readFileSync(path.join(dayDir, f), "utf8");
       let title = extractTitle(content).replace(/\n/g, " ");
-      title = title.replace(/\\&/g, "&");
+      title = title.replace(/\[\^\d+\]/g, "").replace(/\\&/g, "&");
       // Use a checkbox-style list for topics
       out += `- [ ] [${title}](${entry.name}/${f})\n`;
     }
@@ -216,8 +217,11 @@ function main() {
         );
         if (dayTitleMatch && dayTitleMatch[1]) {
           let dt = dayTitleMatch[1].trim();
-          // Strip markdown links and unescape any backslash-escaped ampersands
-          dt = dt.replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1").replace(/\\&/g, "&");
+          // Strip markdown links, remove footnote markers, and unescape any backslash-escaped ampersands
+          dt = dt
+            .replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1")
+            .replace(/\\&/g, "&")
+            .replace(/\[\^\d+\]/g, "");
           dayTitles[dayFolder] = dt;
         }
 
@@ -227,7 +231,9 @@ function main() {
         const topics = splitMarkdownIntoTopics(markdown);
 
         for (const topic of topics) {
-          const contentToWrite = topic.content.replace(/\\&/g, "&");
+          const contentToWrite = topic.content
+            .replace(/\\&/g, "&")
+            .replace(/\[\^\d+\]/g, "");
           fs.writeFileSync(
             path.join(dayDirPath, topic.filename),
             contentToWrite,
@@ -270,7 +276,9 @@ function main() {
   fs.mkdirSync(outputDirPath, { recursive: true });
 
   for (const topic of topics) {
-    const contentToWrite = topic.content.replace(/\\&/g, "&");
+    const contentToWrite = topic.content
+      .replace(/\\&/g, "&")
+      .replace(/\[\^\d+\]/g, "");
     fs.writeFileSync(
       path.join(outputDirPath, topic.filename),
       contentToWrite,

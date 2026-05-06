@@ -83,7 +83,7 @@ Understanding variance explains why `(dog: Dog) => void` is NOT assignable to `(
 **Q: Why are function parameters contravariant?**
 
 ```
-A: If a function expects `Dog`, it can only handle `Dog`. If you substitute it with a function that expects `Animal` (supertype), it can handle any animal — including `Dog`. So `Consumer<Animal>` is safely assignable to `Consumer<Dog>`. The direction flips from the type hierarchy: subtype parameter → supertype is valid, not the other way.[^1]
+A: If a function expects `Dog`, it can only handle `Dog`. If you substitute it with a function that expects `Animal` (supertype), it can handle any animal — including `Dog`. So `Consumer<Animal>` is safely assignable to `Consumer<Dog>`. The direction flips from the type hierarchy: subtype parameter → supertype is valid, not the other way.
 ```
 
 **Q: What does `strictFunctionTypes` enforce?**

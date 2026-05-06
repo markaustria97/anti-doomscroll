@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Never use mutating array methods (`push`, `splice`, `sort`) on state — use non-mutating alternatives that return new arrays.[^9]
+Never use mutating array methods (`push`, `splice`, `sort`) on state — use non-mutating alternatives that return new arrays.
 
 ## K — Key Concepts
 
@@ -17,7 +17,7 @@ Never use mutating array methods (`push`, `splice`, `sort`) on state — use non
 | Sort | `arr.sort()` | `[...arr].sort()` |
 | Reverse | `arr.reverse()` | `[...arr].reverse()` |
 
-**Practical patterns:**[^9]
+**Practical patterns:**
 
 ```jsx
 const [items, setItems] = useState([...])
@@ -46,7 +46,7 @@ setItems(prev => [
 
 ## W — Why It Matters
 
-Mutating array state is the \#1 silent bug in React. `push` and `splice` change the existing array's contents but not its reference — React doesn't detect the change and skips re-rendering. This is especially tricky because the state appears to "work" in the console but the UI doesn't update.[^9]
+Mutating array state is the \#1 silent bug in React. `push` and `splice` change the existing array's contents but not its reference — React doesn't detect the change and skips re-rendering. This is especially tricky because the state appears to "work" in the console but the UI doesn't update.
 
 ## I — Interview Q&A
 

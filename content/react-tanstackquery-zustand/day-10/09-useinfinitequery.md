@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-`useInfiniteQuery` manages "load more" and infinite scroll patterns — it fetches pages sequentially, accumulates them in a `pages` array, and tracks the next page cursor automatically via `getNextPageParam`.[^3]
+`useInfiniteQuery` manages "load more" and infinite scroll patterns — it fetches pages sequentially, accumulates them in a `pages` array, and tracks the next page cursor automatically via `getNextPageParam`.
 
 ## K — Key Concepts
 
-**Full anatomy of `useInfiniteQuery` (v5):**[^12][^3]
+**Full anatomy of `useInfiniteQuery` (v5):**
 
 ```jsx
 import { useInfiniteQuery } from "@tanstack/react-query"
@@ -82,18 +82,18 @@ getNextPageParam: (lastPage, allPages) => {
 
 ## W — Why It Matters
 
-`useInfiniteQuery` handles all the complexity of cursor tracking, page accumulation, and "load more" state that would otherwise require a `useState` cursor, a `useEffect` to append results, and manual deduplication logic. Every social feed, product listing, or activity timeline in a modern app benefits from this hook.[^3]
+`useInfiniteQuery` handles all the complexity of cursor tracking, page accumulation, and "load more" state that would otherwise require a `useState` cursor, a `useEffect` to append results, and manual deduplication logic. Every social feed, product listing, or activity timeline in a modern app benefits from this hook.
 
 ## I — Interview Q&A
 
 **Q: What is the difference between `isPending` and `isFetchingNextPage` in `useInfiniteQuery`?**
-**A:** `isPending` is `true` only during the very first page load — no data exists yet. `isFetchingNextPage` is `true` when additional pages are being fetched via `fetchNextPage()`. Use `isPending` for the full-page skeleton and `isFetchingNextPage` for the "loading more..." indicator at the bottom.[^3]
+**A:** `isPending` is `true` only during the very first page load — no data exists yet. `isFetchingNextPage` is `true` when additional pages are being fetched via `fetchNextPage()`. Use `isPending` for the full-page skeleton and `isFetchingNextPage` for the "loading more..." indicator at the bottom.
 
 **Q: What does `getNextPageParam` return to signal there are no more pages?**
-**A:** Return `undefined` or `null` — this sets `hasNextPage: false`. As long as you return a non-nullish value, TanStack Query knows more pages exist.[^12][^3]
+**A:** Return `undefined` or `null` — this sets `hasNextPage: false`. As long as you return a non-nullish value, TanStack Query knows more pages exist.
 
 **Q: What is `initialPageParam` and why is it required in v5?**
-**A:** It's the `pageParam` value used for the very first page fetch. In v5 it must be explicitly declared (previously it defaulted to `undefined`). Common values: `0` for offset, `1` for page numbers, `null` or `""` for cursor-based APIs where the first page has no cursor.[^12]
+**A:** It's the `pageParam` value used for the very first page fetch. In v5 it must be explicitly declared (previously it defaulted to `undefined`). Common values: `0` for offset, `1` for page numbers, `null` or `""` for cursor-based APIs where the first page has no cursor.
 
 ## C — Common Pitfalls
 

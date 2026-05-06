@@ -14,8 +14,8 @@ const p2: Point = [1, 2, 3]   // ❌ Source has 3 element(s) but target allows o
 
 // Accessing tuple elements
 const [x, y] = p              // destructuring — x: number, y: number
-p[^0]                          // number
-p[^2]                          // ❌ Tuple type 'Point' of length '2' has no index '2'
+p                          // number
+p                          // ❌ Tuple type 'Point' of length '2' has no index '2'
 
 // Named tuple elements (TypeScript 4.0+)
 type Range = [start: number, end: number]
@@ -36,7 +36,7 @@ type Args = [first: string, ...rest: number[]]
 // Readonly tuple
 type ImmutablePoint = readonly [number, number]
 const rp: ImmutablePoint = [1, 2]
-rp[^0] = 3  // ❌ Cannot assign to '0' because it is a read-only property
+rp = 3  // ❌ Cannot assign to '0' because it is a read-only property
 
 // Common use case: function returning multiple values
 function minMax(nums: number[]): [min: number, max: number] {

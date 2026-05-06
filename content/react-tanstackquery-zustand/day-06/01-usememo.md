@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`useMemo` caches the result of an expensive computation between renders — recomputing only when its dependencies change, not on every render.[^1]
+`useMemo` caches the result of an expensive computation between renders — recomputing only when its dependencies change, not on every render.
 
 ## K — Key Concepts
 
@@ -15,7 +15,7 @@ const cachedValue = useMemo(
 )
 ```
 
-**When to use it — the two valid use cases:**[^1]
+**When to use it — the two valid use cases:**
 
 ```jsx
 // 1. Expensive computation
@@ -34,7 +34,7 @@ const options = useMemo(() => ({
 return <Chart options={options} />      // options reference is stable between renders
 ```
 
-**When NOT to use it:**[^1]
+**When NOT to use it:**
 
 ```jsx
 // ❌ Cheap computation — useMemo overhead > computation cost
@@ -59,7 +59,7 @@ const name = `${first} ${last}`
 
 ## W — Why It Matters
 
-`useMemo` is one of React's most misused hooks — applied prematurely everywhere "for performance" when it actually adds overhead. Knowing exactly when it helps (expensive computation, stable references for `React.memo`) versus when it hurts (wrapping trivial values) separates senior developers from juniors.[^1]
+`useMemo` is one of React's most misused hooks — applied prematurely everywhere "for performance" when it actually adds overhead. Knowing exactly when it helps (expensive computation, stable references for `React.memo`) versus when it hurts (wrapping trivial values) separates senior developers from juniors.
 
 ## I — Interview Q&A
 

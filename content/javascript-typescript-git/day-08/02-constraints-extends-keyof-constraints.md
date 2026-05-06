@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`T extends SomeType` constrains what `T` can be — only types assignable to `SomeType` are accepted; `K extends keyof T` ensures `K` is a valid property key of `T`.[^2]
+`T extends SomeType` constrains what `T` can be — only types assignable to `SomeType` are accepted; `K extends keyof T` ensures `K` is a valid property key of `T`.
 
 ## K — Key Concepts
 
@@ -69,12 +69,12 @@ on("submit", () => {})          // ❌ not in EventMap
 
 ## W — Why It Matters
 
-`K extends keyof T` with return type `T[K]` is one of the most powerful TypeScript patterns — it's used throughout React's type definitions, lodash's typed pick/get utilities, and any typed object accessor. It ensures you can never access a property that doesn't exist and always get the correct type back.[^2][^1]
+`K extends keyof T` with return type `T[K]` is one of the most powerful TypeScript patterns — it's used throughout React's type definitions, lodash's typed pick/get utilities, and any typed object accessor. It ensures you can never access a property that doesn't exist and always get the correct type back.
 
 ## I — Interview Q&A
 
 **Q: What does `K extends keyof T` guarantee at the call site?**
-A: It guarantees that whatever value you pass for `K` must be one of the property keys of `T`. TypeScript will error if you pass a key that doesn't exist. And the return type `T[K]` is the exact type of that property — not a generic `unknown`.[^2]
+A: It guarantees that whatever value you pass for `K` must be one of the property keys of `T`. TypeScript will error if you pass a key that doesn't exist. And the return type `T[K]` is the exact type of that property — not a generic `unknown`.
 
 **Q: Can a generic extend multiple types?**
 A: Yes — use intersection: `T extends A & B` means T must be assignable to both A and B. There's no direct `extends A, B` syntax — use `&` to combine.

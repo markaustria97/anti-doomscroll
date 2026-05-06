@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Modules are evaluated in depth-first post-order — imports run before the importing module; top-level `await` pauses the evaluating module and all its dependents until the awaited value resolves.[^6][^3]
+Modules are evaluated in depth-first post-order — imports run before the importing module; top-level `await` pauses the evaluating module and all its dependents until the awaited value resolves.
 
 ## K — Key Concepts
 
@@ -50,7 +50,7 @@ export const db = await createConnection(process.env.DATABASE_URL)
 
 ## W — Why It Matters
 
-TLA enables clean module-level initialization without async IIFE wrappers. But it creates implicit blocking dependencies — a slow TLA in a shared util module blocks every app that imports it. This is why major libraries avoid TLA in their packages.[^6][^3]
+TLA enables clean module-level initialization without async IIFE wrappers. But it creates implicit blocking dependencies — a slow TLA in a shared util module blocks every app that imports it. This is why major libraries avoid TLA in their packages.
 
 ## I — Interview Q&A
 
@@ -58,7 +58,7 @@ TLA enables clean module-level initialization without async IIFE wrappers. But i
 A: The importing module is suspended — it does not execute until the awaited module completes its evaluation (including its `await`). The entire module dependency graph respects this, so dependents higher up the chain also wait.
 
 **Q: Can you use top-level `await` in CommonJS?**
-A: No. CJS loading is synchronous — it cannot wait for async operations during `require()`. Top-level `await` is only available in ES Modules. Use an async IIFE or a separate async init function in CJS projects.[^7]
+A: No. CJS loading is synchronous — it cannot wait for async operations during `require()`. Top-level `await` is only available in ES Modules. Use an async IIFE or a separate async init function in CJS projects.
 
 ## C — Common Pitfalls
 

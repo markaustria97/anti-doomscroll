@@ -18,7 +18,7 @@ getUser(userId, (err, user) => {
   if (err) return handleError(err)
   getOrders(user.id, (err, orders) => {
     if (err) return handleError(err)
-    getProduct(orders[^0].productId, (err, product) => {
+    getProduct(orders.productId, (err, product) => {
       if (err) return handleError(err)
       getReviews(product.id, (err, reviews) => {
         if (err) return handleError(err)

@@ -63,12 +63,12 @@ Object.hasOwn(unsafe, "x")      // ✅ always safe
 
 ## W — Why It Matters
 
-`Object.defineProperty` is how Vue 2's reactivity system worked. `Object.create(null)` is used for performance-critical hash maps. `Object.hasOwn` replaced `hasOwnProperty` as the safe modern alternative. `fromEntries` is essential for transforming objects via the `entries → map → fromEntries` pipeline. [^3][^10]
+`Object.defineProperty` is how Vue 2's reactivity system worked. `Object.create(null)` is used for performance-critical hash maps. `Object.hasOwn` replaced `hasOwnProperty` as the safe modern alternative. `fromEntries` is essential for transforming objects via the `entries → map → fromEntries` pipeline. 
 
 ## I — Interview Q&A
 
 **Q: Why use `Object.hasOwn` instead of `obj.hasOwnProperty()`?**
-A: `obj.hasOwnProperty()` fails if the object was created with `Object.create(null)` (no prototype). It can also be overridden. `Object.hasOwn()` is a static method that always works safely. [^3]
+A: `obj.hasOwnProperty()` fails if the object was created with `Object.create(null)` (no prototype). It can also be overridden. `Object.hasOwn()` is a static method that always works safely. 
 
 **Q: What is an enumerable property?**
 A: An enumerable property shows up in `for...in` loops and `Object.keys()`. Properties added normally are enumerable by default. Properties defined with `defineProperty({enumerable: false})` are hidden from iteration but still accessible directly.

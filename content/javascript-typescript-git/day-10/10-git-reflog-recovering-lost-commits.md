@@ -70,7 +70,6 @@ git gc --prune=now              # ⚠️ permanently removes unreachable objects
 git reflog stash                # show all stash operations
 ```
 
-
 ## W — Why It Matters
 
 `git reflog` has saved countless engineers from "I just lost a week of work" moments. Unlike `git log` (only shows reachable commits), `reflog` shows every local HEAD movement — meaning commits "deleted" by `reset --hard`, wiped by a bad rebase, or on a force-deleted branch are all still there. It's local-only (not pushed to remotes), making it a private time machine.[^11][^10]
@@ -85,11 +84,11 @@ A: Reachable commits (on a branch or tag): 90 days by default. Unreachable commi
 
 ## C — Common Pitfalls
 
-| Pitfall | Fix |
-| :-- | :-- |
-| Reflog not available after `git clone` or on CI | Reflog is local-only — it's populated as you work, not available for fresh clones |
-| `git gc --prune=now` before checking reflog | Never prune before checking if you need to recover — GC makes losses permanent |
-| Reflog entries looking confusing | Look for the action label: `commit:`, `checkout:`, `rebase:`, `reset:` to find the right entry |
+| Pitfall                                         | Fix                                                                                            |
+| :---------------------------------------------- | :--------------------------------------------------------------------------------------------- |
+| Reflog not available after `git clone` or on CI | Reflog is local-only — it's populated as you work, not available for fresh clones              |
+| `git gc --prune=now` before checking reflog     | Never prune before checking if you need to recover — GC makes losses permanent                 |
+| Reflog entries looking confusing                | Look for the action label: `commit:`, `checkout:`, `rebase:`, `reset:` to find the right entry |
 
 ## K — Coding Challenge
 
@@ -115,42 +114,3 @@ git switch main
 git cherry-pick abc1234          # apply just that commit to main
 git branch -D recovery
 ```
-
-
-***
-
-> ✅ **Day 10 complete.**
-> Your tiny next action: run `git reflog` in any repo you're working in right now. Find the most recent 5 HEAD movements, understand what caused each one, and identify one "lost" commit SHA. That one command unlocks the most powerful Git recovery skill.
-<span style="display:none">[^12][^13][^14][^15]</span>
-
-<div align="center">⁂</div>
-
-[^1]: https://git-scm.com/book/en/v2/Git-Internals-Git-Objects
-
-[^2]: https://dev.to/__whyd_rf/a-deep-dive-into-git-internals-blobs-trees-and-commits-1doc
-
-[^3]: https://circleci.com/blog/git-detached-head-state/
-
-[^4]: https://dev.to/devsatasurion/git-rebase-vs-merge-vs-squash-how-to-choose-the-right-one-3a33
-
-[^5]: https://www.kenmuse.com/blog/understanding-how-git-stores-data/
-
-[^6]: https://shafiul.github.io/gitbook/1_the_git_object_model.html
-
-[^7]: https://stackoverflow.com/questions/36112726/why-git-tag-a-blob-or-a-tree-or-a-tag
-
-[^8]: https://graphite.com/guides/git-merge-squash-graphite-cli
-
-[^9]: https://www.centron.de/en/tutorial/git-rebase-tutorial-interactive-merge-options-explained/
-
-[^10]: https://blog.kusho.ai/how-to-use-git-reflog-to-find-lost-commits/
-
-[^11]: https://stackoverflow.com/questions/10099258/how-can-i-recover-a-lost-commit-in-git
-
-[^12]: https://www.youtube.com/watch?v=1eHwkyOmb-4
-
-[^13]: https://initialcommit.com/blog/git-objects-linked-together
-
-[^14]: https://www.freecodecamp.org/news/git-internals-objects-branches-create-repo/
-
-[^15]: https://stackoverflow.com/questions/1725708/git-rebase-interactive-squash-merge-commits-together

@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Client state is data your app owns and controls synchronously; server state is a remote snapshot your app doesn't own — async, potentially stale, and requiring its own management strategy.[^4][^5]
+Client state is data your app owns and controls synchronously; server state is a remote snapshot your app doesn't own — async, potentially stale, and requiring its own management strategy.
 
 ## K — Key Concepts
 
-**The fundamental split:**[^5][^4]
+**The fundamental split:**
 
 
 |  | Client State | Server State |
@@ -18,7 +18,7 @@ Client state is data your app owns and controls synchronously; server state is a
 | Examples | Theme, modal open, form input, UI toggles | Users, products, orders, messages |
 | Best tool | `useState`, `useReducer`, Zustand | TanStack Query |
 
-**Why server state is different — the 4 unique challenges:**[^6][^7]
+**Why server state is different — the 4 unique challenges:**
 
 1. **Caching** — you fetched it, why re-fetch if it hasn't changed?
 2. **Deduplication** — 5 components call the same endpoint; don't fire 5 requests
@@ -47,7 +47,7 @@ Server/async data                 → TanStack Query
 
 ## W — Why It Matters
 
-Before TanStack Query, developers put server data into Redux — a client state tool — then bolted on thunks, sagas, and custom caching logic to compensate for what Redux wasn't designed to do. Understanding the server/client split is the mental unlock that makes TanStack Query obvious and essential, not just another library to learn.[^7][^5]
+Before TanStack Query, developers put server data into Redux — a client state tool — then bolted on thunks, sagas, and custom caching logic to compensate for what Redux wasn't designed to do. Understanding the server/client split is the mental unlock that makes TanStack Query obvious and essential, not just another library to learn.
 
 ## I — Interview Q&A
 
@@ -55,10 +55,10 @@ Before TanStack Query, developers put server data into Redux — a client state 
 **A:** Client state is owned, controlled, and synchronously accurate in the browser — theme, modals, form inputs. Server state is a remote snapshot the frontend doesn't own — it's async, potentially stale, and shared with other users or systems. They require fundamentally different management strategies.
 
 **Q: Why is a Redux store a poor fit for server state?**
-**A:** Redux is designed for synchronous, deterministic client state. Server state is async, perishable, and needs caching, deduplication, background refetching, and cache invalidation — none of which Redux provides natively. Using Redux for server data means building those systems yourself on top of it.[^5]
+**A:** Redux is designed for synchronous, deterministic client state. Server state is async, perishable, and needs caching, deduplication, background refetching, and cache invalidation — none of which Redux provides natively. Using Redux for server data means building those systems yourself on top of it.
 
 **Q: What makes server state "stale"?**
-**A:** The moment you fetch data from a server, it's a snapshot — the server may update it a second later. Other users' actions, background jobs, or scheduled changes can make your cached copy outdated. Managing "how fresh is this data?" is the core problem TanStack Query solves.[^4]
+**A:** The moment you fetch data from a server, it's a snapshot — the server may update it a second later. Other users' actions, background jobs, or scheduled changes can make your cached copy outdated. Managing "how fresh is this data?" is the core problem TanStack Query solves.
 
 ## C — Common Pitfalls
 

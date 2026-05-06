@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Use `useLayoutEffect` + refs to measure DOM dimensions *before* the browser paints — this is the pattern for dynamic sizing, sticky elements, overflow detection, and position-aware UI.[^9]
+Use `useLayoutEffect` + refs to measure DOM dimensions *before* the browser paints — this is the pattern for dynamic sizing, sticky elements, overflow detection, and position-aware UI.
 
 ## K — Key Concepts
 
-**The measure-then-render pattern:**[^9]
+**The measure-then-render pattern:**
 
 ```jsx
 function useElementSize(ref) {
@@ -93,12 +93,12 @@ function TruncatedText({ text }) {
 
 ## W — Why It Matters
 
-CSS alone can't handle every layout scenario — some UI decisions require knowing actual pixel dimensions at runtime. Dropdown alignment, sticky header offset calculation, scroll-aware UI, dynamic font sizing, and virtual list row heights all depend on measuring DOM nodes. This is the precise use case `useLayoutEffect` was designed for.[^2][^9]
+CSS alone can't handle every layout scenario — some UI decisions require knowing actual pixel dimensions at runtime. Dropdown alignment, sticky header offset calculation, scroll-aware UI, dynamic font sizing, and virtual list row heights all depend on measuring DOM nodes. This is the precise use case `useLayoutEffect` was designed for.
 
 ## I — Interview Q&A
 
 **Q: Why use `useLayoutEffect` instead of `useEffect` for DOM measurements?**
-**A:** `useEffect` runs after the browser paints — if you measure and update state inside it, the user sees a flash of the wrong layout first, then a jump to the correct one. `useLayoutEffect` runs before paint, so measurements and state updates happen before the user sees anything, eliminating the visual flicker.[^9]
+**A:** `useEffect` runs after the browser paints — if you measure and update state inside it, the user sees a flash of the wrong layout first, then a jump to the correct one. `useLayoutEffect` runs before paint, so measurements and state updates happen before the user sees anything, eliminating the visual flicker.
 
 **Q: How do you continuously track element size changes?**
 **A:** Use a `ResizeObserver` inside `useLayoutEffect` — it fires whenever the element's dimensions change, allowing you to update state in real time. Always disconnect the observer in the cleanup function.

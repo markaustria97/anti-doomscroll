@@ -18,7 +18,7 @@ arr.forEach((item, index) => console.log(index, item))
 [1,2,3].join()        // "1,2,3" (default comma)
 
 // concat — merge arrays (non-mutating)
-[1,2].concat([3,4], [^5])  // [1,2,3,4,5]
+[1,2].concat([3,4], )  // [1,2,3,4,5]
 [1,2].concat(3, 4)        // [1,2,3,4]
 [...[1,2], ...[3,4]]      // modern equivalent
 

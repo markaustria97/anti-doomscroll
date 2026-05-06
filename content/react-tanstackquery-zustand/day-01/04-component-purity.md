@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-A pure component always returns the same JSX for the same inputs — no side effects during render.[^3]
+A pure component always returns the same JSX for the same inputs — no side effects during render.
 
 ## K — Key Concepts
 
-**Pure function rules applied to React:**[^3]
+**Pure function rules applied to React:**
 
 - **Same inputs → same output** (idempotent)
 - **No side effects during render** (no DOM mutation, no network calls, no modifying external variables)
@@ -26,11 +26,11 @@ function Counter() {
 }
 ```
 
-React's **Strict Mode** renders components twice in development to help detect impure components.[^3]
+React's **Strict Mode** renders components twice in development to help detect impure components.
 
 ## W — Why It Matters
 
-Purity enables React's optimizations — concurrent rendering, `React.memo`, and future compiler optimizations all depend on components being pure. Impure components cause subtle, hard-to-reproduce bugs.[^3]
+Purity enables React's optimizations — concurrent rendering, `React.memo`, and future compiler optimizations all depend on components being pure. Impure components cause subtle, hard-to-reproduce bugs.
 
 ## I — Interview Q&A
 

@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-TanStack Query hashes query keys deterministically — object property order doesn't matter, and the same data always produces the same hash, guaranteeing stable cache lookups.[^5][^4]
+TanStack Query hashes query keys deterministically — object property order doesn't matter, and the same data always produces the same hash, guaranteeing stable cache lookups.
 
 ## K — Key Concepts
 
-**Property order is irrelevant — deep equality wins:**[^5][^3]
+**Property order is irrelevant — deep equality wins:**
 
 ```jsx
 // These four query keys are IDENTICAL — same cache entry
@@ -37,7 +37,7 @@ queryKey: ["user", undefined] // valid but object keys with undefined are stripp
 queryKey: ["filter", { a: { b: { c: 3 } } }]  // deeply serialized
 ```
 
-**How TanStack Query uses the hash:**[^4]
+**How TanStack Query uses the hash:**
 
 ```
 queryKey → hashKey(queryKey) → "["filter",{"a":{"b":{"c":3}}}]"
@@ -68,18 +68,18 @@ function hashKey(queryKey) {
 
 ## W — Why It Matters
 
-Deterministic hashing means you can construct query keys dynamically — from user input, URL params, state — without worrying about key instability from object property ordering. It also means cache invalidation with partial key matches works reliably: `invalidateQueries({ queryKey: ["users"] })` matches every key that starts with `"users"`.[^4]
+Deterministic hashing means you can construct query keys dynamically — from user input, URL params, state — without worrying about key instability from object property ordering. It also means cache invalidation with partial key matches works reliably: `invalidateQueries({ queryKey: ["users"] })` matches every key that starts with `"users"`.
 
 ## I — Interview Q&A
 
 **Q: Does the order of properties in a query key object matter?**
-**A:** No — TanStack Query sorts object keys before hashing, making `{ a: 1, b: 2 }` and `{ b: 2, a: 1 }` produce identical hashes. Only the values and structure matter, not insertion order.[^5][^4]
+**A:** No — TanStack Query sorts object keys before hashing, making `{ a: 1, b: 2 }` and `{ b: 2, a: 1 }` produce identical hashes. Only the values and structure matter, not insertion order.
 
 **Q: Is `["user", 1]` the same cache key as `["user", "1"]`?**
 **A:** No — numbers and strings hash differently. `1 !== "1"` in the hash, so they're separate cache entries. This is a common source of accidental cache misses when mixing ID types from different sources.
 
 **Q: How does partial key matching work in `invalidateQueries`?**
-**A:** TanStack Query checks if the stored key *starts with* the provided prefix. `invalidateQueries({ queryKey: ["users"] })` matches `["users"]`, `["users", 1]`, `["users", { role: "admin" }]` — any key whose first element is `"users"`. This is why Key Factories use hierarchical arrays.[^4]
+**A:** TanStack Query checks if the stored key *starts with* the provided prefix. `invalidateQueries({ queryKey: ["users"] })` matches `["users"]`, `["users", 1]`, `["users", { role: "admin" }]` — any key whose first element is `"users"`. This is why Key Factories use hierarchical arrays.
 
 ## C — Common Pitfalls
 

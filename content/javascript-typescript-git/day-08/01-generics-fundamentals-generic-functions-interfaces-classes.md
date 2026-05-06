@@ -73,7 +73,7 @@ Generics are the foundation of every TypeScript utility type, every React generi
 ## I — Interview Q&A
 
 **Q: What problem do generics solve over using `any`?**
-A: `any` discards all type information — what goes in and comes out is unknown, no autocomplete, no type checking. Generics preserve the relationship between types: if a `T` goes in, a `T` comes out — TypeScript tracks the specific type through the function.[^1]
+A: `any` discards all type information — what goes in and comes out is unknown, no autocomplete, no type checking. Generics preserve the relationship between types: if a `T` goes in, a `T` comes out — TypeScript tracks the specific type through the function.
 
 **Q: When does TypeScript infer generic type parameters vs. when do you provide them explicitly?**
 
@@ -104,7 +104,7 @@ first([])            // undefined
 
 ```ts
 function first<T>(arr: T[]): T | undefined {
-  return arr[^0]
+  return arr
 }
 ```
 

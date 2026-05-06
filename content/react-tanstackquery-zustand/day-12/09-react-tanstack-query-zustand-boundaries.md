@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-React owns local UI, TanStack Query owns server data, and Zustand owns client state — respecting these three boundaries eliminates redundant state, prevents sync bugs, and gives each concern the right tooling.[^12][^13]
+React owns local UI, TanStack Query owns server data, and Zustand owns client state — respecting these three boundaries eliminates redundant state, prevents sync bugs, and gives each concern the right tooling.
 
 ## K — Key Concepts
 
@@ -39,7 +39,7 @@ React owns local UI, TanStack Query owns server data, and Zustand owns client st
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-**The "Zustand drives Query" pattern — clean integration:**[^13][^12]
+**The "Zustand drives Query" pattern — clean integration:**
 
 ```jsx
 // Zustand: owns what to query
@@ -100,18 +100,18 @@ const useAuthStore = create((set) => ({
 
 ## W — Why It Matters
 
-The most common architecture mistake in React apps is using one tool for everything — Redux/Zustand for server data, or TanStack Query for client state. The result is manually reimplementing caching in Zustand, or storing modal state in a query cache. Each boundary violation adds complexity. The clean three-boundary model scales to any app size and makes state predictably debuggable.[^12][^13]
+The most common architecture mistake in React apps is using one tool for everything — Redux/Zustand for server data, or TanStack Query for client state. The result is manually reimplementing caching in Zustand, or storing modal state in a query cache. Each boundary violation adds complexity. The clean three-boundary model scales to any app size and makes state predictably debuggable.
 
 ## I — Interview Q&A
 
 **Q: How do you decide whether state belongs in Zustand or TanStack Query?**
-**A:** Ask: "Does this data live on a server and need to be cached/refreshed?" → TanStack Query. "Is this client-owned state shared across many components?" → Zustand. "Is this local to one component?" → `useState`. The question of where data originates is the primary deciding factor.[^13][^12]
+**A:** Ask: "Does this data live on a server and need to be cached/refreshed?" → TanStack Query. "Is this client-owned state shared across many components?" → Zustand. "Is this local to one component?" → `useState`. The question of where data originates is the primary deciding factor.
 
 **Q: How do Zustand and TanStack Query interact in a filter + results pattern?**
-**A:** Zustand holds the filter state (category, sort, page). Components read filters from Zustand and pass them into `useQuery`'s `queryKey` and `queryFn`. When filters change in Zustand, the query key changes, triggering a new fetch. The two tools cooperate — Zustand as the source of "what to fetch," Query as the mechanism of fetching and caching.[^13]
+**A:** Zustand holds the filter state (category, sort, page). Components read filters from Zustand and pass them into `useQuery`'s `queryKey` and `queryFn`. When filters change in Zustand, the query key changes, triggering a new fetch. The two tools cooperate — Zustand as the source of "what to fetch," Query as the mechanism of fetching and caching.
 
 **Q: What should you do on logout regarding TanStack Query's cache?**
-**A:** Call `queryClient.clear()` — this removes all cached data for the previous user. Without it, the next user (or a re-login) might see stale data from the previous session. If you only want to remove user-specific queries, use `removeQueries` with targeted keys.[^12]
+**A:** Call `queryClient.clear()` — this removes all cached data for the previous user. Without it, the next user (or a re-login) might see stale data from the previous session. If you only want to remove user-specific queries, use `removeQueries` with targeted keys.
 
 ## C — Common Pitfalls
 

@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-`useDebugValue` adds a human-readable label to your custom hook in React DevTools — making it immediately clear what state a hook holds without expanding every hook call.[^2][^8]
+`useDebugValue` adds a human-readable label to your custom hook in React DevTools — making it immediately clear what state a hook holds without expanding every hook call.
 
 ## K — Key Concepts
 
-**Basic usage:**[^2]
+**Basic usage:**
 
 ```jsx
 function useOnlineStatus() {
@@ -30,7 +30,7 @@ function useOnlineStatus() {
 }
 ```
 
-**The formatter function (lazy evaluation):**[^2]
+**The formatter function (lazy evaluation):**
 
 The second argument is a formatter called only when DevTools are open — use it for expensive formatting operations:
 
@@ -49,7 +49,7 @@ function useFetch(url) {
 }
 ```
 
-**Multiple `useDebugValue` calls:**[^9]
+**Multiple `useDebugValue` calls:**
 
 ```jsx
 function useAuthenticatedFetch(url) {
@@ -77,7 +77,7 @@ function useAuthenticatedFetch(url) {
 
 ## W — Why It Matters
 
-Without `useDebugValue`, inspecting custom hooks in DevTools shows raw state values with no context — you have to expand every hook and understand the internals to figure out what it holds. With it, you see a human label at a glance. This matters most in large codebases with many custom hooks.[^8][^2]
+Without `useDebugValue`, inspecting custom hooks in DevTools shows raw state values with no context — you have to expand every hook and understand the internals to figure out what it holds. With it, you see a human label at a glance. This matters most in large codebases with many custom hooks.
 
 ## I — Interview Q&A
 
@@ -88,7 +88,7 @@ Without `useDebugValue`, inspecting custom hooks in DevTools shows raw state val
 **A:** Only inside custom hooks — not directly in components. It's specifically for labeling custom hook behavior in DevTools.
 
 **Q: What is the purpose of the second argument (formatter) in `useDebugValue`?**
-**A:** It's a lazy formatter function — React only calls it when DevTools is actually open and inspecting the hook. This prevents expensive formatting computations from running in production or when DevTools isn't active.[^2]
+**A:** It's a lazy formatter function — React only calls it when DevTools is actually open and inspecting the hook. This prevents expensive formatting computations from running in production or when DevTools isn't active.
 
 ## C — Common Pitfalls
 

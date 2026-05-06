@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Event handlers run in response to a specific user action; effects run whenever their dependencies change — choose based on *why* the code should run, not *when*.[^3]
+Event handlers run in response to a specific user action; effects run whenever their dependencies change — choose based on *why* the code should run, not *when*.
 
 ## K — Key Concepts
 
-**The core distinction:**[^3]
+**The core distinction:**
 
 
 |  | Event Handler | Effect |
@@ -38,7 +38,7 @@ function ChatRoom({ roomId }) {
 }
 ```
 
-**`useEffectEvent` — mixing event and effect logic:**[^7]
+**`useEffectEvent` — mixing event and effect logic:**
 
 Sometimes you need non-reactive logic inside a reactive effect. `useEffectEvent` creates an "effect event" — a function that always reads the latest values but isn't a dependency:
 
@@ -60,7 +60,7 @@ function ChatRoom({ roomId, onConnected }) {
 
 ## W — Why It Matters
 
-Confusing events and effects is the most common architectural mistake in React. Putting user action logic inside `useEffect` creates bugs — code fires at the wrong time, too often, or with stale data. The event vs. effect distinction is tested heavily in senior React interviews.[^3]
+Confusing events and effects is the most common architectural mistake in React. Putting user action logic inside `useEffect` creates bugs — code fires at the wrong time, too often, or with stale data. The event vs. effect distinction is tested heavily in senior React interviews.
 
 ## I — Interview Q&A
 
@@ -68,7 +68,7 @@ Confusing events and effects is the most common architectural mistake in React. 
 **A:** Ask "why should this code run?" If it runs because the *user did something specific*, use an event handler. If it runs because *some reactive value changed and the component needs to stay in sync*, use an effect. The trigger is the deciding factor.
 
 **Q: What is `useEffectEvent` and why does it exist?**
-**A:** It creates a non-reactive function that always reads the latest props/state, designed to be called *from within* an effect without being listed as a dependency. It solves the "I need the latest value but don't want the effect to re-run when it changes" problem — separating the reactive trigger from the non-reactive action.[^7]
+**A:** It creates a non-reactive function that always reads the latest props/state, designed to be called *from within* an effect without being listed as a dependency. It solves the "I need the latest value but don't want the effect to re-run when it changes" problem — separating the reactive trigger from the non-reactive action.
 
 **Q: Can you use async/await directly in `useEffect`?**
 **A:** Not directly — the `useEffect` callback can't be `async` because it would return a Promise instead of a cleanup function. Define an `async` function inside the effect and call it immediately, or use `.then()`.

@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-The query key uniquely identifies cached data; the query function fetches it — together they are the entire data contract for a `useQuery` call.[^2][^9]
+The query key uniquely identifies cached data; the query function fetches it — together they are the entire data contract for a `useQuery` call.
 
 ## K — Key Concepts
 
-**Query Keys — the cache identity:**[^2][^9]
+**Query Keys — the cache identity:**
 
 ```jsx
 // Query keys are arrays — serialized for cache lookup
@@ -23,7 +23,7 @@ useQuery({ queryKey: ["products", { category, sort }] }) // products with filter
 - More specific keys = more granular cache entries
 - Changing the key → triggers a new fetch for the new key's cache entry
 
-**Query Key Factory pattern — the professional approach:**[^10]
+**Query Key Factory pattern — the professional approach:**
 
 ```jsx
 // ✅ Centralized key factory — prevents typos and key drift
@@ -71,7 +71,7 @@ queryFn: () => axios.get(`/api/users/${id}`).then(res => res.data)
 
 ## W — Why It Matters
 
-Query keys are the most important concept in TanStack Query — they control caching, invalidation, and deduplication. A poorly structured key strategy causes hard-to-debug cache bugs (stale data, missed invalidations). The Key Factory pattern is the industry standard for teams and scales from a 3-component app to a 300-component app cleanly.[^9][^10]
+Query keys are the most important concept in TanStack Query — they control caching, invalidation, and deduplication. A poorly structured key strategy causes hard-to-debug cache bugs (stale data, missed invalidations). The Key Factory pattern is the industry standard for teams and scales from a 3-component app to a 300-component app cleanly.
 
 ## I — Interview Q&A
 
@@ -82,7 +82,7 @@ Query keys are the most important concept in TanStack Query — they control cac
 **A:** TanStack Query treats it as a completely new query — it looks up the new key in the cache, returns any existing cached data immediately, and fetches fresh data in the background or foreground depending on `staleTime`.
 
 **Q: Why should query functions throw errors instead of returning `null`?**
-**A:** TanStack Query determines success vs. error by whether the promise resolves or rejects. Returning `null` or `undefined` for error cases makes the query appear successful with empty data — `isError` stays `false` and retry logic doesn't trigger. Always throw (or let `fetch`/`axios` throw) on failure.[^2]
+**A:** TanStack Query determines success vs. error by whether the promise resolves or rejects. Returning `null` or `undefined` for error cases makes the query appear successful with empty data — `isError` stays `false` and retry logic doesn't trigger. Always throw (or let `fetch`/`axios` throw) on failure.
 
 ## C — Common Pitfalls
 

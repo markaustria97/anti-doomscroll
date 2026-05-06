@@ -44,7 +44,7 @@ A: A non-zero exit code signals failure. CI/CD systems (GitHub Actions, Jenkins)
 | Pitfall | Fix |
 | :-- | :-- |
 | `process.env.PORT === 3000` (number compare) | Cast first: `Number(process.env.PORT) === 3000` |
-| Reading `process.argv[^0]` expecting your arg | Your args start at index `2` |
+| Reading `process.argv` expecting your arg | Your args start at index `2` |
 | Forgetting `process.exit()` in long-running scripts | Call explicitly or use `process.exitCode = 1` |
 
 ## K — Coding Challenge
@@ -58,7 +58,7 @@ A: A non-zero exit code signals failure. CI/CD systems (GitHub Actions, Jenkins)
 **Solution:**
 
 ```js
-const name = process.argv[^2]
+const name = process.argv
 if (!name) {
   console.error("Usage: node greet.js <name>")
   process.exit(1)

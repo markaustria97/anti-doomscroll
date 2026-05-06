@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Zustand stores are JavaScript module singletons — no `<Provider>` wrapper is needed, and any component anywhere in the tree can import and read the store instantly.[^4][^2]
+Zustand stores are JavaScript module singletons — no `<Provider>` wrapper is needed, and any component anywhere in the tree can import and read the store instantly.
 
 ## K — Key Concepts
 
-**How Zustand achieves no-provider:**[^4][^2]
+**How Zustand achieves no-provider:**
 
 ```jsx
 // The store is created at MODULE level — outside React
@@ -68,7 +68,7 @@ import { useAuthStore } from "./stores/auth"
 import { useCartStore } from "./stores/cart"
 ```
 
-**When you DO want a provider (scoped stores):**[^6]
+**When you DO want a provider (scoped stores):**
 
 ```jsx
 // If you need multiple independent instances of a store (e.g., multiple
@@ -96,18 +96,18 @@ function useModalStore(selector) {
 
 ## W — Why It Matters
 
-The provider-free model eliminates the "provider hell" that's common in large React apps — layers of context providers, each requiring setup, each adding a React tree node. It also means you can use Zustand stores in non-component contexts: outside React (event handlers, WebSocket listeners, service workers), in test utilities, and in middleware — all without mocking a React tree.[^2][^4]
+The provider-free model eliminates the "provider hell" that's common in large React apps — layers of context providers, each requiring setup, each adding a React tree node. It also means you can use Zustand stores in non-component contexts: outside React (event handlers, WebSocket listeners, service workers), in test utilities, and in middleware — all without mocking a React tree.
 
 ## I — Interview Q&A
 
 **Q: How does Zustand work without a Provider?**
-**A:** Zustand stores are JavaScript module singletons created outside the React tree. React's Context API needs a Provider to inject a value into the tree; Zustand bypasses this entirely by living in module scope — when a component imports the store hook and calls it, it subscribes to the module-level store directly.[^4][^2]
+**A:** Zustand stores are JavaScript module singletons created outside the React tree. React's Context API needs a Provider to inject a value into the tree; Zustand bypasses this entirely by living in module scope — when a component imports the store hook and calls it, it subscribes to the module-level store directly.
 
 **Q: Can you use a Zustand store outside of a React component?**
-**A:** Yes — `useCountStore.getState()` returns the current state synchronously anywhere. `useCountStore.setState(...)` updates it. `useCountStore.subscribe(...)` subscribes to changes. These are all available without hooks, enabling usage in vanilla JS, WebSocket handlers, or test utilities.[^6]
+**A:** Yes — `useCountStore.getState()` returns the current state synchronously anywhere. `useCountStore.setState(...)` updates it. `useCountStore.subscribe(...)` subscribes to changes. These are all available without hooks, enabling usage in vanilla JS, WebSocket handlers, or test utilities.
 
 **Q: When would you actually need a provider with Zustand?**
-**A:** When you need multiple independent instances of the same store — for example, a modal component that appears multiple times, each with its own open/close state. Use `createStore` (not `create`) with a React Context to scope the store per instance.[^6]
+**A:** When you need multiple independent instances of the same store — for example, a modal component that appears multiple times, each with its own open/close state. Use `createStore` (not `create`) with a React Context to scope the store per instance.
 
 ## C — Common Pitfalls
 

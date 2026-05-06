@@ -105,7 +105,6 @@ git filter-repo --path large-file.zip --invert-paths   # needs git-filter-repo t
 git push --force --all
 ```
 
-
 ## W — Why It Matters
 
 `git worktree` is the fastest way to work on a hotfix while keeping your feature branch intact — no stashing, no branch switching, no losing context. For large repos with accidentally committed binary files, `git gc` after `filter-repo` can reduce repo size from gigabytes to megabytes.
@@ -120,11 +119,11 @@ A: When the context switch is long-lived or complex — e.g., you need to run a 
 
 ## C — Common Pitfalls
 
-| Pitfall | Fix |
-| :-- | :-- |
-| Forgetting `--recurse-submodules` on clone — empty submodule dirs | `git submodule init && git submodule update` to recover, or reclone with flag |
+| Pitfall                                                           | Fix                                                                             |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------ |
+| Forgetting `--recurse-submodules` on clone — empty submodule dirs | `git submodule init && git submodule update` to recover, or reclone with flag   |
 | `git gc --prune=now` before verifying no needed objects in reflog | Check `git reflog` first; `--prune=now` makes unreachable objects unrecoverable |
-| Two worktrees checked out to the same branch — Git blocks it | Worktrees enforce one checkout per branch; use different branches per worktree |
+| Two worktrees checked out to the same branch — Git blocks it      | Worktrees enforce one checkout per branch; use different branches per worktree  |
 
 ## K — Coding Challenge
 
@@ -151,42 +150,3 @@ git branch -d hotfix/null-crash
 
 # Your feature/dashboard is exactly where you left it ✅
 ```
-
-
-***
-
-> ✅ **Day 12 complete.**
-> Your tiny next action: set up Husky + lint-staged + commitlint in a project you're actively working in. Run `npx husky init`, add `npx lint-staged` to `.husky/pre-commit`, and try committing with a bad message. Watch commitlint block it. That 10-minute setup will save your team hours of review feedback every week.
-<span style="display:none">[^11][^12][^13][^14][^15]</span>
-
-<div align="center">⁂</div>
-
-[^1]: https://www.conventionalcommits.org/en/v1.0.0/
-
-[^2]: https://github.com/semantic-release/semantic-release
-
-[^3]: https://dev.to/kanta13jp1/github-actions-advanced-patterns-matrix-cache-and-reusable-workflows-1j68
-
-[^4]: https://dev.to/_d7eb1c1703182e3ce1782/git-hooks-with-husky-and-lint-staged-the-complete-setup-guide-for-2025-53ji
-
-[^5]: https://dev.to/tene/mastering-conventional-commits-structure-benefits-and-tools-3cpo
-
-[^6]: https://jfrog.com/learn/sdlc/semantic-release/
-
-[^7]: https://paulserban.eu/blog/post/advanced-git-workflows-for-team-collaboration/
-
-[^8]: https://dev.to/zhangzewei/pre-commit-with-husky-lint-staged-2kcm
-
-[^9]: https://codefresh.io/learn/github-actions/github-actions-matrix/
-
-[^10]: https://devactivity.com/insights/securing-secrets-in-github-actions-matrix-builds-a-key-aspect-of-planning-a-software-project/
-
-[^11]: https://xnok.github.io/infra-bootstrap-tools/blog/intentional-releases-changesets/
-
-[^12]: https://www.sei.cmu.edu/blog/versioning-with-git-tags-and-conventional-commits/
-
-[^13]: https://robk.uk/posts/training/github/2025-github-actions/07-controlling-workflow/
-
-[^14]: https://capgo.app/blog/automating-ci-cd-with-conventional-commits/
-
-[^15]: https://mokkapps.de/blog/how-to-automatically-generate-a-helpful-changelog-from-your-git-commit-messages

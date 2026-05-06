@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Share state between components by lifting it to their nearest common ancestor — never duplicate the same state in multiple places.[^8][^7]
+Share state between components by lifting it to their nearest common ancestor — never duplicate the same state in multiple places.
 
 ## K — Key Concepts
 
@@ -44,7 +44,7 @@ function ProductPage() {
 
 ## W — Why It Matters
 
-Understanding this pattern prevents the most common architecture mistake: storing the same data in multiple components. That always leads to sync bugs. Knowing *when* to lift vs. when to use Context is a senior-level React skill.[^9][^7]
+Understanding this pattern prevents the most common architecture mistake: storing the same data in multiple components. That always leads to sync bugs. Knowing *when* to lift vs. when to use Context is a senior-level React skill.
 
 ## I — Interview Q&A
 

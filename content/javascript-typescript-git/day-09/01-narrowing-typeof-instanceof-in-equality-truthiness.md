@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Narrowing is TypeScript refining a broad type into a specific one inside a guarded block — every `if`, `switch`, `typeof`, and `instanceof` check is a narrowing operation.[^1]
+Narrowing is TypeScript refining a broad type into a specific one inside a guarded block — every `if`, `switch`, `typeof`, and `instanceof` check is a narrowing operation.
 
 ## K — Key Concepts
 
@@ -83,7 +83,7 @@ x.toUpperCase()        // ✅ string — assignment narrows permanently
 
 ## W — Why It Matters
 
-Narrowing is what makes TypeScript's `string | number | null` unions actually safe to use. Without it, you could never call `.toUpperCase()` on a `string | number` without a cast. Every senior TypeScript developer instinctively writes narrowing before accessing union properties. [^1]
+Narrowing is what makes TypeScript's `string | number | null` unions actually safe to use. Without it, you could never call `.toUpperCase()` on a `string | number` without a cast. Every senior TypeScript developer instinctively writes narrowing before accessing union properties. 
 
 ## I — Interview Q&A
 
@@ -91,7 +91,7 @@ Narrowing is what makes TypeScript's `string | number | null` unions actually sa
 A: `typeof null === "object"` in JavaScript — a historical quirk. To narrow out `null`, use `=== null`, `!= null`, or `val !== null && val !== undefined`. Relying on `typeof val === "object"` will also include `null`.
 
 **Q: What is the difference between `in` narrowing and `instanceof`?**
-A: `instanceof` checks the prototype chain — for class instances. `in` checks if a property key exists on an object — for structural/interface types that have no constructor. Use `instanceof` for classes, `in` for plain objects with discriminating property names.[^1]
+A: `instanceof` checks the prototype chain — for class instances. `in` checks if a property key exists on an object — for structural/interface types that have no constructor. Use `instanceof` for classes, `in` for plain objects with discriminating property names.
 
 ## C — Common Pitfalls
 

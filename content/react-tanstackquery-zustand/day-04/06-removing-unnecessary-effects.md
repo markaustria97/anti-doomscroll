@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Most `useEffect` calls are unnecessary — if you can derive it during render, handle it in an event handler, or skip a re-sync, you don't need an effect.[^1]
+Most `useEffect` calls are unnecessary — if you can derive it during render, handle it in an event handler, or skip a re-sync, you don't need an effect.
 
 ## K — Key Concepts
 
-**The most common unnecessary effects:**[^1]
+**The most common unnecessary effects:**
 
 **1. Deriving state from props or state:**
 
@@ -75,7 +75,7 @@ function handleSearch(term) {
 
 ## W — Why It Matters
 
-Unnecessary effects add render cycles, make code harder to trace, and mask the real intent of your logic. Every extra effect is extra complexity. Developers who know when NOT to use `useEffect` write faster, simpler, more readable React code.[^1]
+Unnecessary effects add render cycles, make code harder to trace, and mask the real intent of your logic. Every extra effect is extra complexity. Developers who know when NOT to use `useEffect` write faster, simpler, more readable React code.
 
 ## I — Interview Q&A
 

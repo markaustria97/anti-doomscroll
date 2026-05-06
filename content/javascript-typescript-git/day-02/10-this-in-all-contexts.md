@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`this` is not who defined the function — it's **how the function was called**. Arrow functions are the exception: they inherit `this` from their definition scope.[^2]
+`this` is not who defined the function — it's **how the function was called**. Arrow functions are the exception: they inherit `this` from their definition scope.
 
 ## K — Key Concepts
 
@@ -67,12 +67,12 @@ class Counter {
 
 ## W — Why It Matters
 
-`this` bugs are the \#1 source of confusing runtime errors in JS. React class component lifecycle bugs, event handler context loss, and setTimeout-inside-methods all stem from misunderstood `this`.[^8]
+`this` bugs are the \#1 source of confusing runtime errors in JS. React class component lifecycle bugs, event handler context loss, and setTimeout-inside-methods all stem from misunderstood `this`.
 
 ## I — Interview Q&A
 
 **Q: What is `this` in a regular function vs an arrow function?**
-A: Regular functions have dynamic `this` — determined by how they're called. Arrow functions have lexical `this` — determined by where they're defined. Arrow functions cannot have their `this` changed by `call`, `apply`, or `bind`.[^2][^4]
+A: Regular functions have dynamic `this` — determined by how they're called. Arrow functions have lexical `this` — determined by where they're defined. Arrow functions cannot have their `this` changed by `call`, `apply`, or `bind`.
 
 **Q: Why does extracting a method lose `this`?**
 A: `const fn = obj.method` — calling `fn()` detaches it from `obj`. `this` is now determined by the call site, not the original object. Fix with `bind`, or use an arrow function.

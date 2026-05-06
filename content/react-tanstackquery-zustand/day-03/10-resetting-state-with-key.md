@@ -2,18 +2,19 @@
 
 ## T — TL;DR
 
-Changing a component's `key` prop forces React to unmount and remount it from scratch — this is the idiomatic way to reset any component's state.[^2][^3]
+Changing a component's `key` prop forces React to unmount and remount it from scratch — this is the idiomatic way to reset any component's state.
 
 ## K — Key Concepts
 
-**`key` has a dual role in React:**[^3]
+**`key` has a dual role in React:**
 
 1. **In lists** — uniquely identifies items so React can reconcile efficiently
 2. **Outside lists** — acts as a component identity signal; changing it forces full remount
+
 ```jsx
 // ✅ Resetting a chat window when switching contacts
 function Messenger() {
-  const [selectedContact, setSelectedContact] = useState(contacts[^0])
+  const [selectedContact, setSelectedContact] = useState(contacts);
 
   return (
     <>
@@ -25,7 +26,7 @@ function Messenger() {
       {/* key change → ChatWindow fully remounts → message input clears */}
       <ChatWindow key={selectedContact.id} contact={selectedContact} />
     </>
-  )
+  );
 }
 ```
 
@@ -34,19 +35,19 @@ function Messenger() {
 ```jsx
 // ❌ Verbose — manually resetting every state value in useEffect
 function ChatWindow({ contact }) {
-  const [message, setMessage] = useState("")
-  const [attachments, setAttachments] = useState([])
-  const [drafts, setDrafts] = useState([])
+  const [message, setMessage] = useState("");
+  const [attachments, setAttachments] = useState([]);
+  const [drafts, setDrafts] = useState([]);
 
   useEffect(() => {
-    setMessage("")
-    setAttachments([])
-    setDrafts([])
-  }, [contact.id])  // must enumerate every state variable
+    setMessage("");
+    setAttachments([]);
+    setDrafts([]);
+  }, [contact.id]); // must enumerate every state variable
 }
 
 // ✅ key does it all automatically — no useEffect needed
-<ChatWindow key={contact.id} contact={contact} />
+<ChatWindow key={contact.id} contact={contact} />;
 // All state in ChatWindow resets when contact changes — zero extra code
 ```
 
@@ -58,16 +59,15 @@ function ProfilePage({ userId }) {
   return (
     <div>
       <h1>Profile</h1>
-      <ProfileForm key={userId} userId={userId} />  {/* only form resets */}
+      <ProfileForm key={userId} userId={userId} /> {/* only form resets */}
     </div>
-  )
+  );
 }
 ```
 
-
 ## W — Why It Matters
 
-The `key`-for-reset pattern eliminates entire categories of "stale form state" bugs. Without it, developers write complex `useEffect` chains to manually reset state — fragile code that misses newly added state variables. The `key` pattern is a one-line solution that resets *everything*.[^2][^3]
+The `key`-for-reset pattern eliminates entire categories of "stale form state" bugs. Without it, developers write complex `useEffect` chains to manually reset state — fragile code that misses newly added state variables. The `key` pattern is a one-line solution that resets _everything_.
 
 ## I — Interview Q&A
 
@@ -82,11 +82,11 @@ The `key`-for-reset pattern eliminates entire categories of "stale form state" b
 
 ## C — Common Pitfalls
 
-| Pitfall | Fix |
-| :-- | :-- |
-| Using `useEffect` to manually reset every state variable | Replace with `key={id}` — resets all state automatically |
-| Using `Math.random()` or a timestamp as `key` | Generates a new key every render → constant remounting; use stable IDs |
-| Forgetting that `key` resets the ENTIRE component tree below it | Wrap only the part that needs resetting in a keyed element |
+| Pitfall                                                         | Fix                                                                    |
+| :-------------------------------------------------------------- | :--------------------------------------------------------------------- |
+| Using `useEffect` to manually reset every state variable        | Replace with `key={id}` — resets all state automatically               |
+| Using `Math.random()` or a timestamp as `key`                   | Generates a new key every render → constant remounting; use stable IDs |
+| Forgetting that `key` resets the ENTIRE component tree below it | Wrap only the part that needs resetting in a keyed element             |
 
 ## K — Coding Challenge
 
@@ -94,32 +94,31 @@ The `key`-for-reset pattern eliminates entire categories of "stale form state" b
 
 ```jsx
 function UserEditor() {
-  const [userId, setUserId] = useState(1)
+  const [userId, setUserId] = useState(1);
   const users = {
     1: { name: "Alice", bio: "Engineer" },
     2: { name: "Bob", bio: "Designer" },
-  }
+  };
 
   return (
     <>
       <button onClick={() => setUserId(1)}>Alice</button>
       <button onClick={() => setUserId(2)}>Bob</button>
-
-      <EditForm user={users[userId]} />   {/* ← fix here */}
+      <EditForm user={users[userId]} /> {/* ← fix here */}
     </>
-  )
+  );
 }
 
 function EditForm({ user }) {
-  const [name, setName] = useState(user.name)
-  const [bio, setBio] = useState(user.bio)
+  const [name, setName] = useState(user.name);
+  const [bio, setBio] = useState(user.bio);
 
   return (
     <>
-      <input value={name} onChange={e => setName(e.target.value)} />
-      <textarea value={bio} onChange={e => setBio(e.target.value)} />
+      <input value={name} onChange={(e) => setName(e.target.value)} />
+      <textarea value={bio} onChange={(e) => setBio(e.target.value)} />
     </>
-  )
+  );
 }
 ```
 
@@ -137,41 +136,3 @@ function EditForm({ user }) {
 // Without key: name and bio hold the previous user's typed values
 // even after switching, because EditForm stays in the same tree position.
 ```
-
-
-***
-
-> **Your tiny action right now:** Pick subtopic 1 or 4. Read the TL;DR and the pitfalls table. Do the coding challenge. You're done for this session.
-<span style="display:none">[^10][^11][^12][^13][^14][^15]</span>
-
-<div align="center">⁂</div>
-
-[^1]: https://react.dev/learn/choosing-the-state-structure
-
-[^2]: https://react.dev/learn/managing-state
-
-[^3]: https://react.dev/learn/preserving-and-resetting-state
-
-[^4]: https://dev.to/sonaykara/reactjs-choosing-the-state-structure-5gnp
-
-[^5]: https://blog.bitsrc.io/5-best-practices-for-handling-state-structure-in-react-f011e842076e
-
-[^6]: https://www.geeksforgeeks.org/reactjs/lifting-state-up-in-reactjs/
-
-[^7]: https://react.dev/learn/sharing-state-between-components
-
-[^8]: https://it.react.dev/learn/sharing-state-between-components
-
-[^9]: https://www.developerway.com/posts/react-state-management-2025
-
-[^10]: https://www.reddit.com/r/reactjs/comments/1bz5agf/how_do_you_typically_plan_your_state_structure_in/
-
-[^11]: https://stackoverflow.com/questions/74933010/react-preserving-state-even-though-key-has-changed
-
-[^12]: https://coreui.io/answers/how-to-lift-state-up-in-react/
-
-[^13]: https://www.youtube.com/watch?v=lzajhzOLUeg
-
-[^14]: https://certificates.dev/blog/structuring-state-in-react-5-essential-patterns
-
-[^15]: https://www.fullstack.com/labs/resources/blog/choosing-the-right-state-management-tool-for-your-react-apps

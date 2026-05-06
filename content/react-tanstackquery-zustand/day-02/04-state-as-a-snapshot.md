@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-State is a snapshot frozen at the time of each render — calling `setState` doesn't change the current snapshot, it schedules a new render with a new snapshot.[^1]
+State is a snapshot frozen at the time of each render — calling `setState` doesn't change the current snapshot, it schedules a new render with a new snapshot.
 
 ## K — Key Concepts
 
-**The core mental model:**[^1]
+**The core mental model:**
 
 Each render gets its own frozen copy of state. Event handlers created during that render "see" only that render's state — not future values.
 
@@ -33,7 +33,7 @@ function Counter() {
 // Because handleAlertClick captured count=0 from THAT render's snapshot
 ```
 
-**Every render is its own world:**[^1]
+**Every render is its own world:**
 
 - Its own state values
 - Its own event handlers
@@ -43,7 +43,7 @@ function Counter() {
 
 ## W — Why It Matters
 
-This is the most common source of confusion for React developers coming from imperative backgrounds. The `setTimeout` / stale state bug appears in production constantly. Understanding snapshots prevents bugs in async code, intervals, and closures.[^1]
+This is the most common source of confusion for React developers coming from imperative backgrounds. The `setTimeout` / stale state bug appears in production constantly. Understanding snapshots prevents bugs in async code, intervals, and closures.
 
 ## I — Interview Q&A
 

@@ -33,9 +33,9 @@ items.every(i => i.inStock)   // false (Banana out of stock)
 items.every(i => i.id > 0)    // true
 
 // flat — flattens nested arrays
-[1, [2, [3, [^4]]]].flat()      // [1, 2, [3, [^4]]] — one level
-[1, [2, [3, [^4]]]].flat(2)     // [1, 2, 3, [^4]]
-[1, [2, [3, [^4]]]].flat(Infinity)  // [1, 2, 3, 4] — fully flat
+[1, [2, [3, ]]].flat()      // [1, 2, [3, ]] — one level
+[1, [2, [3, ]]].flat(2)     // [1, 2, 3, ]
+[1, [2, [3, ]]].flat(Infinity)  // [1, 2, 3, 4] — fully flat
 
 // flatMap — map then flat (1 level only), more efficient than .map().flat()
 const sentences = ["Hello world", "Foo bar"]

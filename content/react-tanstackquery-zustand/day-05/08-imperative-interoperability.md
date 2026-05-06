@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Use React's imperative escape hatches to integrate non-React code — jQuery plugins, D3 charts, Google Maps, video players — by giving React control over mounting and cleanup while letting the external library own the DOM inside.[^13]
+Use React's imperative escape hatches to integrate non-React code — jQuery plugins, D3 charts, Google Maps, video players — by giving React control over mounting and cleanup while letting the external library own the DOM inside.
 
 ## K — Key Concepts
 
-**The integration pattern:**[^13]
+**The integration pattern:**
 
 When integrating a non-React library, React renders a container element and the library takes over that container's DOM. React never touches the interior — it only manages the container lifecycle.
 
@@ -87,7 +87,7 @@ function BarChart({ data }) {
 
 ## W — Why It Matters
 
-The ecosystem of JavaScript libraries predates React. Maps, rich text editors, charting libraries, drag-and-drop toolkits — most are not React-native. The imperative interoperability pattern is how you use all of them without rewriting them. It's essential knowledge for any production React developer.[^13]
+The ecosystem of JavaScript libraries predates React. Maps, rich text editors, charting libraries, drag-and-drop toolkits — most are not React-native. The imperative interoperability pattern is how you use all of them without rewriting them. It's essential knowledge for any production React developer.
 
 ## I — Interview Q&A
 

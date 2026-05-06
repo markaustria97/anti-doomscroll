@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-These are the three merge strategies for closing a PR — squash collapses all commits into one, merge commit preserves branch topology, rebase creates linear history without a merge commit; each team picks one and stays consistent.[^7]
+These are the three merge strategies for closing a PR — squash collapses all commits into one, merge commit preserves branch topology, rebase creates linear history without a merge commit; each team picks one and stays consistent.
 
 ## K — Key Concepts
 
@@ -85,7 +85,7 @@ GitHub branch protection → "allowed merge types"
 
 ## W — Why It Matters
 
-Inconsistency between merge strategies is worse than any single bad choice — a `git log --graph` that mixes squash commits with merge commits with rebased commits is unreadable. GitHub's branch protection lets you enforce exactly one strategy, removing the decision from individual PR authors.[^7]
+Inconsistency between merge strategies is worse than any single bad choice — a `git log --graph` that mixes squash commits with merge commits with rebased commits is unreadable. GitHub's branch protection lets you enforce exactly one strategy, removing the decision from individual PR authors.
 
 ## I — Interview Q&A
 

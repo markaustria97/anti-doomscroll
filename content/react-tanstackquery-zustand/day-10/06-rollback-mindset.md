@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-The rollback mindset treats optimistic updates as temporary assumptions — always snapshot before applying, always revert on failure, and always reconcile with server truth via `onSettled` invalidation.[^6][^1]
+The rollback mindset treats optimistic updates as temporary assumptions — always snapshot before applying, always revert on failure, and always reconcile with server truth via `onSettled` invalidation.
 
 ## K — Key Concepts
 
-**The complete rollback mental model:**[^1]
+**The complete rollback mental model:**
 
 ```
 Assume success → Apply optimistic change
@@ -61,7 +61,7 @@ onSettled: async (_, __, { postId }) => {
 },
 ```
 
-**Handling concurrent mutations:**[^6][^5]
+**Handling concurrent mutations:**
 
 ```jsx
 // Problem: user clicks like 3 times quickly
@@ -84,18 +84,18 @@ onError: (err, variables, context) => {
 
 ## W — Why It Matters
 
-Without the rollback mindset, optimistic updates are a liability — a failed mutation leaves the UI in an incorrect state that looks correct to the user. The rollback mindset flips this: optimistic updates become safe because failure is always recoverable. The `onSettled` invalidation is the safety net that guarantees eventual consistency regardless of what went wrong.[^5][^1]
+Without the rollback mindset, optimistic updates are a liability — a failed mutation leaves the UI in an incorrect state that looks correct to the user. The rollback mindset flips this: optimistic updates become safe because failure is always recoverable. The `onSettled` invalidation is the safety net that guarantees eventual consistency regardless of what went wrong.
 
 ## I — Interview Q&A
 
 **Q: What is the rollback mindset in optimistic updates?**
-**A:** Always treat the optimistic change as provisional. Snapshot the current state before modifying the cache, revert to the snapshot on error, and always use `onSettled` invalidation to let the server's actual state overwrite everything — both on success and on failure.[^1]
+**A:** Always treat the optimistic change as provisional. Snapshot the current state before modifying the cache, revert to the snapshot on error, and always use `onSettled` invalidation to let the server's actual state overwrite everything — both on success and on failure.
 
 **Q: What happens if you don't roll back on error?**
-**A:** The cache shows incorrect data that diverges from the server. The user sees a like that wasn't recorded, a deleted item that still exists, or a completed task that didn't save. The UI lies. Without rollback, optimistic updates are worse than no optimistic updates.[^1]
+**A:** The cache shows incorrect data that diverges from the server. The user sees a like that wasn't recorded, a deleted item that still exists, or a completed task that didn't save. The UI lies. Without rollback, optimistic updates are worse than no optimistic updates.
 
 **Q: How do you handle concurrent mutations that update the same cache entry?**
-**A:** Use `queryClient.isMutating({ mutationKey: [...] })` to check if other mutations of the same type are still in flight before rolling back. If other mutations are pending, skip the rollback — let `onSettled` invalidation reconcile the final state after all mutations settle.[^5]
+**A:** Use `queryClient.isMutating({ mutationKey: [...] })` to check if other mutations of the same type are still in flight before rolling back. If other mutations are pending, skip the rollback — let `onSettled` invalidation reconcile the final state after all mutations settle.
 
 ## C — Common Pitfalls
 

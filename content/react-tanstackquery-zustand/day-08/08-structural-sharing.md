@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-TanStack Query uses structural sharing to preserve identical object references between fetches — preventing unnecessary re-renders in components that haven't received actually changed data.[^9]
+TanStack Query uses structural sharing to preserve identical object references between fetches — preventing unnecessary re-renders in components that haven't received actually changed data.
 
 ## K — Key Concepts
 
@@ -18,8 +18,8 @@ TanStack Query uses structural sharing to preserve identical object references b
 // → ALL consumers re-render, even those only using Alice
 //
 // With structural sharing (TanStack Query default):
-// → data.users[^0] is the SAME reference as before (Alice didn't change)
-// → data.users[^1] is a NEW reference (Bobby changed)
+// → data.users is the SAME reference as before (Alice didn't change)
+// → data.users is a NEW reference (Bobby changed)
 // → Only components subscribed to Bob's data re-render
 ```
 
@@ -83,7 +83,7 @@ useQuery({
 
 ## W — Why It Matters
 
-Structural sharing is the invisible performance feature that makes TanStack Query's caching model compose cleanly with `React.memo` and `useMemo`. Without it, every background refetch would cause every subscribed component to re-render, even if their data slice didn't change. It's how TanStack Query achieves both freshness and rendering efficiency simultaneously.[^9]
+Structural sharing is the invisible performance feature that makes TanStack Query's caching model compose cleanly with `React.memo` and `useMemo`. Without it, every background refetch would cause every subscribed component to re-render, even if their data slice didn't change. It's how TanStack Query achieves both freshness and rendering efficiency simultaneously.
 
 ## I — Interview Q&A
 
@@ -94,7 +94,7 @@ Structural sharing is the invisible performance feature that makes TanStack Quer
 **A:** `React.memo` skips re-renders when props haven't changed (by reference). With structural sharing, if a component receives a sub-object from query data that didn't actually change, its reference stays the same → `React.memo` skips the re-render. Without structural sharing, every refetch creates new references → every memo'd child re-renders.
 
 **Q: When would you disable structural sharing?**
-**A:** When you're directly mutating the returned data objects (anti-pattern but it exists in some codebases), or when using data types that can't be deep-compared — like `Map`, `Set`, or class instances that override equality.[^9]
+**A:** When you're directly mutating the returned data objects (anti-pattern but it exists in some codebases), or when using data types that can't be deep-compared — like `Map`, `Set`, or class instances that override equality.
 
 ## C — Common Pitfalls
 
@@ -129,8 +129,8 @@ function Dashboard() {
     <div>
       <UserList users={data?.users} />
       <MetaInfo meta={data?.meta} />
-      <AliceCard user={data?.users[^0]} />
-      <BobCard user={data?.users[^1]} />
+      <AliceCard user={data?.users} />
+      <BobCard user={data?.users} />
     </div>
   )
 }
@@ -143,16 +143,16 @@ With structural sharing after Bob's online status changes:
 
 data              → NEW reference (container changed — child changed)
 data.users        → NEW reference (array changed — Bob changed)
-data.users[^0]     → SAME reference ✅ (Alice unchanged — deep equal)
-data.users[^1]     → NEW reference (Bob changed)
+data.users     → SAME reference ✅ (Alice unchanged — deep equal)
+data.users     → NEW reference (Bob changed)
 data.meta         → SAME reference ✅ (meta unchanged — deep equal)
 
 Re-render analysis:
 ✅ Dashboard        → re-renders (data reference changed)
 ✅ UserList         → RE-RENDERS (users array is a new reference)
 ❌ MetaInfo         → SKIPS (meta is same reference → React.memo holds) ✅
-❌ AliceCard        → SKIPS (data.users[^0] is same reference → React.memo holds) ✅
-✅ BobCard          → RE-RENDERS (data.users[^1] is new reference, online changed)
+❌ AliceCard        → SKIPS (data.users is same reference → React.memo holds) ✅
+✅ BobCard          → RE-RENDERS (data.users is new reference, online changed)
 
 Without structural sharing:
 ALL four memo'd children would re-render, even MetaInfo and AliceCard,

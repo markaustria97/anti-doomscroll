@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Custom hooks are plain JavaScript functions prefixed with `use` that encapsulate reusable stateful logic — extract them when the same hook combinations appear in multiple components.[^1]
+Custom hooks are plain JavaScript functions prefixed with `use` that encapsulate reusable stateful logic — extract them when the same hook combinations appear in multiple components.
 
 ## K — Key Concepts
 
@@ -78,7 +78,7 @@ function useFetch(url) {
 
 ## W — Why It Matters
 
-Custom hooks are how React scales. Every large React codebase is built on a foundation of custom hooks that abstract away complexity — auth, permissions, forms, data fetching, animations, device APIs. Writing them cleanly is a core senior-level skill and signals strong React mastery.[^1]
+Custom hooks are how React scales. Every large React codebase is built on a foundation of custom hooks that abstract away complexity — auth, permissions, forms, data fetching, animations, device APIs. Writing them cleanly is a core senior-level skill and signals strong React mastery.
 
 ## I — Interview Q&A
 

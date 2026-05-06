@@ -85,7 +85,7 @@ CHANGELOG.md merge=union       # merge strategy for CHANGELOG
 
 ## W — Why It Matters
 
-Amending is the most common history-cleanup operation — fix a typo, add a forgotten file to the last commit before pushing. Never amend pushed commits because it rewrites history and breaks teammates' repos. `.gitignore` is your first line of defense against committing secrets and build artifacts; adding a `.env` to a public repo is one of the most common security incidents.[^1]
+Amending is the most common history-cleanup operation — fix a typo, add a forgotten file to the last commit before pushing. Never amend pushed commits because it rewrites history and breaks teammates' repos. `.gitignore` is your first line of defense against committing secrets and build artifacts; adding a `.env` to a public repo is one of the most common security incidents.
 
 ## I — Interview Q&A
 

@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-React preserves a component's state as long as the same component type renders at the same position in the tree between renders.[^3]
+React preserves a component's state as long as the same component type renders at the same position in the tree between renders.
 
 ## K — Key Concepts
 
-**State preservation rules:**[^3]
+**State preservation rules:**
 
 React identifies components by their **position in the tree** and their **type**. Same position + same type = state is preserved across re-renders.
 
@@ -65,7 +65,7 @@ function Parent() {
 
 ## W — Why It Matters
 
-Unexplained state resets and unexpected state preservation are two of the most confusing bugs in React. Both trace back to this rule. Understanding it lets you predict exactly when state will and won't be preserved — a clear sign of senior React understanding.[^3]
+Unexplained state resets and unexpected state preservation are two of the most confusing bugs in React. Both trace back to this rule. Understanding it lets you predict exactly when state will and won't be preserved — a clear sign of senior React understanding.
 
 ## I — Interview Q&A
 

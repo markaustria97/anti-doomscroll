@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Three browser storage mechanisms with different lifetimes, scopes, and security properties — choose based on whether data needs to survive tab close, be server-accessible, or be protected from JavaScript.[^3]
+Three browser storage mechanisms with different lifetimes, scopes, and security properties — choose based on whether data needs to survive tab close, be server-accessible, or be protected from JavaScript.
 
 ## K — Key Concepts
 
@@ -35,7 +35,7 @@ document.cookie = "name=Alice; path=/; max-age=3600; SameSite=Lax"
 // Reading cookies manually
 const getCookie = (name) => {
   const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`))
-  return match ? decodeURIComponent(match[^2]) : null
+  return match ? decodeURIComponent(match) : null
 }
 
 // Modern: Cookie Store API (Chrome, async, clean)
@@ -53,15 +53,15 @@ await cookieStore.get("session")   // { name: "session", value: "token", ... }
 
 ## W — Why It Matters
 
-Storing auth tokens in `localStorage` is an XSS vulnerability — any injected script can read it. `HttpOnly` cookies prevent JavaScript access entirely, making them the secure choice for session tokens. The `SameSite` attribute on cookies is the modern CSRF defense.[^10][^3]
+Storing auth tokens in `localStorage` is an XSS vulnerability — any injected script can read it. `HttpOnly` cookies prevent JavaScript access entirely, making them the secure choice for session tokens. The `SameSite` attribute on cookies is the modern CSRF defense.
 
 ## I — Interview Q&A
 
 **Q: Why are JWTs stored in `HttpOnly` cookies safer than `localStorage`?**
-A: `localStorage` is readable by any JavaScript on the page — including injected XSS scripts. `HttpOnly` cookies cannot be read by JavaScript at all, only sent automatically by the browser with requests. This eliminates the XSS token-theft attack vector.[^3]
+A: `localStorage` is readable by any JavaScript on the page — including injected XSS scripts. `HttpOnly` cookies cannot be read by JavaScript at all, only sent automatically by the browser with requests. This eliminates the XSS token-theft attack vector.
 
 **Q: What does `SameSite=Strict` do on a cookie?**
-A: The cookie is only sent on requests originating from the same site. Cross-site requests (from another domain's links or forms) don't include the cookie. This prevents CSRF attacks where a malicious third-party site triggers authenticated requests to your API.[^10]
+A: The cookie is only sent on requests originating from the same site. Cross-site requests (from another domain's links or forms) don't include the cookie. This prevents CSRF attacks where a malicious third-party site triggers authenticated requests to your API.
 
 ## C — Common Pitfalls
 

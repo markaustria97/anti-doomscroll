@@ -39,7 +39,7 @@ const arrow = () => console.log(arguments)  // ReferenceError in strict mode
 
 ## W — Why It Matters
 
-Default parameters eliminate `const x = opts || {}` boilerplate. Rest parameters replace the `arguments` object cleanly. The `arguments` object is an array-like — not a real array — which is a classic interview trip-up. [^4]
+Default parameters eliminate `const x = opts || {}` boilerplate. Rest parameters replace the `arguments` object cleanly. The `arguments` object is an array-like — not a real array — which is a classic interview trip-up. 
 
 ## I — Interview Q&A
 

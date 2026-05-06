@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Accessible React means using semantic HTML, proper ARIA attributes, keyboard navigation, and focus management — `useId` and `useRef` are your primary accessibility tools.[^8]
+Accessible React means using semantic HTML, proper ARIA attributes, keyboard navigation, and focus management — `useId` and `useRef` are your primary accessibility tools.
 
 ## K — Key Concepts
 
@@ -16,7 +16,7 @@ Accessible React means using semantic HTML, proper ARIA attributes, keyboard nav
 <button onClick={handleClick} type="button">Submit</button>
 ```
 
-**`useId` for label-input association:**[^8]
+**`useId` for label-input association:**
 
 ```jsx
 function FormField({ label, type = "text" }) {
@@ -117,7 +117,7 @@ function Modal({ isOpen, onClose, children }) {
 
 ## W — Why It Matters
 
-Accessibility is a legal requirement in many jurisdictions and a moral imperative. In React, improper `htmlFor`/`id` pairing, missing ARIA on dynamic widgets, and broken focus management after route changes are the most common violations. Senior React developers audit for these automatically.[^8]
+Accessibility is a legal requirement in many jurisdictions and a moral imperative. In React, improper `htmlFor`/`id` pairing, missing ARIA on dynamic widgets, and broken focus management after route changes are the most common violations. Senior React developers audit for these automatically.
 
 ## I — Interview Q&A
 
@@ -128,7 +128,7 @@ Accessibility is a legal requirement in many jurisdictions and a moral imperativ
 **A:** Use `useRef` to reference an element inside the modal (typically the close button or first focusable element) and call `.focus()` inside a `useEffect` that runs when `isOpen` becomes `true`. When the modal closes, restore focus to the trigger element.
 
 **Q: What is `aria-live` used for?**
-**A:** It tells screen readers to announce content changes automatically when the region updates. Use `aria-live="polite"` for non-urgent updates (search results, status messages) and `aria-live="assertive"` for urgent ones (errors, alerts).[^8]
+**A:** It tells screen readers to announce content changes automatically when the region updates. Use `aria-live="polite"` for non-urgent updates (search results, status messages) and `aria-live="assertive"` for urgent ones (errors, alerts).
 
 ## C — Common Pitfalls
 

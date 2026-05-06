@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-`useId` generates stable, unique IDs for accessibility attributes across server and client; `useOptimistic` shows a predicted UI state immediately before a server response confirms the change.[^2]
+`useId` generates stable, unique IDs for accessibility attributes across server and client; `useOptimistic` shows a predicted UI state immediately before a server response confirms the change.
 
 ## K — Key Concepts
 
-**`useId` — stable unique IDs:**[^8]
+**`useId` — stable unique IDs:**
 
 ```jsx
 // Problem: manually generating IDs causes hydration mismatches in SSR
@@ -37,7 +37,7 @@ function PasswordField() {
 }
 ```
 
-**`useOptimistic` — instant UI feedback:**[^2]
+**`useOptimistic` — instant UI feedback:**
 
 ```jsx
 function LikeButton({ postId, initialLikes }) {
@@ -71,7 +71,7 @@ function LikeButton({ postId, initialLikes }) {
 
 ## W — Why It Matters
 
-`useId` solves a persistent accessibility + SSR bug that existed since React's beginning. `useOptimistic` is the correct, composable way to implement optimistic UI — previously done manually with try/catch and separate state variables. Both reflect React's evolution toward server-first, accessibility-first development.[^2]
+`useId` solves a persistent accessibility + SSR bug that existed since React's beginning. `useOptimistic` is the correct, composable way to implement optimistic UI — previously done manually with try/catch and separate state variables. Both reflect React's evolution toward server-first, accessibility-first development.
 
 ## I — Interview Q&A
 
@@ -82,7 +82,7 @@ function LikeButton({ postId, initialLikes }) {
 **A:** It automatically reverts to the actual state value passed as the first argument. You don't need to write rollback logic — the optimistic overlay is discarded and the real state shows again.
 
 **Q: When should you use `useOptimistic` vs just `useState`?**
-**A:** Use `useOptimistic` when you want to show a predicted result immediately while an async operation is in progress. Use regular `useState` when you need to wait for confirmation before showing any change.[^2]
+**A:** Use `useOptimistic` when you want to show a predicted result immediately while an async operation is in progress. Use regular `useState` when you need to wait for confirmation before showing any change.
 
 ## C — Common Pitfalls
 

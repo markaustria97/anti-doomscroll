@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-There are exactly two rules for hooks: call them only at the top level, and only inside React functions — violating either causes subtle, hard-to-diagnose bugs.[^1]
+There are exactly two rules for hooks: call them only at the top level, and only inside React functions — violating either causes subtle, hard-to-diagnose bugs.
 
 ## K — Key Concepts
 
-**Rule 1: Only call hooks at the top level**[^1]
+**Rule 1: Only call hooks at the top level**
 
 Never call hooks inside loops, conditions, or nested functions. React tracks hooks by their call order — if that order changes between renders, React loses track of which state belongs to which hook.
 
@@ -25,7 +25,7 @@ function Component({ flag }) {
 }
 ```
 
-**Rule 2: Only call hooks inside React functions**[^1]
+**Rule 2: Only call hooks inside React functions**
 
 Hooks can only live inside:
 
@@ -51,7 +51,7 @@ React internally tracks hooks as an ordered list per component. Every render, it
 
 ## W — Why It Matters
 
-Hook rule violations are silent at first but corrupt state in unpredictable ways — you'll see wrong values, missed updates, and crashes that only appear under specific conditions. The `eslint-plugin-react-hooks` package statically enforces both rules and should be enabled in every project.[^1]
+Hook rule violations are silent at first but corrupt state in unpredictable ways — you'll see wrong values, missed updates, and crashes that only appear under specific conditions. The `eslint-plugin-react-hooks` package statically enforces both rules and should be enabled in every project.
 
 ## I — Interview Q&A
 

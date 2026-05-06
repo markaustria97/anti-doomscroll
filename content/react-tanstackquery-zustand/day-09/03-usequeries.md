@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`useQueries` runs a dynamic array of queries in parallel — use it when the number of queries isn't known until runtime, such as fetching details for each item in a list.[^1]
+`useQueries` runs a dynamic array of queries in parallel — use it when the number of queries isn't known until runtime, such as fetching details for each item in a list.
 
 ## K — Key Concepts
 
@@ -20,9 +20,9 @@ const results = useQueries({
 })
 
 // results is an array of query result objects
-// results[^0] = { data, isPending, isError, ... } for user 1
-// results[^1] = { data, isPending, isError, ... } for user 2
-// results[^2] = { data, isPending, isError, ... } for user 3
+// results = { data, isPending, isError, ... } for user 1
+// results = { data, isPending, isError, ... } for user 2
+// results = { data, isPending, isError, ... } for user 3
 ```
 
 **Dynamic queries from a list — the primary use case:**
@@ -78,7 +78,7 @@ const { members, isAnyPending, errors } = useQueries({
 
 ## W — Why It Matters
 
-Without `useQueries`, fetching details for a dynamic list requires either a single "fetch all" endpoint (tight coupling) or violating hook rules by putting `useQuery` inside a loop. `useQueries` is the correct, rules-compliant solution for dynamic parallel fetching — and its `combine` option in v5 eliminates boilerplate aggregation code.[^1]
+Without `useQueries`, fetching details for a dynamic list requires either a single "fetch all" endpoint (tight coupling) or violating hook rules by putting `useQuery` inside a loop. `useQueries` is the correct, rules-compliant solution for dynamic parallel fetching — and its `combine` option in v5 eliminates boilerplate aggregation code.
 
 ## I — Interview Q&A
 
@@ -89,7 +89,7 @@ Without `useQueries`, fetching details for a dynamic list requires either a sing
 **A:** It takes the array of individual query results and transforms them into a single combined return value. Instead of manually aggregating `.map()`, `.filter()`, `.some()` outside the hook, you do it inside `combine` — and the result is memoized.
 
 **Q: How does `useQueries` handle an empty array?**
-**A:** It returns an empty array of results immediately — no fetches fire, no loading state. This makes it safe to call with `queries: []` while data is still loading.[^1]
+**A:** It returns an empty array of results immediately — no fetches fire, no loading state. This makes it safe to call with `queries: []` while data is still loading.
 
 ## C — Common Pitfalls
 

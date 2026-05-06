@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Git hooks are scripts that run at specific points in the Git workflow; Husky makes them version-controlled and team-shared; lint-staged runs checks only on staged files (fast); commitlint enforces conventional commit format.[^7][^4][^8]
+Git hooks are scripts that run at specific points in the Git workflow; Husky makes them version-controlled and team-shared; lint-staged runs checks only on staged files (fast); commitlint enforces conventional commit format.
 
 ## K — Key Concepts
 
@@ -104,15 +104,15 @@ echo "npm run typecheck" > .husky/pre-push
 
 ## W — Why It Matters
 
-Husky + lint-staged is the team-wide quality gate at zero CI cost — problems are caught before they're committed, not after CI runs 3 minutes later. The key insight: `lint-staged` runs only on staged files, not the whole codebase — a commit that touches 3 files runs lint on 3 files, not 500.[^4][^8]
+Husky + lint-staged is the team-wide quality gate at zero CI cost — problems are caught before they're committed, not after CI runs 3 minutes later. The key insight: `lint-staged` runs only on staged files, not the whole codebase — a commit that touches 3 files runs lint on 3 files, not 500.
 
 ## I — Interview Q&A
 
 **Q: Why use lint-staged instead of running ESLint on the whole project in a pre-commit hook?**
-A: Full project lint can take 30+ seconds in large codebases — slow enough that developers start using `--no-verify` to skip hooks. lint-staged runs lint only on files being committed, typically taking under 2 seconds. Fast hooks get used; slow ones get skipped.[^8]
+A: Full project lint can take 30+ seconds in large codebases — slow enough that developers start using `--no-verify` to skip hooks. lint-staged runs lint only on files being committed, typically taking under 2 seconds. Fast hooks get used; slow ones get skipped.
 
 **Q: How does Husky ensure hooks are installed for all team members?**
-A: Husky adds `"prepare": "husky"` to `package.json`. `prepare` is an npm lifecycle hook that runs automatically on every `npm install`. When a developer clones the repo and runs `npm install`, Husky runs and configures Git to use `.husky/` as the hooks directory.[^4]
+A: Husky adds `"prepare": "husky"` to `package.json`. `prepare` is an npm lifecycle hook that runs automatically on every `npm install`. When a developer clones the repo and runs `npm install`, Husky runs and configures Git to use `.husky/` as the hooks directory.
 
 ## C — Common Pitfalls
 

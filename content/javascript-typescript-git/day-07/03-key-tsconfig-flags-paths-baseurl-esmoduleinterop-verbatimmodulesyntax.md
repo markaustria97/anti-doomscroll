@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`paths` + `baseUrl` enable absolute import aliases; `esModuleInterop` fixes CJS default import syntax; `verbatimModuleSyntax` enforces `import type` — preventing type-only imports from emitting real `import` statements.[^6][^3]
+`paths` + `baseUrl` enable absolute import aliases; `esModuleInterop` fixes CJS default import syntax; `verbatimModuleSyntax` enforces `import type` — preventing type-only imports from emitting real `import` statements.
 
 ## K — Key Concepts
 
@@ -60,7 +60,7 @@ export { User }        // ❌ esbuild can't tell if User is a type or value
 
 ## W — Why It Matters
 
-`verbatimModuleSyntax` was introduced specifically to prevent the class of bugs where TypeScript emits a `require()` or `import` for something that's purely a type — causing runtime errors when the imported module has side effects or doesn't export a runtime value. It's the recommended setting for all new projects.[^3]
+`verbatimModuleSyntax` was introduced specifically to prevent the class of bugs where TypeScript emits a `require()` or `import` for something that's purely a type — causing runtime errors when the imported module has side effects or doesn't export a runtime value. It's the recommended setting for all new projects.
 
 ## I — Interview Q&A
 

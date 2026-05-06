@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Any object with a `[Symbol.iterator]()` method is iterable — it must return an iterator with a `next()` method that produces `{ value, done }` objects.[^8][^9]
+Any object with a `[Symbol.iterator]()` method is iterable — it must return an iterator with a `next()` method that produces `{ value, done }` objects.
 
 ## K — Key Concepts
 
@@ -57,7 +57,7 @@ iter2.throw?.(new Error())    // signal error into iterator
 
 ## W — Why It Matters
 
-The iteration protocol powers `for...of`, spread `[...x]`, destructuring, `Array.from`, `Promise.all`, `Map`/`Set` constructors, and `yield*`. Any data structure you build becomes a first-class JavaScript citizen once it implements this protocol.[^9][^8]
+The iteration protocol powers `for...of`, spread `[...x]`, destructuring, `Array.from`, `Promise.all`, `Map`/`Set` constructors, and `yield*`. Any data structure you build becomes a first-class JavaScript citizen once it implements this protocol.
 
 ## I — Interview Q&A
 

@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-A controlled input is one where React state is the single source of truth for the input's value — every keystroke updates state and state drives the display.[^6]
+A controlled input is one where React state is the single source of truth for the input's value — every keystroke updates state and state drives the display.
 
 ## K — Key Concepts
 
@@ -16,7 +16,7 @@ A controlled input is one where React state is the single source of truth for th
 | Re-renders per keystroke | Yes | No |
 | Use case | Forms needing validation, derived values | Simple forms, file inputs |
 
-**Controlled input pattern:**[^6]
+**Controlled input pattern:**
 
 ```jsx
 function SearchBar() {
@@ -56,7 +56,7 @@ function SignupForm() {
 
 ## W — Why It Matters
 
-Controlled inputs let you validate on the fly, format input as the user types, disable submit until form is complete, and keep form state in sync with your UI. They're the standard React approach for any form that does more than just submit.[^7][^6]
+Controlled inputs let you validate on the fly, format input as the user types, disable submit until form is complete, and keep form state in sync with your UI. They're the standard React approach for any form that does more than just submit.
 
 ## I — Interview Q&A
 

@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Reusable workflows (called via `workflow_call`) eliminate duplication across repos; conditional execution (`if:`) runs steps only when needed; least-privilege `permissions:` restrict the GITHUB_TOKEN to only what each job needs.[^3]
+Reusable workflows (called via `workflow_call`) eliminate duplication across repos; conditional execution (`if:`) runs steps only when needed; least-privilege `permissions:` restrict the GITHUB_TOKEN to only what each job needs.
 
 ## K — Key Concepts
 
@@ -134,7 +134,7 @@ updates:
 
 ## W — Why It Matters
 
-Least-privilege permissions are the most ignored GitHub Actions security practice — the default `GITHUB_TOKEN` has write access to almost everything. A compromised third-party action with broad permissions can write to your packages, create releases, or push code. Pinning to a commit SHA ensures a third-party action can't be updated maliciously between your runs.[^3]
+Least-privilege permissions are the most ignored GitHub Actions security practice — the default `GITHUB_TOKEN` has write access to almost everything. A compromised third-party action with broad permissions can write to your packages, create releases, or push code. Pinning to a commit SHA ensures a third-party action can't be updated maliciously between your runs.
 
 ## I — Interview Q&A
 
@@ -142,7 +142,7 @@ Least-privilege permissions are the most ignored GitHub Actions security practic
 A: A reusable workflow (`workflow_call`) is a full workflow with its own jobs and runners — called from another workflow's `jobs:`. A composite action is a reusable set of `steps:` (no own runner) — referenced as a `uses:` step inside a job. Reusable workflows share entire job pipelines; composite actions share step sequences.
 
 **Q: Why is pinning actions to SHA safer than pinning to a version tag?**
-A: Tags like `@v4` are mutable — a maintainer (or an attacker who compromised the maintainer's account) can push new code to the same tag. A SHA is immutable — `@abc1234` will always refer to exactly that commit, forever. Supply chain attacks on GitHub Actions are a real threat.[^3]
+A: Tags like `@v4` are mutable — a maintainer (or an attacker who compromised the maintainer's account) can push new code to the same tag. A SHA is immutable — `@abc1234` will always refer to exactly that commit, forever. Supply chain attacks on GitHub Actions are a real threat.
 
 ## C — Common Pitfalls
 

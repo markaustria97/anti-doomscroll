@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Error boundaries are class components that catch JavaScript errors anywhere in their child component tree and display a fallback UI instead of crashing the entire app.[^3]
+Error boundaries are class components that catch JavaScript errors anywhere in their child component tree and display a fallback UI instead of crashing the entire app.
 
 ## K — Key Concepts
 
-**The only way to implement an error boundary — class component:**[^3]
+**The only way to implement an error boundary — class component:**
 
 ```jsx
 class ErrorBoundary extends React.Component {
@@ -40,7 +40,7 @@ class ErrorBoundary extends React.Component {
 </ErrorBoundary>
 ```
 
-**What error boundaries catch vs. don't catch:**[^3]
+**What error boundaries catch vs. don't catch:**
 
 
 | Caught ✅ | Not Caught ❌ |
@@ -89,7 +89,7 @@ import { ErrorBoundary } from "react-error-boundary"
 
 ## W — Why It Matters
 
-Without error boundaries, a single runtime error in any component crashes the entire React tree — the user sees a blank white screen with no feedback. Error boundaries are the production resilience layer. Every production React app should have strategically placed error boundaries, especially around data-fetching components and third-party integrations.[^10][^3]
+Without error boundaries, a single runtime error in any component crashes the entire React tree — the user sees a blank white screen with no feedback. Error boundaries are the production resilience layer. Every production React app should have strategically placed error boundaries, especially around data-fetching components and third-party integrations.
 
 ## I — Interview Q&A
 

@@ -3,7 +3,7 @@
 ## T — TL;DR
 
 ```
-Conventional Commits is a machine-readable commit message format — `<type>(<scope>): <description>` — that unlocks automated versioning, changelogs, and release tooling.[^5][^1]
+Conventional Commits is a machine-readable commit message format — `<type>(<scope>): <description>` — that unlocks automated versioning, changelogs, and release tooling.
 ```
 
 
@@ -96,12 +96,12 @@ v1.1.0-next.0     # next major cycle preview
 
 ## W — Why It Matters
 
-Conventional Commits is the contract between your commit history and your release tooling — without it, tools like `semantic-release` and `standard-version` can't determine whether to bump patch, minor, or major. Once adopted, version bumps and changelogs become fully automated — zero manual tagging.[^6][^1]
+Conventional Commits is the contract between your commit history and your release tooling — without it, tools like `semantic-release` and `standard-version` can't determine whether to bump patch, minor, or major. Once adopted, version bumps and changelogs become fully automated — zero manual tagging.
 
 ## I — Interview Q&A
 
 **Q: How does `BREAKING CHANGE` in a commit footer affect versioning?**
-A: Any commit with `BREAKING CHANGE:` in the footer or `!` after the type (e.g., `feat!:`) triggers a **MAJOR** semver bump — regardless of whether the type is `fix` or `feat`. Even a `fix!:` that removes a deprecated field triggers `v2.0.0` not `v1.0.1`.[^1]
+A: Any commit with `BREAKING CHANGE:` in the footer or `!` after the type (e.g., `feat!:`) triggers a **MAJOR** semver bump — regardless of whether the type is `fix` or `feat`. Even a `fix!:` that removes a deprecated field triggers `v2.0.0` not `v1.0.1`.
 
 **Q: What's the difference between `feat` and `chore`?**
 A: `feat` introduces a new user-facing capability — it bumps MINOR version and appears in the changelog. `chore` covers maintenance tasks (updating build tools, bumping dev dependencies, CI changes) — no version bump, no changelog entry. Only things that affect consumers need `feat` or `fix`.

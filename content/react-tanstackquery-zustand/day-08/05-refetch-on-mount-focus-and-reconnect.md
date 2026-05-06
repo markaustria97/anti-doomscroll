@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-TanStack Query automatically refetches stale queries when a component mounts, when the browser window is focused, and when the network reconnects — each trigger is individually configurable.[^6][^1]
+TanStack Query automatically refetches stale queries when a component mounts, when the browser window is focused, and when the network reconnects — each trigger is individually configurable.
 
 ## K — Key Concepts
 
-**The three automatic refetch triggers:**[^6][^1]
+**The three automatic refetch triggers:**
 
 ```jsx
 useQuery({
@@ -19,7 +19,7 @@ useQuery({
 })
 ```
 
-**`refetchOnMount`** — refetch when a component using this query mounts:[^6]
+**`refetchOnMount`** — refetch when a component using this query mounts:
 
 ```jsx
 // true (default): refetch if data is stale when component mounts
@@ -31,7 +31,7 @@ refetchOnMount: false       // never re-fetch just because the component mounted
 refetchOnMount: "always"    // force fresh data every time the component appears
 ```
 
-**`refetchOnWindowFocus`** — refetch when user returns to the browser tab:[^1]
+**`refetchOnWindowFocus`** — refetch when user returns to the browser tab:
 
 ```jsx
 // This is the most visible default behavior
@@ -42,7 +42,7 @@ refetchOnWindowFocus: false    // disable for: rate-limited APIs, slow queries, 
 refetchOnWindowFocus: "always" // even fresh queries refetch on focus
 ```
 
-**`refetchOnReconnect`** — refetch when network connection restores:[^1]
+**`refetchOnReconnect`** — refetch when network connection restores:
 
 ```jsx
 // User's laptop goes offline → comes back online → stale queries refetch
@@ -90,18 +90,18 @@ useQuery({
 
 ## W — Why It Matters
 
-These three triggers are why TanStack Query apps feel "alive" compared to apps with manual `useEffect` fetching. Users coming back to a tab always see fresh data. Network interruptions auto-recover. But each trigger also means network activity — understanding and tuning them prevents unnecessary requests and reduces API costs for production apps.[^1]
+These three triggers are why TanStack Query apps feel "alive" compared to apps with manual `useEffect` fetching. Users coming back to a tab always see fresh data. Network interruptions auto-recover. But each trigger also means network activity — understanding and tuning them prevents unnecessary requests and reduces API costs for production apps.
 
 ## I — Interview Q&A
 
 **Q: What are the three automatic refetch triggers in TanStack Query?**
-**A:** `refetchOnMount` (fires when a component using the query mounts), `refetchOnWindowFocus` (fires when the user focuses the browser window/tab), and `refetchOnReconnect` (fires when the device reconnects to the internet). All default to `true` and only trigger for stale data unless set to `"always"`.[^1]
+**A:** `refetchOnMount` (fires when a component using the query mounts), `refetchOnWindowFocus` (fires when the user focuses the browser window/tab), and `refetchOnReconnect` (fires when the device reconnects to the internet). All default to `true` and only trigger for stale data unless set to `"always"`.
 
 **Q: When would you disable `refetchOnWindowFocus`?**
-**A:** For cost-sensitive APIs where every refetch has a cost, slow queries that would disrupt the UX when the user returns to the tab, or when using `staleTime` long enough that focus-triggered refetches add no value. Disable globally in the `QueryClient` and selectively enable for high-priority live data queries.[^1]
+**A:** For cost-sensitive APIs where every refetch has a cost, slow queries that would disrupt the UX when the user returns to the tab, or when using `staleTime` long enough that focus-triggered refetches add no value. Disable globally in the `QueryClient` and selectively enable for high-priority live data queries.
 
 **Q: What is the difference between `refetchOnMount: true` and `refetchOnMount: "always"`?**
-**A:** `true` only refetches if the data is stale (past `staleTime`). `"always"` refetches every time the component mounts, regardless of staleness — including when data is still fresh. Use `"always"` for data that must be current every time the view appears, like a checkout total.[^6]
+**A:** `true` only refetches if the data is stale (past `staleTime`). `"always"` refetches every time the component mounts, regardless of staleness — including when data is still fresh. Use `"always"` for data that must be current every time the view appears, like a checkout total.
 
 ## C — Common Pitfalls
 

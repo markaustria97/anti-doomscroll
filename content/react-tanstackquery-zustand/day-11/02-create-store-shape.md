@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-`create` is the single function that defines your entire Zustand store — it takes a callback receiving `set` and `get`, and returns a custom React hook your components call directly.[^6][^1]
+`create` is the single function that defines your entire Zustand store — it takes a callback receiving `set` and `get`, and returns a custom React hook your components call directly.
 
 ## K — Key Concepts
 
-**The complete `create` anatomy:**[^1][^6]
+**The complete `create` anatomy:**
 
 ```jsx
 import { create } from "zustand"
@@ -92,18 +92,18 @@ const doubleCount = () => {
 
 ## W — Why It Matters
 
-Zustand's `create` API collapses the Redux pattern of `initialState + reducers + actions + selectors` into a single function. The hook it returns is also the selector — no `connect()`, no `mapStateToProps`, no dispatch. Understanding the `set`/`get` contract and the state-plus-actions shape convention is the complete mental model for 90% of Zustand usage.[^6][^1]
+Zustand's `create` API collapses the Redux pattern of `initialState + reducers + actions + selectors` into a single function. The hook it returns is also the selector — no `connect()`, no `mapStateToProps`, no dispatch. Understanding the `set`/`get` contract and the state-plus-actions shape convention is the complete mental model for 90% of Zustand usage.
 
 ## I — Interview Q&A
 
 **Q: What does `create` return in Zustand?**
-**A:** A custom React hook. You call this hook in any component (with or without a selector) to access the store. No Provider setup required — the store is a module-level singleton.[^1][^6]
+**A:** A custom React hook. You call this hook in any component (with or without a selector) to access the store. No Provider setup required — the store is a module-level singleton.
 
 **Q: When should you use `get()` inside an action instead of reading state inside `set()`?**
-**A:** Use `get()` when you need to read the current state outside of a `set()` updater function — for example, when composing multiple reads before a single write, or when reading state in an `async` action between `await` calls. Inside `set()`, always use the functional form `set(state => ...)` to avoid stale closure issues.[^1]
+**A:** Use `get()` when you need to read the current state outside of a `set()` updater function — for example, when composing multiple reads before a single write, or when reading state in an `async` action between `await` calls. Inside `set()`, always use the functional form `set(state => ...)` to avoid stale closure issues.
 
 **Q: Should actions be defined inside or outside the store?**
-**A:** Inside — co-locating actions with state is Zustand's recommended pattern. This keeps the data contract in one place, avoids prop drilling the `set` function, and lets actions access both `set` and `get`.[^5]
+**A:** Inside — co-locating actions with state is Zustand's recommended pattern. This keeps the data contract in one place, avoids prop drilling the `set` function, and lets actions access both `set` and `get`.
 
 ## C — Common Pitfalls
 

@@ -60,7 +60,7 @@ headers.has("X-Custom")       // false
 
 // FormData — multipart/form-data (file uploads)
 const form = new FormData()
-form.append("file", fileInput.files[^0])
+form.append("file", fileInput.files)
 form.append("name", "Alice")
 await fetch("/upload", { method: "POST", body: form })
 // Don't set Content-Type — browser sets it with boundary automatically

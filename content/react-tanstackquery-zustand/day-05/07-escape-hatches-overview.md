@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Escape hatches are React's intentional "opt out" mechanisms — use them to step outside React's declarative model when you must work imperatively with the DOM, external systems, or non-React code.[^13]
+Escape hatches are React's intentional "opt out" mechanisms — use them to step outside React's declarative model when you must work imperatively with the DOM, external systems, or non-React code.
 
 ## K — Key Concepts
 
@@ -31,7 +31,7 @@ Can this be done declaratively with props + state?
         → YES: forwardRef + useImperativeHandle
 ```
 
-**The "escape" mental model:**[^13]
+**The "escape" mental model:**
 
 React renders your UI as a pure function of state. Escape hatches are the intentionally placed emergency exits for when that model doesn't fit — they're designed to be minimal, explicit, and easy to spot in code review.
 
@@ -53,7 +53,7 @@ function VideoPlayer({ isPlaying }) {
 
 ## W — Why It Matters
 
-Knowing the full escape hatch landscape prevents two opposite mistakes: (1) over-using escape hatches (writing imperative code when declarative works) and (2) under-using them (fighting React when an escape hatch is the right tool). Senior React developers know exactly which tool solves which problem.[^13]
+Knowing the full escape hatch landscape prevents two opposite mistakes: (1) over-using escape hatches (writing imperative code when declarative works) and (2) under-using them (fighting React when an escape hatch is the right tool). Senior React developers know exactly which tool solves which problem.
 
 ## I — Interview Q&A
 

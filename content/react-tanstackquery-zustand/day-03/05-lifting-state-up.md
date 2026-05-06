@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-When two sibling components need to share or coordinate state, move that state to their closest common parent and pass it down via props.[^6][^7]
+When two sibling components need to share or coordinate state, move that state to their closest common parent and pass it down via props.
 
 ## K — Key Concepts
 
-**The three steps to lift state up:**[^7]
+**The three steps to lift state up:**
 
 1. **Remove** state from the children
 2. **Add** state to the nearest common parent
@@ -65,11 +65,11 @@ function Panel({ title, isOpen, onToggle }) {
 }
 ```
 
-**Controlled vs. Uncontrolled components** — when you lift state up, the child becomes "controlled" (driven by props from parent). When it owns its own state, it's "uncontrolled."[^7]
+**Controlled vs. Uncontrolled components** — when you lift state up, the child becomes "controlled" (driven by props from parent). When it owns its own state, it's "uncontrolled."
 
 ## W — Why It Matters
 
-Lifting state up is the core React pattern for component coordination. It appears in every real app — accordion menus, wizard forms, tab systems, filter bars — anywhere two components need to react to each other. Interviewers test this pattern constantly.[^6][^7]
+Lifting state up is the core React pattern for component coordination. It appears in every real app — accordion menus, wizard forms, tab systems, filter bars — anywhere two components need to react to each other. Interviewers test this pattern constantly.
 
 ## I — Interview Q&A
 

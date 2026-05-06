@@ -71,7 +71,7 @@ const cfg = defineConfig({ host: "localhost", port: 3000 })
 
 ## W — Why It Matters
 
-`const` type parameters (TS 5.0) eliminate the need to write `as const` at every callsite when using builder-pattern APIs. They're used in modern TS libraries (tRPC, Zod, type-safe routers) to capture literal types from user input without explicit annotation.[^5]
+`const` type parameters (TS 5.0) eliminate the need to write `as const` at every callsite when using builder-pattern APIs. They're used in modern TS libraries (tRPC, Zod, type-safe routers) to capture literal types from user input without explicit annotation.
 
 ## I — Interview Q&A
 

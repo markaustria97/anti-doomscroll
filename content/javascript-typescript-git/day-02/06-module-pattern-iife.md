@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-The module pattern uses an IIFE + closure to create a namespace with private state and a public API — the precursor to ES6 modules.[^6]
+The module pattern uses an IIFE + closure to create a namespace with private state and a public API — the precursor to ES6 modules.
 
 ## K — Key Concepts
 
@@ -63,15 +63,15 @@ const AuthModule = (function() {
 
 ## W — Why It Matters
 
-Before ES6 modules, every major library (jQuery, Lodash, Backbone) used the IIFE module pattern. You'll still see it in legacy codebases. Understanding it also makes ES6 `import`/`export` feel intuitive by comparison.[^6]
+Before ES6 modules, every major library (jQuery, Lodash, Backbone) used the IIFE module pattern. You'll still see it in legacy codebases. Understanding it also makes ES6 `import`/`export` feel intuitive by comparison.
 
 ## I — Interview Q&A
 
 **Q: What is an IIFE and why would you use it?**
-A: An IIFE is a function that defines and immediately calls itself. It creates an isolated scope, preventing variables from polluting the global namespace. Used for module encapsulation, initialization code, and avoiding variable name collisions.[^7]
+A: An IIFE is a function that defines and immediately calls itself. It creates an isolated scope, preventing variables from polluting the global namespace. Used for module encapsulation, initialization code, and avoiding variable name collisions.
 
 **Q: What's the difference between the Module Pattern and the Revealing Module Pattern?**
-A: Both use IIFE + closure. The Revealing Module defines everything at the top (private and public together) and explicitly returns only the public API at the bottom — making it clearer what's exposed.[^6]
+A: Both use IIFE + closure. The Revealing Module defines everything at the top (private and public together) and explicitly returns only the public API at the bottom — making it clearer what's exposed.
 
 ## C — Common Pitfalls
 

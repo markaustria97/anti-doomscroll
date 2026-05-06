@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Semantic versioning (`MAJOR.MINOR.PATCH`) communicates backward compatibility; `semantic-release` automates the entire release pipeline — version bump, git tag, GitHub Release, changelog, npm publish — from commit messages alone.[^2][^6]
+Semantic versioning (`MAJOR.MINOR.PATCH`) communicates backward compatibility; `semantic-release` automates the entire release pipeline — version bump, git tag, GitHub Release, changelog, npm publish — from commit messages alone.
 
 ## K — Key Concepts
 
@@ -137,12 +137,12 @@ updates:
 
 ## W — Why It Matters
 
-Manual versioning is error-prone and slows releases. `semantic-release` turns "merge to main" into a full automated release: version bump, changelog, GitHub Release, npm publish — all determined by your commit messages. Zero human decisions, zero forgotten steps.[^2][^6]
+Manual versioning is error-prone and slows releases. `semantic-release` turns "merge to main" into a full automated release: version bump, changelog, GitHub Release, npm publish — all determined by your commit messages. Zero human decisions, zero forgotten steps.
 
 ## I — Interview Q&A
 
 **Q: If a release contains one `fix:` commit and one `feat:` commit, what version is bumped?**
-A: MINOR. `semantic-release` takes the highest-severity bump from all commits since the last release. `feat:` = MINOR, `fix:` = PATCH — the MINOR wins. The version goes from, say, `1.2.3` to `1.3.0`.[^6]
+A: MINOR. `semantic-release` takes the highest-severity bump from all commits since the last release. `feat:` = MINOR, `fix:` = PATCH — the MINOR wins. The version goes from, say, `1.2.3` to `1.3.0`.
 
 **Q: What is Dependabot and how does it relate to release automation?**
 A: Dependabot (GitHub-native) automatically opens PRs to update outdated dependencies on a schedule. Combined with conventional commits and automerge rules, patch updates to dev dependencies can be fully automated — Dependabot opens the PR, CI passes, it auto-merges, semantic-release publishes. Zero manual toil.

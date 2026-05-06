@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-A closure is a function that **remembers** the variables from the scope where it was created, even after that scope has exited.[^1]
+A closure is a function that **remembers** the variables from the scope where it was created, even after that scope has exited.
 
 ## K — Key Concepts
 
@@ -47,12 +47,12 @@ for (let i = 0; i < 3; i++) {
 
 ## W — Why It Matters
 
-Closures power React hooks (`useState` captures state across renders), memoization, event handlers, and the entire module pattern. The loop bug is one of the most common interview questions for mid-to-senior JS roles.[^5][^1]
+Closures power React hooks (`useState` captures state across renders), memoization, event handlers, and the entire module pattern. The loop bug is one of the most common interview questions for mid-to-senior JS roles.
 
 ## I — Interview Q&A
 
 **Q: What is a closure?**
-A: A closure is a function plus the lexical environment in which it was created. The function retains access to variables from its outer scope even after that scope has finished executing.[^1]
+A: A closure is a function plus the lexical environment in which it was created. The function retains access to variables from its outer scope even after that scope has finished executing.
 
 **Q: Does a closure capture the variable or its value?**
 A: It captures the **variable binding** (reference), not the value at the time of creation. That's why the loop bug happens — all closures share the same `i` variable.

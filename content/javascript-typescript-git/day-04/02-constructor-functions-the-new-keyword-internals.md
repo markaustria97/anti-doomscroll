@@ -55,7 +55,7 @@ oops   // undefined — no object returned
 
 ## W — Why It Matters
 
-The `new` keyword implementation question is a classic senior interview question. Understanding these four steps also explains why `class` syntax is essentially syntactic sugar, why returning an object from a constructor overrides the new instance, and why forgetting `new` pollutes globals.[^1]
+The `new` keyword implementation question is a classic senior interview question. Understanding these four steps also explains why `class` syntax is essentially syntactic sugar, why returning an object from a constructor overrides the new instance, and why forgetting `new` pollutes globals.
 
 ## I — Interview Q&A
 

@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Ambient declarations tell TypeScript "this value exists at runtime, but I'm not providing its implementation" — used for third-party JavaScript, global variables, and extending existing types.[^9]
+Ambient declarations tell TypeScript "this value exists at runtime, but I'm not providing its implementation" — used for third-party JavaScript, global variables, and extending existing types.
 
 ## K — Key Concepts
 
@@ -85,7 +85,7 @@ declare module "express" {
 
 ## W — Why It Matters
 
-`declare global` and module augmentation are the only safe way to add properties to `Express.Request` (auth middleware), `Window` (analytics plugins), or `next-auth` Session types — without modifying library source. Every enterprise TypeScript project has at least one `.d.ts` file doing this.[^4][^9]
+`declare global` and module augmentation are the only safe way to add properties to `Express.Request` (auth middleware), `Window` (analytics plugins), or `next-auth` Session types — without modifying library source. Every enterprise TypeScript project has at least one `.d.ts` file doing this.
 
 ## I — Interview Q&A
 
@@ -93,7 +93,7 @@ declare module "express" {
 A: A `.ts` file contains implementation (values + types, compiled to JavaScript). A `.d.ts` file contains only type declarations — no implementation, no runtime output. `.d.ts` files describe the shape of existing JavaScript to TypeScript without affecting the bundle.
 
 **Q: When do you need `declare global` vs just declaring at the top level of a `.d.ts` file?**
-A: If the file has no `import`/`export` statements, it's treated as a global script — declarations are automatically global. If it has any import/export (it's a module), you must use `declare global { }` to add to the global scope.[^4]
+A: If the file has no `import`/`export` statements, it's treated as a global script — declarations are automatically global. If it has any import/export (it's a module), you must use `declare global { }` to add to the global scope.
 
 ## C — Common Pitfalls
 

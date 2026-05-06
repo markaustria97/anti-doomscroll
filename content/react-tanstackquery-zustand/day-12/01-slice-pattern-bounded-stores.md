@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-The slice pattern splits a large Zustand store into focused, domain-specific functions that are combined into one "bounded store" — giving you code separation without sacrificing cross-slice coordination.[^2][^1]
+The slice pattern splits a large Zustand store into focused, domain-specific functions that are combined into one "bounded store" — giving you code separation without sacrificing cross-slice coordination.
 
 ## K — Key Concepts
 
-**Why slices — the problem they solve:**[^1][^2]
+**Why slices — the problem they solve:**
 
 ```jsx
 // ❌ One giant store — everything tangled together
@@ -22,7 +22,7 @@ const useBigStore = create((set, get) => ({
 // ✅ Slice pattern — each domain in its own file, merged into one store
 ```
 
-**Slice creator signature — the key convention:**[^2][^1]
+**Slice creator signature — the key convention:**
 
 ```jsx
 // Each slice is a FUNCTION that takes (set, get, api) and returns its slice
@@ -55,7 +55,7 @@ const createUISlice = (set) => ({
 })
 ```
 
-**Bounded store — combining all slices:**[^1][^2]
+**Bounded store — combining all slices:**
 
 ```jsx
 import { create } from "zustand"
@@ -111,18 +111,18 @@ function UserMenu() {
 
 ## W — Why It Matters
 
-The slice pattern is how Zustand scales from a 20-line store to a 2,000-line codebase without becoming unmaintainable. Each slice has a single responsibility, lives in its own file, can be tested independently, and communicates with other slices through the shared `get()`. It mirrors the domain-driven structure that senior engineers expect in production apps.[^5][^2][^1]
+The slice pattern is how Zustand scales from a 20-line store to a 2,000-line codebase without becoming unmaintainable. Each slice has a single responsibility, lives in its own file, can be tested independently, and communicates with other slices through the shared `get()`. It mirrors the domain-driven structure that senior engineers expect in production apps.
 
 ## I — Interview Q&A
 
 **Q: What is the slice pattern in Zustand and why use it?**
-**A:** The slice pattern splits a store into domain-specific creator functions, each defining state and actions for one concern (auth, cart, UI). They're combined with spread syntax inside a single `create()` call, forming a bounded store. Benefits: code organization by domain, single hook for components, and cross-slice communication via `get()`.[^2][^1]
+**A:** The slice pattern splits a store into domain-specific creator functions, each defining state and actions for one concern (auth, cart, UI). They're combined with spread syntax inside a single `create()` call, forming a bounded store. Benefits: code organization by domain, single hook for components, and cross-slice communication via `get()`.
 
 **Q: What is a "bounded store" in Zustand?**
-**A:** A bounded store is the single `create()` call that combines all slices into one unified hook — `useBoundStore`. "Bounded" means all slices share the same state context, so `get()` in any slice can read the entire store state including other slices. It contrasts with multiple independent stores.[^5][^1]
+**A:** A bounded store is the single `create()` call that combines all slices into one unified hook — `useBoundStore`. "Bounded" means all slices share the same state context, so `get()` in any slice can read the entire store state including other slices. It contrasts with multiple independent stores.
 
 **Q: How do slices communicate with each other?**
-**A:** Through `get()` — since all slices share the same store, `get()` returns the complete combined state. An action in `authSlice` can call `get().clearCart()` — a function defined in `cartSlice` — because both exist on the same store state object.[^5][^2]
+**A:** Through `get()` — since all slices share the same store, `get()` returns the complete combined state. An action in `authSlice` can call `get().clearCart()` — a function defined in `cartSlice` — because both exist on the same store state object.
 
 ## C — Common Pitfalls
 

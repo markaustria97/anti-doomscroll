@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Weak collections hold **object references that don't prevent garbage collection** — when the object is GC'd, its entry silently disappears — making them ideal for caches and private metadata.[^10][^11]
+Weak collections hold **object references that don't prevent garbage collection** — when the object is GC'd, its entry silently disappears — making them ideal for caches and private metadata.
 
 ## K — Key Concepts
 
@@ -79,12 +79,12 @@ obj = null  // remove strong reference — object can now be GC'd
 
 ## W — Why It Matters
 
-`WeakMap` is used by Vue 3's reactivity system (storing effect dependencies), React internals (fiber metadata), and test libraries for spy/mock metadata. The key insight: if you'd need to manually delete an entry when an object is destroyed, you want a `WeakMap`.[^11][^10]
+`WeakMap` is used by Vue 3's reactivity system (storing effect dependencies), React internals (fiber metadata), and test libraries for spy/mock metadata. The key insight: if you'd need to manually delete an entry when an object is destroyed, you want a `WeakMap`.
 
 ## I — Interview Q&A
 
 **Q: Why doesn't `WeakMap` have a `.size` property or iteration methods?**
-A: Because GC can happen at any time — the "size" of a WeakMap is non-deterministic. Providing `.size` or `.keys()` would give you unreliable numbers. The design forces you to use WeakMap purely as a side-channel store, not as a data container.[^10]
+A: Because GC can happen at any time — the "size" of a WeakMap is non-deterministic. Providing `.size` or `.keys()` would give you unreliable numbers. The design forces you to use WeakMap purely as a side-channel store, not as a data container.
 
 **Q: What's the difference between `WeakRef.deref()` returning `undefined` vs. an object?**
 A: If the GC has collected the referenced object, `deref()` returns `undefined`. If the object still exists in memory, `deref()` returns it. Always check before using: `const val = ref.deref(); if (val) { ... }`.

@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Composition builds flexible UIs from small pieces; `React.lazy` + `Suspense` defers loading components until needed — reducing initial bundle size and showing fallback UI while chunks load.[^9][^10]
+Composition builds flexible UIs from small pieces; `React.lazy` + `Suspense` defers loading components until needed — reducing initial bundle size and showing fallback UI while chunks load.
 
 ## K — Key Concepts
 
@@ -38,7 +38,7 @@ function Layout({ sidebar, main, header }) {
 <Layout header={<Nav />} sidebar={<Filters />} main={<ProductGrid />} />
 ```
 
-**Lazy loading with `React.lazy` + `Suspense`:**[^10][^9]
+**Lazy loading with `React.lazy` + `Suspense`:**
 
 ```jsx
 // ✅ Component loaded only when first rendered
@@ -57,7 +57,7 @@ function App() {
 }
 ```
 
-**Nested Suspense boundaries — granular loading:**[^9]
+**Nested Suspense boundaries — granular loading:**
 
 ```jsx
 // Different fallbacks for different sections
@@ -82,7 +82,7 @@ function Dashboard() {
 
 ## W — Why It Matters
 
-Composition is how you build React components that are genuinely reusable — not just copy-paste reusable. Lazy loading is how production apps achieve fast initial load times — large pages, route-specific code, and heavy libraries should never be in the initial bundle. Combined, these are the foundation of scalable, performant React architecture.[^3][^10][^9]
+Composition is how you build React components that are genuinely reusable — not just copy-paste reusable. Lazy loading is how production apps achieve fast initial load times — large pages, route-specific code, and heavy libraries should never be in the initial bundle. Combined, these are the foundation of scalable, performant React architecture.
 
 ## I — Interview Q&A
 

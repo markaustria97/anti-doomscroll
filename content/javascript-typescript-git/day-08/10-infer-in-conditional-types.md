@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`infer` declares a new type variable inside a conditional type's `extends` clause — it captures (extracts) a part of the matched type for use in the result.[^3]
+`infer` declares a new type variable inside a conditional type's `extends` clause — it captures (extracts) a part of the matched type for use in the result.
 
 ## K — Key Concepts
 
@@ -57,7 +57,7 @@ type Q = ExtractData<ApiResult<User[]>>  // User[]
 
 ## W — Why It Matters
 
-`infer` is the foundation of TypeScript's most powerful built-in utility types — `ReturnType`, `Parameters`, `Awaited`, `InstanceType` are all implemented with `infer`. Understanding it lets you extract type information from any generic or structured type — the core skill for writing library-level TypeScript.[^3]
+`infer` is the foundation of TypeScript's most powerful built-in utility types — `ReturnType`, `Parameters`, `Awaited`, `InstanceType` are all implemented with `infer`. Understanding it lets you extract type information from any generic or structured type — the core skill for writing library-level TypeScript.
 
 ## I — Interview Q&A
 

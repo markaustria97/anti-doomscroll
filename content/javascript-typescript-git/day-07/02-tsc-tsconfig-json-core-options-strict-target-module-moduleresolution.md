@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`tsconfig.json` is the master config file — `strict` enables all safety checks at once, `target` controls output JS version, `module` controls import/export format, and `moduleResolution` controls how imports are resolved.[^3][^1]
+`tsconfig.json` is the master config file — `strict` enables all safety checks at once, `target` controls output JS version, `module` controls import/export format, and `moduleResolution` controls how imports are resolved.
 
 ## K — Key Concepts
 
@@ -12,7 +12,7 @@
   "compilerOptions": {
     // ── Type Checking ────────────────────────────────────
     "strict": true,                    // enables ALL strict family flags
-    "noUncheckedIndexedAccess": true,  // arr[^0] becomes T | undefined
+    "noUncheckedIndexedAccess": true,  // arr becomes T | undefined
     "noImplicitOverride": true,        // must use `override` keyword in subclasses
     "noFallthroughCasesInSwitch": true,// switch cases must break/return
     "noUnusedLocals": true,            // error on unused variables
@@ -59,7 +59,7 @@ npx tsc --init       # generate a starter tsconfig.json
 
 ## W — Why It Matters
 
-`moduleResolution: "Bundler"` is the modern choice for Vite/esbuild projects — it matches what bundlers actually do (no extension required on imports). `isolatedModules: true` ensures every file can be transpiled independently, which is required by fast transpilers like esbuild and SWC.[^5][^3]
+`moduleResolution: "Bundler"` is the modern choice for Vite/esbuild projects — it matches what bundlers actually do (no extension required on imports). `isolatedModules: true` ensures every file can be transpiled independently, which is required by fast transpilers like esbuild and SWC.
 
 ## I — Interview Q&A
 
@@ -67,7 +67,7 @@ npx tsc --init       # generate a starter tsconfig.json
 A: It tells TypeScript to perform type checking but write no output files. Use this when a bundler (Vite, esbuild) handles transpilation — you only want TypeScript for its type checking, not its compiler output.
 
 **Q: What's the difference between `moduleResolution: "Node"` vs `"Bundler"` vs `"NodeNext"`?**
-A: `Node` (legacy) mimics Node.js CommonJS resolution. `NodeNext` matches Node.js ESM resolution — requires explicit extensions in imports. `Bundler` matches modern bundlers like Vite/webpack that don't require extensions and resolve `package.json` exports. Use `Bundler` for Vite projects, `NodeNext` for Node.js ESM projects.[^3]
+A: `Node` (legacy) mimics Node.js CommonJS resolution. `NodeNext` matches Node.js ESM resolution — requires explicit extensions in imports. `Bundler` matches modern bundlers like Vite/webpack that don't require extensions and resolve `package.json` exports. Use `Bundler` for Vite projects, `NodeNext` for Node.js ESM projects.
 
 ## C — Common Pitfalls
 

@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Every JavaScript object has an internal `[[Prototype]]` link — property lookup walks up this chain until it hits `null`, enabling inheritance without copying.[^1]
+Every JavaScript object has an internal `[[Prototype]]` link — property lookup walks up this chain until it hits `null`, enabling inheritance without copying.
 
 ## K — Key Concepts
 
@@ -50,12 +50,12 @@ alice.toString()// found on Object.prototype
 
 ## W — Why It Matters
 
-Understanding the prototype chain explains how `instanceof`, `class extends`, `Object.create`, and every method on built-in types (`.map`, `.toString`, `.hasOwnProperty`) work under the hood. It's the engine behind all JavaScript inheritance.[^5][^1]
+Understanding the prototype chain explains how `instanceof`, `class extends`, `Object.create`, and every method on built-in types (`.map`, `.toString`, `.hasOwnProperty`) work under the hood. It's the engine behind all JavaScript inheritance.
 
 ## I — Interview Q&A
 
 **Q: What is the prototype chain?**
-A: A linked series of objects where each object's `[[Prototype]]` points to the next. When you access a property, JS looks on the object itself first, then up the chain until it finds it or hits `null`.[^1]
+A: A linked series of objects where each object's `[[Prototype]]` points to the next. When you access a property, JS looks on the object itself first, then up the chain until it finds it or hits `null`.
 
 **Q: What's the difference between `__proto__` and `prototype`?**
 A: `__proto__` is the internal `[[Prototype]]` link on every object instance — it points to the next object in the chain. `prototype` is a property on **functions** that becomes the `[[Prototype]]` of objects created with `new`. They're related but different.

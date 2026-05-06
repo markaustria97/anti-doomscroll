@@ -52,12 +52,12 @@ Index      → another name for the Staging Area
 
 ## W — Why It Matters
 
-Understanding the snapshot model explains why Git is fast — there's no "reconstruct from diffs" operation; any commit's state is directly accessible by its hash. Understanding the three areas (working/staging/repo) explains every git command: each one moves changes between these areas or reads from them.[^5][^1]
+Understanding the snapshot model explains why Git is fast — there's no "reconstruct from diffs" operation; any commit's state is directly accessible by its hash. Understanding the three areas (working/staging/repo) explains every git command: each one moves changes between these areas or reads from them.
 
 ## I — Interview Q&A
 
 **Q: How is Git's storage model different from SVN?**
-A: SVN stores deltas (what changed). Git stores snapshots (full project state per commit), with content deduplication through hashing — identical file contents share the same blob object. Git snapshots feel expensive but are efficient because unchanged files are reused by hash.[^1]
+A: SVN stores deltas (what changed). Git stores snapshots (full project state per commit), with content deduplication through hashing — identical file contents share the same blob object. Git snapshots feel expensive but are efficient because unchanged files are reused by hash.
 
 **Q: What does "distributed" mean in Git's context?**
 A: Every developer clones the complete repository — full history, all branches, all objects. Operations like `log`, `diff`, `blame`, `rebase` are local. You're not forced to push/pull for every action. Multiple remotes can coexist; there's no architectural central server, just social convention.

@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-JavaScript is single-threaded but non-blocking — the call stack runs synchronous code, Web APIs handle async work off-thread, and the event loop drains queues back onto the stack when it's empty.[^1]
+JavaScript is single-threaded but non-blocking — the call stack runs synchronous code, Web APIs handle async work off-thread, and the event loop drains queues back onto the stack when it's empty.
 
 ## K — Key Concepts
 
@@ -51,15 +51,15 @@ console.log("2 — sync")
 
 ## W — Why It Matters
 
-The event loop is the most-asked JavaScript interview concept at senior level. It explains why `setTimeout(fn, 0)` doesn't run "immediately," why Promises resolve before timeouts, and why blocking the call stack freezes the UI. Everything async in JavaScript flows through this model.[^2][^1]
+The event loop is the most-asked JavaScript interview concept at senior level. It explains why `setTimeout(fn, 0)` doesn't run "immediately," why Promises resolve before timeouts, and why blocking the call stack freezes the UI. Everything async in JavaScript flows through this model.
 
 ## I — Interview Q&A
 
 **Q: What is the event loop?**
-A: The event loop continuously checks: is the call stack empty? If yes, drain the entire microtask queue, then take one macrotask and push its callback onto the stack. This repeats indefinitely.[^5]
+A: The event loop continuously checks: is the call stack empty? If yes, drain the entire microtask queue, then take one macrotask and push its callback onto the stack. This repeats indefinitely.
 
 **Q: Why do microtasks run before macrotasks?**
-A: Microtasks represent continuations of the current operation (Promise resolutions, mutation observers). They have priority to complete before the engine yields control to the next external task. After every macrotask — and after every microtask — the engine drains the full microtask queue before moving on.[^2][^1]
+A: Microtasks represent continuations of the current operation (Promise resolutions, mutation observers). They have priority to complete before the engine yields control to the next external task. After every macrotask — and after every microtask — the engine drains the full microtask queue before moving on.
 
 ## C — Common Pitfalls
 

@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-React batches multiple `setState` calls in the same event handler into a single re-render — understand this to predict how many times your component re-renders.[^2]
+React batches multiple `setState` calls in the same event handler into a single re-render — understand this to predict how many times your component re-renders.
 
 ## K — Key Concepts
 
-**Batching in action:**[^2]
+**Batching in action:**
 
 ```jsx
 function handleClick() {
@@ -43,7 +43,7 @@ function handleClick() {
 
 ## W — Why It Matters
 
-Batching is why React is fast. Without it, every `setState` call in a complex handler would trigger its own render and DOM update. Misunderstanding batching leads to wrong mental models about how many times your component renders and why performance behaves the way it does.[^2]
+Batching is why React is fast. Without it, every `setState` call in a complex handler would trigger its own render and DOM update. Misunderstanding batching leads to wrong mental models about how many times your component renders and why performance behaves the way it does.
 
 ## I — Interview Q&A
 

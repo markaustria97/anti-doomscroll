@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Zustand persist hydration and SSR require special care — `skipHydration` prevents hydration mismatches on the server, and `version` + `migrate` handle breaking schema changes across deployments.[^8][^6]
+Zustand persist hydration and SSR require special care — `skipHydration` prevents hydration mismatches on the server, and `version` + `migrate` handle breaking schema changes across deployments.
 
 ## K — Key Concepts
 
-**The SSR hydration mismatch problem:**[^8]
+**The SSR hydration mismatch problem:**
 
 ```
 Server render:
@@ -21,7 +21,7 @@ Client hydration:
 React throws a hydration error or silently shows wrong content.
 ```
 
-**Solution — `skipHydration`:**[^8][^6]
+**Solution — `skipHydration`:**
 
 ```jsx
 // 1. Skip automatic hydration on init
@@ -54,7 +54,7 @@ function HydrationGate({ children }) {
 }
 ```
 
-**Versioning — preventing stale persisted state from breaking your app:**[^6]
+**Versioning — preventing stale persisted state from breaking your app:**
 
 ```jsx
 persist(
@@ -112,18 +112,18 @@ persist(
 
 ## W — Why It Matters
 
-Every production app that uses SSR (Next.js) with persist must handle the hydration mismatch problem — it causes subtle UI bugs that are hard to diagnose. Every app that ever deploys a schema change to persisted state must handle migration — without it, users with old data get broken stores or blank screens. Versioning is essentially database migrations for client-side state.[^8][^6]
+Every production app that uses SSR (Next.js) with persist must handle the hydration mismatch problem — it causes subtle UI bugs that are hard to diagnose. Every app that ever deploys a schema change to persisted state must handle migration — without it, users with old data get broken stores or blank screens. Versioning is essentially database migrations for client-side state.
 
 ## I — Interview Q&A
 
 **Q: What is a hydration mismatch and how does Zustand's `skipHydration` solve it?**
-**A:** In SSR, the server renders with default state (no localStorage access). When the client hydrates, Zustand reads localStorage and updates the store — but React's hydration expects the DOM to match the server-rendered HTML. `skipHydration: true` prevents auto-rehydration at store creation; you manually call `rehydrate()` inside a `useEffect` (client-only), after React's initial hydration completes.[^6][^8]
+**A:** In SSR, the server renders with default state (no localStorage access). When the client hydrates, Zustand reads localStorage and updates the store — but React's hydration expects the DOM to match the server-rendered HTML. `skipHydration: true` prevents auto-rehydration at store creation; you manually call `rehydrate()` inside a `useEffect` (client-only), after React's initial hydration completes.
 
 **Q: What happens to persisted state when you add a new field to the store?**
-**A:** The `merge` behavior (shallow merge by default) fills in missing fields from the store's defaults. New fields not in localStorage get their initial values from the store creator. No migration needed for purely additive changes — only for renames, deletions, or type changes.[^6]
+**A:** The `merge` behavior (shallow merge by default) fills in missing fields from the store's defaults. New fields not in localStorage get their initial values from the store creator. No migration needed for purely additive changes — only for renames, deletions, or type changes.
 
 **Q: When should you bump the `version` number in persist?**
-**A:** Whenever you make a breaking schema change — renaming a key, splitting a field, changing a value's type, or removing a required field. Non-breaking changes (adding new fields with defaults) don't require a version bump since the shallow merge handles them.[^6]
+**A:** Whenever you make a breaking schema change — renaming a key, splitting a field, changing a value's type, or removing a required field. Non-breaking changes (adding new fields with defaults) don't require a version bump since the shallow merge handles them.
 
 ## C — Common Pitfalls
 

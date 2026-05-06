@@ -57,7 +57,7 @@ type CSSProperty = `--${string}` | "color" | "background" | "font-size"
 
 ## W — Why It Matters
 
-Template literal types power typed database query builders, typed URL routers (tRPC uses them for procedure paths), typed CSS-in-JS (interpolating theme tokens), and auto-generated event handler props in React. They convert string conventions into enforced type contracts.[^8][^7]
+Template literal types power typed database query builders, typed URL routers (tRPC uses them for procedure paths), typed CSS-in-JS (interpolating theme tokens), and auto-generated event handler props in React. They convert string conventions into enforced type contracts.
 
 ## I — Interview Q&A
 

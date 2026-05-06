@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Fetching data in React manually requires solving 8+ problems every time — TanStack Query solves all of them out of the box with zero boilerplate.[^3][^8]
+Fetching data in React manually requires solving 8+ problems every time — TanStack Query solves all of them out of the box with zero boilerplate.
 
 ## K — Key Concepts
 
-**The 8 problems with manual `useEffect` fetching:**[^3]
+**The 8 problems with manual `useEffect` fetching:**
 
 ```jsx
 // What manual fetching actually requires:
@@ -51,7 +51,7 @@ function useUsers() {
 }
 ```
 
-**What TanStack Query handles automatically:**[^8][^3]
+**What TanStack Query handles automatically:**
 
 ```
 ✅ Loading / error / success states
@@ -93,7 +93,7 @@ function UserList() {
 
 ## W — Why It Matters
 
-Every production app that fetches data has implicitly solved (or ignored) these 8 problems. Ignoring race conditions causes users to see stale data. Missing retry logic causes silent failures. No caching causes waterfalls. TanStack Query is the industry standard solution — understanding *why* it exists makes you use it correctly and confidently defend it in code reviews.[^8][^3]
+Every production app that fetches data has implicitly solved (or ignored) these 8 problems. Ignoring race conditions causes users to see stale data. Missing retry logic causes silent failures. No caching causes waterfalls. TanStack Query is the industry standard solution — understanding *why* it exists makes you use it correctly and confidently defend it in code reviews.
 
 ## I — Interview Q&A
 
@@ -104,7 +104,7 @@ Every production app that fetches data has implicitly solved (or ignored) these 
 **A:** When two requests are in flight simultaneously — the first resolves after the second — and the component shows the first (stale) response. TanStack Query prevents this by tracking which request is current and discarding stale responses.
 
 **Q: What is stale-while-revalidate?**
-**A:** A caching strategy where stale (cached but potentially outdated) data is served immediately while a fresh request runs in the background. The UI shows something instantly, then updates silently when fresh data arrives. TanStack Query implements this via `staleTime`.[^8]
+**A:** A caching strategy where stale (cached but potentially outdated) data is served immediately while a fresh request runs in the background. The UI shows something instantly, then updates silently when fresh data arrives. TanStack Query implements this via `staleTime`.
 
 ## C — Common Pitfalls
 

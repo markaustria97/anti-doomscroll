@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Query keys are serializable arrays that act as the unique identity for every cached entry — every distinct key gets its own cache slot, fetch lifecycle, and invalidation target.[^3]
+Query keys are serializable arrays that act as the unique identity for every cached entry — every distinct key gets its own cache slot, fetch lifecycle, and invalidation target.
 
 ## K — Key Concepts
 
-**Query keys must be arrays (v5 rule):**[^3]
+**Query keys must be arrays (v5 rule):**
 
 ```jsx
 // ✅ Valid — arrays of any serializable value
@@ -77,18 +77,18 @@ useQuery({ queryKey: ["users"], queryFn: fetchUsers })
 
 ## W — Why It Matters
 
-Every caching decision in TanStack Query traces back to the query key. A key that's too broad means different data shares one cache entry. A key that's missing a variable means the cache never updates when that variable changes. Understanding keys deeply is the prerequisite to understanding all cache behavior.[^4][^3]
+Every caching decision in TanStack Query traces back to the query key. A key that's too broad means different data shares one cache entry. A key that's missing a variable means the cache never updates when that variable changes. Understanding keys deeply is the prerequisite to understanding all cache behavior.
 
 ## I — Interview Q&A
 
 **Q: What makes two query keys "the same" in TanStack Query?**
-**A:** Deep equality after deterministic hashing — `["user", 1]` is the same key every render, even as a new array literal. Object property order doesn't matter: `["data", { a: 1, b: 2 }]` equals `["data", { b: 2, a: 1 }]`. Only the serialized values must match.[^4][^3]
+**A:** Deep equality after deterministic hashing — `["user", 1]` is the same key every render, even as a new array literal. Object property order doesn't matter: `["data", { a: 1, b: 2 }]` equals `["data", { b: 2, a: 1 }]`. Only the serialized values must match.
 
 **Q: Why must query keys include all variables that affect the query result?**
-**A:** Because the key is the cache identity. If `userId` affects what data is fetched but isn't in the key, then fetching for user 1 and user 2 writes to the same cache slot — user 2's data overwrites user 1's. Every variable that changes the output must be in the key.[^3]
+**A:** Because the key is the cache identity. If `userId` affects what data is fetched but isn't in the key, then fetching for user 1 and user 2 writes to the same cache slot — user 2's data overwrites user 1's. Every variable that changes the output must be in the key.
 
 **Q: What types of values are valid in a query key?**
-**A:** Any JSON-serializable value: strings, numbers, booleans, `null`, plain objects, and arrays. Functions, class instances, Symbols, and `undefined`-valued object keys are not reliably serializable and should not be used in query keys.[^3]
+**A:** Any JSON-serializable value: strings, numbers, booleans, `null`, plain objects, and arrays. Functions, class instances, Symbols, and `undefined`-valued object keys are not reliably serializable and should not be used in query keys.
 
 ## C — Common Pitfalls
 

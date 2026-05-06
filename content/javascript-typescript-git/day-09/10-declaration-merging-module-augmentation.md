@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Declaration merging lets multiple `interface` declarations with the same name combine into one; module augmentation adds new types to an existing module's exports without modifying its source.[^9][^4]
+Declaration merging lets multiple `interface` declarations with the same name combine into one; module augmentation adds new types to an existing module's exports without modifying its source.
 
 ## K — Key Concepts
 
@@ -88,12 +88,12 @@ declare global {
 
 ## W — Why It Matters
 
-Module augmentation is the standard pattern for typing middleware and plugins — without it, `req.user` in Express would be `any` after your auth middleware runs. Every major TypeScript library provides augmentation examples in their docs for exactly this reason.[^4][^9]
+Module augmentation is the standard pattern for typing middleware and plugins — without it, `req.user` in Express would be `any` after your auth middleware runs. Every major TypeScript library provides augmentation examples in their docs for exactly this reason.
 
 ## I — Interview Q&A
 
 **Q: What are the limitations of module augmentation?**
-A: Two key limits: (1) you cannot add new *top-level* declarations to an augmented module — only extend existing exported types; (2) default exports cannot be augmented — only named exports. Also, the augmenting file must import from the target module to ensure TypeScript includes the augmentation.[^9]
+A: Two key limits: (1) you cannot add new *top-level* declarations to an augmented module — only extend existing exported types; (2) default exports cannot be augmented — only named exports. Also, the augmenting file must import from the target module to ensure TypeScript includes the augmentation.
 
 **Q: When would you use declaration merging vs module augmentation?**
 A: Use declaration merging for your own `interface` types that multiple files contribute to (e.g., a plugin-extensible config). Use module augmentation to add properties to third-party module types (`express`, `next-auth`, `prisma`) that you don't own.

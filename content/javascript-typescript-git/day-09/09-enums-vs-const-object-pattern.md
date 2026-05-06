@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-TypeScript `enum` generates runtime code and has surprising behavior — modern TypeScript prefers `const` objects with `as const` + `keyof typeof` for the same result with zero runtime cost and better tree-shaking.[^3]
+TypeScript `enum` generates runtime code and has surprising behavior — modern TypeScript prefers `const` objects with `as const` + `keyof typeof` for the same result with zero runtime cost and better tree-shaking.
 
 ## K — Key Concepts
 
@@ -21,7 +21,7 @@ enum Status {
   Active,     // 1
   Failed      // 2
 }
-Status[^0]        // "Pending" (reverse lookup!) — confusing
+Status        // "Pending" (reverse lookup!) — confusing
 Status.Pending   // 0
 
 // String enum — no reverse mapping
@@ -88,7 +88,7 @@ paint("red")       // ✅ the literal IS the type
 
 ## W — Why It Matters
 
-`const enum` breaks with `isolatedModules: true` (required by Vite and esbuild) — making it incompatible with modern tooling. Const objects are zero-overhead, fully tree-shakable, and work in all environments. The TypeScript team itself now recommends const objects over enums for most use cases.[^3]
+`const enum` breaks with `isolatedModules: true` (required by Vite and esbuild) — making it incompatible with modern tooling. Const objects are zero-overhead, fully tree-shakable, and work in all environments. The TypeScript team itself now recommends const objects over enums for most use cases.
 
 ## I — Interview Q&A
 
@@ -102,7 +102,7 @@ A: No — TypeScript string enums are nominally typed. `Color.Red` is `Color.Red
 
 | Pitfall | Fix |
 | :-- | :-- |
-| Numeric enum reverse mapping causing unexpected `Direction[^0]` access | Use string enums or const objects — string enums have no reverse mapping |
+| Numeric enum reverse mapping causing unexpected `Direction` access | Use string enums or const objects — string enums have no reverse mapping |
 | `const enum` with `isolatedModules: true` | Replace with const object + `as const` |
 | Forgetting `as const` on the const object — widens to `string` | Always `} as const` — without it, values are `string`, not literals |
 

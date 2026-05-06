@@ -46,7 +46,7 @@ type Store = ReturnType<typeof createStore>
 // ── Parameters<T> — extract function parameter types ──────
 function greet(name: string, age: number): string { return "" }
 type GreetParams = Parameters<typeof greet>   // [name: string, age: number]
-type FirstParam = Parameters<typeof greet>[^0] // string
+type FirstParam = Parameters<typeof greet> // string
 
 // ── ConstructorParameters<T> — constructor args ───────────
 class User {
@@ -78,7 +78,7 @@ type Config = Awaited<ReturnType<typeof loadConfig>>
 ## W — Why It Matters
 
 ```
-`ReturnType<typeof fn>` is invaluable when working with external libraries — you don't need to manually re-declare what a function returns. `Awaited<ReturnType<typeof asyncFn>>` gets the resolved value of any async function. These are foundational for building typed wrappers around third-party APIs.[^6]
+`ReturnType<typeof fn>` is invaluable when working with external libraries — you don't need to manually re-declare what a function returns. `Awaited<ReturnType<typeof asyncFn>>` gets the resolved value of any async function. These are foundational for building typed wrappers around third-party APIs.
 ```
 
 

@@ -39,7 +39,6 @@ outer: for (let i = 0; i < 3; i++) {
 }
 ```
 
-
 ## W — Why It Matters
 
 `for...in` on arrays is a classic bug — it can iterate prototype chain properties and doesn't guarantee order. `for...of` is the correct modern choice for arrays. Labeled breaks are rarely needed but appear in coding interview problems.
@@ -54,19 +53,19 @@ A: `break` exits the entire loop. `continue` skips the current iteration and pro
 
 ## C — Common Pitfalls
 
-| Pitfall | Fix |
-| :-- | :-- |
-| `for...in` on arrays | Use `for...of` or `arr.forEach` |
-| `for...of` on a plain object | Use `Object.keys(obj)`, `Object.values()`, or `Object.entries()` |
-| Infinite `while` loop | Ensure loop variable updates inside the body |
-| `for...in` picking up prototype properties | Check `obj.hasOwnProperty(key)` or use `Object.keys()` |
+| Pitfall                                    | Fix                                                              |
+| :----------------------------------------- | :--------------------------------------------------------------- |
+| `for...in` on arrays                       | Use `for...of` or `arr.forEach`                                  |
+| `for...of` on a plain object               | Use `Object.keys(obj)`, `Object.values()`, or `Object.entries()` |
+| Infinite `while` loop                      | Ensure loop variable updates inside the body                     |
+| `for...in` picking up prototype properties | Check `obj.hasOwnProperty(key)` or use `Object.keys()`           |
 
 ## K — Coding Challenge
 
 **Find the first number in an array divisible by both 3 and 5. Return early:**
 
 ```js
-findFirst([1, 9, 10, 15, 30])  // → 15
+findFirst([1, 9, 10, 15, 30]); // → 15
 ```
 
 **Solution:**
@@ -74,47 +73,8 @@ findFirst([1, 9, 10, 15, 30])  // → 15
 ```js
 function findFirst(arr) {
   for (const n of arr) {
-    if (n % 3 === 0 && n % 5 === 0) return n
+    if (n % 3 === 0 && n % 5 === 0) return n;
   }
-  return null
+  return null;
 }
 ```
-
-
-***
-
-> ✅ **Day 1 complete.** Pick one section that felt weakest and re-do just its coding challenge right now.
-> That's your next tiny action.
-<span style="display:none">[^10][^11][^12][^13][^14][^15][^5][^6][^7][^8][^9]</span>
-
-<div align="center">⁂</div>
-
-[^1]: https://nodejs.org/learn/getting-started/introduction-to-nodejs
-
-[^2]: https://dev.to/akshat0610/day-1-of-nodejs-introduction-449j
-
-[^3]: https://dev.to/saboor_bhutta/javascripts-not-so-obvious-type-coercion-examples-1lio
-
-[^4]: https://www.freecodecamp.org/news/javascript-temporal-dead-zone-and-hoisting-explained/
-
-[^5]: https://www.scribd.com/document/798959228/Node-Js-Intro
-
-[^6]: https://www.youtube.com/watch?v=f2EqECiTBL8
-
-[^7]: https://www.youtube.com/watch?v=B8toGbl0Ze0
-
-[^8]: https://www.w3schools.com/nodejs/nodejs_intro.asp
-
-[^9]: https://namastedev.com/blog/javascript-type-coercion-explained/
-
-[^10]: https://www.geeksforgeeks.org/javascript/temporal-dead-zone-in-javascript/
-
-[^11]: https://www.linkedin.com/posts/levi-soromto_100daysofcode-nodejs-backenddevelopment-activity-7434710590985572352-59Mh
-
-[^12]: https://blog.bitsrc.io/javascript-quirks-exploring-the-dual-nature-of-the-plus-operator-and-type-coercion-af1bc360fb17
-
-[^13]: https://stackoverflow.com/questions/31219420/are-variables-declared-with-let-or-const-hoisted
-
-[^14]: https://www.codecademy.com/learn/learn-nodejs-fundamentals
-
-[^15]: https://www.geeksforgeeks.org/javascript/type-conversion-and-type-coercion-in-javascript/

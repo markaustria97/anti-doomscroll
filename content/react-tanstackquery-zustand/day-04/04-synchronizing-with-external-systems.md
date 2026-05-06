@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-`useEffect` is specifically for *synchronization* — keeping React state in sync with something outside React's control (DOM, browser APIs, third-party libraries, servers).[^1]
+`useEffect` is specifically for *synchronization* — keeping React state in sync with something outside React's control (DOM, browser APIs, third-party libraries, servers).
 
 ## K — Key Concepts
 
-**What counts as an "external system":**[^1]
+**What counts as an "external system":**
 
 - Browser APIs: `document.title`, `localStorage`, `window` events
 - Third-party widgets: chat SDKs, map libraries, video players
@@ -62,11 +62,11 @@ function PageTitle({ title }) {
 }
 ```
 
-**The mental model:** Think of `useEffect` as "subscribe/unsubscribe" or "connect/disconnect" — not as a lifecycle hook. If you can't describe your effect as synchronizing with something, it probably belongs somewhere else.[^1]
+**The mental model:** Think of `useEffect` as "subscribe/unsubscribe" or "connect/disconnect" — not as a lifecycle hook. If you can't describe your effect as synchronizing with something, it probably belongs somewhere else.
 
 ## W — Why It Matters
 
-Framing effects as *synchronization* (not lifecycle) changes how you design them. It clarifies *why* cleanup is needed, *what* goes in the dependency array, and *when* an effect is appropriate at all. This mental model directly maps to how React's concurrent rendering and Strict Mode treat effects.[^1]
+Framing effects as *synchronization* (not lifecycle) changes how you design them. It clarifies *why* cleanup is needed, *what* goes in the dependency array, and *when* an effect is appropriate at all. This mental model directly maps to how React's concurrent rendering and Strict Mode treat effects.
 
 ## I — Interview Q&A
 

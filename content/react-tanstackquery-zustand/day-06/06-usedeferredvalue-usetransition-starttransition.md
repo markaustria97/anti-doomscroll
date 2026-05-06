@@ -2,15 +2,15 @@
 
 ## T — TL;DR
 
-Both defer non-urgent state updates to keep the UI responsive — use `useTransition` when you control the state update, and `useDeferredValue` when you only control the value being consumed.[^2][^6]
+Both defer non-urgent state updates to keep the UI responsive — use `useTransition` when you control the state update, and `useDeferredValue` when you only control the value being consumed.
 
 ## K — Key Concepts
 
-**The problem they solve:**[^2]
+**The problem they solve:**
 
 Typing in a search box that filters 10,000 items causes every keystroke to trigger a heavy re-render — the input lags. Both hooks mark the heavy work as "non-urgent," letting React prioritize keeping the input responsive.
 
-**`useTransition`** — wraps the state update you control:[^6]
+**`useTransition`** — wraps the state update you control:
 
 ```jsx
 function SearchPage() {
@@ -36,7 +36,7 @@ function SearchPage() {
 }
 ```
 
-**`useDeferredValue`** — wraps a value you receive (can't control the update):[^6]
+**`useDeferredValue`** — wraps a value you receive (can't control the update):
 
 ```jsx
 function SearchResults({ query }) {
@@ -69,12 +69,12 @@ function SearchResults({ query }) {
 
 ## W — Why It Matters
 
-These hooks are the foundation of React's concurrent rendering model. They make the difference between a search box that freezes and one that feels instant. Every app with live-filtering, tab switching, or pagination benefits from this pattern.[^7][^2]
+These hooks are the foundation of React's concurrent rendering model. They make the difference between a search box that freezes and one that feels instant. Every app with live-filtering, tab switching, or pagination benefits from this pattern.
 
 ## I — Interview Q&A
 
 **Q: What is the difference between `useTransition` and `useDeferredValue`?**
-**A:** `useTransition` wraps a state *update* you control, marking it as non-urgent. `useDeferredValue` wraps a *value* you've already received — useful when you can't access the setState call. Both achieve the same goal: keeping urgent updates (like typing) responsive while deferring expensive renders.[^6]
+**A:** `useTransition` wraps a state *update* you control, marking it as non-urgent. `useDeferredValue` wraps a *value* you've already received — useful when you can't access the setState call. Both achieve the same goal: keeping urgent updates (like typing) responsive while deferring expensive renders.
 
 **Q: What does `isPending` from `useTransition` represent?**
 **A:** It's `true` while React is processing the deferred (transition) update. Use it to show a loading indicator — the UI still shows the previous result while React works on the new one in the background.

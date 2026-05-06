@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-A remote is a named URL pointing to another repository — `origin` is the one you cloned from, `upstream` is the original source when you've forked; you can have as many remotes as needed.[^2][^5]
+A remote is a named URL pointing to another repository — `origin` is the one you cloned from, `upstream` is the original source when you've forked; you can have as many remotes as needed.
 
 ## K — Key Concepts
 
@@ -54,12 +54,12 @@ git remote set-url origin https://github.com/alice/repo.git       # fetch via HT
 
 ## W — Why It Matters
 
-The `origin`/`upstream` pattern is foundational for open-source contribution — you always push to your own fork (`origin`) and submit PRs to the original (`upstream`). Misconfiguring this causes pushes to fail or accidentally submit changes to the wrong repo.[^6][^2]
+The `origin`/`upstream` pattern is foundational for open-source contribution — you always push to your own fork (`origin`) and submit PRs to the original (`upstream`). Misconfiguring this causes pushes to fail or accidentally submit changes to the wrong repo.
 
 ## I — Interview Q&A
 
 **Q: What's the difference between `origin` and `upstream`?**
-A: They're just names — any remote can have any name. By convention, `origin` is the remote you cloned from (typically your fork or your team repo), and `upstream` is the original source project when you've forked. You push to `origin` and pull updates from `upstream`.[^6]
+A: They're just names — any remote can have any name. By convention, `origin` is the remote you cloned from (typically your fork or your team repo), and `upstream` is the original source project when you've forked. You push to `origin` and pull updates from `upstream`.
 
 **Q: What happens when you `git remote remove origin`?**
 A: Git removes the remote entry from `.git/config` and deletes all remote-tracking branches for that remote (e.g., `origin/main`, `origin/feature`). The actual remote repository is completely unaffected — you've only changed your local configuration.

@@ -27,7 +27,7 @@ Array.from({length: 5}, (_, i) => i)   // [0,1,2,3,4]
 Array.from(document.querySelectorAll("div"))  // NodeList → array
 
 // Array.of — creates array from arguments (no weird behavior)
-Array.of(3)         // [^3] — just an array with element 3
+Array.of(3)         //  — just an array with element 3
 new Array(3)        // [empty × 3] — sparse array of length 3!
 
 // Array.isArray
@@ -59,7 +59,7 @@ A: `[undefined, undefined, undefined]` — an array with 3 actual `undefined` sl
 
 | Pitfall | Fix |
 | :-- | :-- |
-| `new Array(5)` expecting `[^5]` | Use `Array.of(5)` or `[^5]` |
+| `new Array(5)` expecting `` | Use `Array.of(5)` or `` |
 | `.map()` on a NodeList | Convert first: `Array.from(nodeList).map(...)` |
 | `typeof arr === "array"` — never works | Use `Array.isArray(arr)` |
 | `.entries()` returning an object | Spread or use `for...of` to consume it |

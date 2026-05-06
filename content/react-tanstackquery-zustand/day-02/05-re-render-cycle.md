@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-A React component re-renders when its state changes, its parent re-renders, or its context changes — React then reconciles the output with the DOM.[^5]
+A React component re-renders when its state changes, its parent re-renders, or its context changes — React then reconciles the output with the DOM.
 
 ## K — Key Concepts
 
-**The render cycle — 3 phases:**[^5]
+**The render cycle — 3 phases:**
 
 1. **Trigger** — something causes a render (initial mount, `setState`, parent re-render, context change)
 2. **Render** — React calls your component function and gets a new JSX snapshot
@@ -53,7 +53,7 @@ function Parent() {
 
 ## W — Why It Matters
 
-Knowing what causes re-renders is critical for performance. Unnecessary re-renders are the \#1 React performance issue. Understanding the trigger → render → commit cycle gives you the mental model to use `React.memo`, `useMemo`, and `useCallback` correctly later.[^5]
+Knowing what causes re-renders is critical for performance. Unnecessary re-renders are the \#1 React performance issue. Understanding the trigger → render → commit cycle gives you the mental model to use `React.memo`, `useMemo`, and `useCallback` correctly later.
 
 ## I — Interview Q&A
 

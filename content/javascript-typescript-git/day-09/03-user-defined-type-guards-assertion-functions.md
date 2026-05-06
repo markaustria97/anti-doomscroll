@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Type guards (`val is T`) return `boolean` and narrow inside the `if` branch; assertion functions (`asserts val is T`) throw on failure and narrow *everything after* the call.[^2][^5]
+Type guards (`val is T`) return `boolean` and narrow inside the `if` branch; assertion functions (`asserts val is T`) throw on failure and narrow *everything after* the call.
 
 ## K — Key Concepts
 
@@ -86,12 +86,12 @@ input.value  // ✅ HTMLInputElement
 
 ## W — Why It Matters
 
-Assertion functions are ideal for setup code — after calling `assertIsUser(data)` at the top of a function, you never need another null check throughout. Type guards are better for conditional branches. Libraries like Zod generate assertion functions under the hood when you call `.parse()`.[^5][^2]
+Assertion functions are ideal for setup code — after calling `assertIsUser(data)` at the top of a function, you never need another null check throughout. Type guards are better for conditional branches. Libraries like Zod generate assertion functions under the hood when you call `.parse()`.
 
 ## I — Interview Q&A
 
 **Q: What's the difference between a type guard function and an assertion function?**
-A: A type guard (`val is T`) returns `boolean` — narrowing only applies in the `true` branch of the caller's `if`. An assertion function (`asserts val is T`) throws instead of returning `false` — narrowing applies to all code after the call, for the rest of the scope.[^2]
+A: A type guard (`val is T`) returns `boolean` — narrowing only applies in the `true` branch of the caller's `if`. An assertion function (`asserts val is T`) throws instead of returning `false` — narrowing applies to all code after the call, for the rest of the scope.
 
 **Q: What does `asserts condition` (without `is T`) do?**
 A: It tells TypeScript: "if this function returns normally, then `condition` is truthy." It narrows the type of `condition` itself without specifying an exact type — useful for generic `assert(someCheck, "message")` helpers.

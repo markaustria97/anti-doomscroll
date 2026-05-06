@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-`subscribeWithSelector` middleware enables selector-based subscriptions outside React — subscribe to a specific slice of state and react only when that exact value changes, without mounting a component.[^4]
+`subscribeWithSelector` middleware enables selector-based subscriptions outside React — subscribe to a specific slice of state and react only when that exact value changes, without mounting a component.
 
 ## K — Key Concepts
 
-**Basic `subscribeWithSelector`:**[^4]
+**Basic `subscribeWithSelector`:**
 
 ```jsx
 import { create } from "zustand"
@@ -93,18 +93,18 @@ useRouterStore.subscribe(
 
 ## W — Why It Matters
 
-Without `subscribeWithSelector`, the only way to react to Zustand state changes is inside a React component. But many side effects don't belong in components — syncing auth headers, updating the document theme, persisting to URL, triggering analytics. `subscribeWithSelector` is the bridge between Zustand's state machine and the outside world, enabling reactive side effects without component coupling.[^4]
+Without `subscribeWithSelector`, the only way to react to Zustand state changes is inside a React component. But many side effects don't belong in components — syncing auth headers, updating the document theme, persisting to URL, triggering analytics. `subscribeWithSelector` is the bridge between Zustand's state machine and the outside world, enabling reactive side effects without component coupling.
 
 ## I — Interview Q&A
 
 **Q: What does `subscribeWithSelector` add that basic `subscribe` doesn't have?**
-**A:** Basic `subscribe` fires on every state change with the full state object. `subscribeWithSelector` adds a selector parameter — the callback only fires when the selected value changes (by reference equality or a custom `equalityFn`). This prevents unwanted callback executions when unrelated state changes.[^4]
+**A:** Basic `subscribe` fires on every state change with the full state object. `subscribeWithSelector` adds a selector parameter — the callback only fires when the selected value changes (by reference equality or a custom `equalityFn`). This prevents unwanted callback executions when unrelated state changes.
 
 **Q: When would you use `subscribeWithSelector` instead of a React component with a `useEffect`?**
-**A:** For side effects that don't need to render anything — syncing state to an API client, updating `document` attributes, reacting to WebSocket events, or triggering analytics. These are infrastructure concerns that should live outside the component tree.[^4]
+**A:** For side effects that don't need to render anything — syncing state to an API client, updating `document` attributes, reacting to WebSocket events, or triggering analytics. These are infrastructure concerns that should live outside the component tree.
 
 **Q: What does `fireImmediately: true` do in the subscribe options?**
-**A:** It fires the callback immediately with the current state value at the time of subscription — equivalent to calling `subscribe` AND immediately executing the callback with the current value. Use it when the side effect must be applied at app start, not just on future changes (e.g., setting the auth header from a persisted token).[^4]
+**A:** It fires the callback immediately with the current state value at the time of subscription — equivalent to calling `subscribe` AND immediately executing the callback with the current value. Use it when the side effect must be applied at app start, not just on future changes (e.g., setting the auth header from a persisted token).
 
 ## C — Common Pitfalls
 

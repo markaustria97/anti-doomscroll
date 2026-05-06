@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`useState` gives a component memory — it stores a value between renders and triggers a re-render when updated.[^2]
+`useState` gives a component memory — it stores a value between renders and triggers a re-render when updated.
 
 ## K — Key Concepts
 
@@ -33,7 +33,7 @@ function Counter() {
 }
 ```
 
-**Functional updater form** — use when new state depends on previous state:[^2]
+**Functional updater form** — use when new state depends on previous state:
 
 ```jsx
 // ❌ Can be stale in async contexts
@@ -56,7 +56,7 @@ const [data, setData] = useState(() => expensiveComputation())
 
 ## W — Why It Matters
 
-`useState` is the most fundamental React hook — every interactive UI element relies on it. Understanding the functional updater form is essential for avoiding subtle stale-state bugs, especially when multiple state updates happen in sequence.[^4][^2]
+`useState` is the most fundamental React hook — every interactive UI element relies on it. Understanding the functional updater form is essential for avoiding subtle stale-state bugs, especially when multiple state updates happen in sequence.
 
 ## I — Interview Q&A
 

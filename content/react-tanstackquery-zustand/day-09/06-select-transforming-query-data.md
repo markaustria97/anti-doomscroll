@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`select` transforms or filters cached data before it reaches a component — without altering the cache — and memoizes the transformation so components only re-render when their selected slice actually changes.[^7][^5]
+`select` transforms or filters cached data before it reaches a component — without altering the cache — and memoizes the transformation so components only re-render when their selected slice actually changes.
 
 ## K — Key Concepts
 
@@ -18,7 +18,7 @@ const { data } = useQuery({
 // cache still holds ALL users ✅
 ```
 
-**`select` is memoized:**[^5]
+**`select` is memoized:**
 
 ```jsx
 // Component A — full list
@@ -79,18 +79,18 @@ const { data: admins } = useQuery({
 
 ## W — Why It Matters
 
-`select` gives you component-level subscriptions to slices of cached data. Combined with structural sharing, it means a component that only cares about an admin count won't re-render when a user's email changes. It replaces derived state `useEffect` patterns and post-fetch transformation code scattered across components.[^7]
+`select` gives you component-level subscriptions to slices of cached data. Combined with structural sharing, it means a component that only cares about an admin count won't re-render when a user's email changes. It replaces derived state `useEffect` patterns and post-fetch transformation code scattered across components.
 
 ## I — Interview Q&A
 
 **Q: What does `select` do in `useQuery` and how is it memoized?**
-**A:** `select` transforms the raw cached data before returning it to the component. TanStack Query memoizes the `select` function's output — it only re-runs when the underlying cache data changes. If the selected value is deeply equal to the previous result, the component doesn't re-render.[^7]
+**A:** `select` transforms the raw cached data before returning it to the component. TanStack Query memoizes the `select` function's output — it only re-runs when the underlying cache data changes. If the selected value is deeply equal to the previous result, the component doesn't re-render.
 
 **Q: Does `select` modify the cache?**
-**A:** No — `select` is purely per-observer. The cache always stores the raw data. Different components can use different `select` functions on the same `queryKey`, each seeing a different transformation without affecting the shared cache.[^5]
+**A:** No — `select` is purely per-observer. The cache always stores the raw data. Different components can use different `select` functions on the same `queryKey`, each seeing a different transformation without affecting the shared cache.
 
 **Q: When should you use `select` vs transforming data in the `queryFn`?**
-**A:** Transform in `queryFn` if the transformation is always needed (e.g., normalizing API response shape). Use `select` if different components need different views of the same raw data, or if the transformation should only apply to one component's slice.[^7]
+**A:** Transform in `queryFn` if the transformation is always needed (e.g., normalizing API response shape). Use `select` if different components need different views of the same raw data, or if the transformation should only apply to one component's slice.
 
 ## C — Common Pitfalls
 

@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`useRef` gives you a mutable container that persists across renders without triggering re-renders — use it for DOM access, storing timers, and tracking values that shouldn't cause UI updates.[^4]
+`useRef` gives you a mutable container that persists across renders without triggering re-renders — use it for DOM access, storing timers, and tracking values that shouldn't cause UI updates.
 
 ## K — Key Concepts
 
@@ -80,7 +80,7 @@ function Component({ value }) {
 
 ## W — Why It Matters
 
-`useRef` is the bridge between React's declarative world and the imperative DOM. You need it for focus management, scroll control, integrating third-party libraries, storing interval IDs, and measuring DOM elements. Using state for these causes unnecessary re-renders; using regular variables causes data to reset on every render.[^4]
+`useRef` is the bridge between React's declarative world and the imperative DOM. You need it for focus management, scroll control, integrating third-party libraries, storing interval IDs, and measuring DOM elements. Using state for these causes unnecessary re-renders; using regular variables causes data to reset on every render.
 
 ## I — Interview Q&A
 

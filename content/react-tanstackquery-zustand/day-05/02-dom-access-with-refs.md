@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Attach a ref to any JSX element with `ref={myRef}` and React sets `myRef.current` to the real DOM node after commit — giving you direct imperative DOM control.[^5]
+Attach a ref to any JSX element with `ref={myRef}` and React sets `myRef.current` to the real DOM node after commit — giving you direct imperative DOM control.
 
 ## K — Key Concepts
 
@@ -83,7 +83,7 @@ function List({ items }) {
 
 ## W — Why It Matters
 
-DOM refs are essential for accessibility (focus management, ARIA), media control (video/audio), third-party library integration (charts, maps, editors), and scroll/animation control. Without refs, React can't do any of these things declaratively — refs are the intentional escape hatch for imperative DOM work.[^5]
+DOM refs are essential for accessibility (focus management, ARIA), media control (video/audio), third-party library integration (charts, maps, editors), and scroll/animation control. Without refs, React can't do any of these things declaratively — refs are the intentional escape hatch for imperative DOM work.
 
 ## I — Interview Q&A
 
@@ -94,7 +94,7 @@ DOM refs are essential for accessibility (focus management, ARIA), media control
 **A:** React sets it during the commit phase — after rendering but before `useEffect` fires. `ref.current` is `null` during render and before the component first mounts. It's set to the DOM node when the element is mounted, and set back to `null` when the element unmounts.
 
 **Q: Can you attach a ref directly to a custom React component like `<MyInput ref={ref} />`?**
-**A:** Not by default — you need `forwardRef` (or React 19's native ref prop support). Without it, `ref` is not forwarded to the underlying DOM node and `ref.current` stays `null`.[^5]
+**A:** Not by default — you need `forwardRef` (or React 19's native ref prop support). Without it, `ref` is not forwarded to the underlying DOM node and `ref.current` stays `null`.
 
 ## C — Common Pitfalls
 

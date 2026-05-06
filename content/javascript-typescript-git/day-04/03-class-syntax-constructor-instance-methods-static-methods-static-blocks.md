@@ -65,7 +65,7 @@ class Config {
 
 ## W — Why It Matters
 
-Static methods and properties are used for factory methods, utility namespacing, and class-level caches. Static blocks solve the problem of initialization code that's too complex for a single expression — used in polyfills and framework internals.[^1]
+Static methods and properties are used for factory methods, utility namespacing, and class-level caches. Static blocks solve the problem of initialization code that's too complex for a single expression — used in polyfills and framework internals.
 
 ## I — Interview Q&A
 

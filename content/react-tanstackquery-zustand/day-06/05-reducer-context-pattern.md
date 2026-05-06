@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Combine `useReducer` for state logic and `useContext` for distribution — this is React's built-in alternative to Redux for managing shared, complex state across a component tree.[^4]
+Combine `useReducer` for state logic and `useContext` for distribution — this is React's built-in alternative to Redux for managing shared, complex state across a component tree.
 
 ## K — Key Concepts
 
-**The pattern — 4 steps:**[^4]
+**The pattern — 4 steps:**
 
 ```jsx
 // 1. Create two contexts: one for state, one for dispatch
@@ -53,7 +53,7 @@ Separating them means components that only dispatch (action buttons) don't re-re
 
 ## W — Why It Matters
 
-This pattern scales to full app-level state management without a third-party library. It's what Redux's core does — a single reducer + centralized dispatch + subscriptions. Understanding it means you can build lightweight global state, migrate from Redux thoughtfully, and reason clearly about any state management library's internals.[^4]
+This pattern scales to full app-level state management without a third-party library. It's what Redux's core does — a single reducer + centralized dispatch + subscriptions. Understanding it means you can build lightweight global state, migrate from Redux thoughtfully, and reason clearly about any state management library's internals.
 
 ## I — Interview Q&A
 

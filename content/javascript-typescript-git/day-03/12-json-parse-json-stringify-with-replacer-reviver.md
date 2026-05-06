@@ -71,7 +71,7 @@ JSON.stringify({ price: new Money(9.99, "USD") })
 A: Use a `reviver` function in `JSON.parse` to detect ISO date strings and convert them back: `if (isDateString(value)) return new Date(value)`. Or use `structuredClone` if you're just copying in-memory (no serialization needed).
 
 **Q: What values does `JSON.stringify` silently drop or transform?**
-A: Drops `undefined`, functions, and Symbols. Converts `NaN`/`Infinity` to `null`. Converts `Date` to ISO string. Converts `Map`/`Set` to `{}`. [^9]
+A: Drops `undefined`, functions, and Symbols. Converts `NaN`/`Infinity` to `null`. Converts `Date` to ISO string. Converts `Map`/`Set` to `{}`. 
 
 ## C — Common Pitfalls
 

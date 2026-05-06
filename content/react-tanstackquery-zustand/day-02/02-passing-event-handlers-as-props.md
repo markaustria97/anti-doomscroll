@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Pass event handlers as props (callbacks) to let child components communicate with their parents — this is React's primary bottom-up data flow.[^3]
+Pass event handlers as props (callbacks) to let child components communicate with their parents — this is React's primary bottom-up data flow.
 
 ## K — Key Concepts
 
@@ -24,7 +24,7 @@ function AddButton({ productId, onAdd }) {
 }
 ```
 
-**Naming convention:**[^3]
+**Naming convention:**
 
 - Prop names for handlers: prefix with `on` → `onClick`, `onSubmit`, `onChange`, `onDelete`
 - Handler function names: prefix with `handle` → `handleClick`, `handleSubmit`, `handleDelete`
@@ -48,7 +48,7 @@ function AddButton({ productId, onAdd }) {
 
 ## W — Why It Matters
 
-This pattern is the backbone of React's data flow. Every button in a form, every item in a list that can be deleted or edited, every modal that can be closed — all use this pattern. Getting it fluent early means you stop fighting React's model.[^3]
+This pattern is the backbone of React's data flow. Every button in a form, every item in a list that can be deleted or edited, every modal that can be closed — all use this pattern. Getting it fluent early means you stop fighting React's model.
 
 ## I — Interview Q&A
 

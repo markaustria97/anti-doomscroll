@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Secrets are encrypted values injected as env vars at runtime; matrices run jobs in parallel across multiple configurations; caching dependencies dramatically speeds up CI; concurrency groups prevent race conditions on shared environments.[^9][^10]
+Secrets are encrypted values injected as env vars at runtime; matrices run jobs in parallel across multiple configurations; caching dependencies dramatically speeds up CI; concurrency groups prevent race conditions on shared environments.
 
 ## K — Key Concepts
 
@@ -97,12 +97,12 @@ concurrency:
 
 ## W — Why It Matters
 
-Matrix builds catch cross-platform and cross-version bugs that single-environment CI misses — a library that works on Node 20 may fail on Node 18 still used by half your users. Caching turns `npm ci` from 45 seconds to 3 seconds on cache hit — for a 50-engineer team running 100 CI runs/day, that's hours of compute saved daily.[^9]
+Matrix builds catch cross-platform and cross-version bugs that single-environment CI misses — a library that works on Node 20 may fail on Node 18 still used by half your users. Caching turns `npm ci` from 45 seconds to 3 seconds on cache hit — for a 50-engineer team running 100 CI runs/day, that's hours of compute saved daily.
 
 ## I — Interview Q&A
 
 **Q: Why should you never use `${{ secrets.MY_SECRET }}` directly in a matrix variable?**
-A: Secrets are interpolated into job metadata (including matrix job names) BEFORE GitHub's log masking applies — the secret value appears unmasked in the job name in the GitHub UI. Always pass secrets through `env:` at the step level, never through matrix variables.[^10]
+A: Secrets are interpolated into job metadata (including matrix job names) BEFORE GitHub's log masking applies — the secret value appears unmasked in the job name in the GitHub UI. Always pass secrets through `env:` at the step level, never through matrix variables.
 
 **Q: What's the difference between `key:` and `restore-keys:` in the cache action?**
 A: `key:` is the exact cache key — a cache hit restores it and the cache is not saved again at the end. `restore-keys:` is a list of fallback prefixes — if exact key misses, GitHub looks for the most recent cache matching any prefix. The new cache is saved with the exact `key:` at the end of the job.

@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`call` and `apply` invoke a function with an explicit `this`; `bind` returns a new function with `this` permanently set — none of these work on arrow functions.[^9]
+`call` and `apply` invoke a function with an explicit `this`; `bind` returns a new function with `this` permanently set — none of these work on arrow functions.
 
 ## K — Key Concepts
 

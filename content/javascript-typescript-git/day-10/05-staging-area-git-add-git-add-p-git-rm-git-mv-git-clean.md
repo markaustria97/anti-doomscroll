@@ -74,7 +74,7 @@ git clean -fdx               # delete everything untracked (incl. ignored files)
 A: It removes the file from Git's index (stops tracking it) without deleting it from disk. Typical use: you accidentally committed a file that should be in `.gitignore` (e.g., `.env`, `node_modules`). After `--cached`, add the file to `.gitignore` and commit.
 
 **Q: Why should you always run `git clean -n` before `git clean -f`?**
-A: `git clean -f` permanently deletes untracked files — they don't go to the Trash and can't be recovered from Git (Git never tracked them). The dry-run `-n` flag shows exactly what would be deleted, preventing accidental data loss.[^1]
+A: `git clean -f` permanently deletes untracked files — they don't go to the Trash and can't be recovered from Git (Git never tracked them). The dry-run `-n` flag shows exactly what would be deleted, preventing accidental data loss.
 
 ## C — Common Pitfalls
 

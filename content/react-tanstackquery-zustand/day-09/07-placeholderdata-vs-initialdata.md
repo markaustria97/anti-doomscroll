@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-`placeholderData` shows temporary UI content while loading without affecting the cache; `initialData` pre-populates the cache with real data and counts toward staleness — they solve completely different problems.[^8][^9][^5]
+`placeholderData` shows temporary UI content while loading without affecting the cache; `initialData` pre-populates the cache with real data and counts toward staleness — they solve completely different problems.
 
 ## K — Key Concepts
 
-**`placeholderData` — synthetic display while loading:**[^9][^5]
+**`placeholderData` — synthetic display while loading:**
 
 ```jsx
 // Static placeholder (structural but fake)
@@ -31,7 +31,7 @@ useQuery({
 })
 ```
 
-**`initialData` — pre-populate with real cached data:**[^5]
+**`initialData` — pre-populate with real cached data:**
 
 ```jsx
 // Use case: populate detail page from list cache
@@ -54,7 +54,7 @@ function ProductPage({ productId }) {
 }
 ```
 
-**The critical difference matrix:**[^8][^9][^5]
+**The critical difference matrix:**
 
 
 |  | `placeholderData` | `initialData` |
@@ -68,18 +68,18 @@ function ProductPage({ productId }) {
 
 ## W — Why It Matters
 
-Choosing between them incorrectly causes subtle bugs: using `initialData` with fake/placeholder content pollutes the cache with bad data. Using `placeholderData` when you have real pre-existing data misses the staleness optimization — TanStack Query will still fetch even though you have perfectly valid cached data available.[^9][^8]
+Choosing between them incorrectly causes subtle bugs: using `initialData` with fake/placeholder content pollutes the cache with bad data. Using `placeholderData` when you have real pre-existing data misses the staleness optimization — TanStack Query will still fetch even though you have perfectly valid cached data available.
 
 ## I — Interview Q&A
 
 **Q: What is the difference between `placeholderData` and `initialData`?**
-**A:** `placeholderData` shows temporary display data without entering the cache — it's for UX only, disappears when real data arrives, and sets `isPlaceholderData: true`. `initialData` pre-populates the actual cache entry with real data — it counts toward staleness and prevents an immediate fetch if still fresh.[^9][^5]
+**A:** `placeholderData` shows temporary display data without entering the cache — it's for UX only, disappears when real data arrives, and sets `isPlaceholderData: true`. `initialData` pre-populates the actual cache entry with real data — it counts toward staleness and prevents an immediate fetch if still fresh.
 
 **Q: When should you use `keepPreviousData` in `placeholderData`?**
-**A:** For paginated lists — when the user navigates to the next page, instead of showing a blank/loading state, the previous page stays visible while the new page loads. Import `keepPreviousData` from `@tanstack/react-query` and pass it as `placeholderData`.[^9]
+**A:** For paginated lists — when the user navigates to the next page, instead of showing a blank/loading state, the previous page stays visible while the new page loads. Import `keepPreviousData` from `@tanstack/react-query` and pass it as `placeholderData`.
 
 **Q: What is `initialDataUpdatedAt` and why does it matter with `initialData`?**
-**A:** It tells TanStack Query when the `initialData` was last fresh. Without it, TanStack Query assumes `initialData` is stale (time = 0) and immediately refetches. Pass `queryClient.getQueryState(key)?.dataUpdatedAt` to inherit the original query's freshness time — no wasted refetch.[^5]
+**A:** It tells TanStack Query when the `initialData` was last fresh. Without it, TanStack Query assumes `initialData` is stale (time = 0) and immediately refetches. Pass `queryClient.getQueryState(key)?.dataUpdatedAt` to inherit the original query's freshness time — no wasted refetch.
 
 ## C — Common Pitfalls
 
@@ -137,8 +137,8 @@ function ProductDetail({ productId }) {
     initialDataUpdatedAt: () => {
       // Use the list query's update time so staleness is correctly calculated
       const states = queryClient.getQueriesData({ queryKey: ["products"] })
-      return states?.[^0]?.[^1]
-        ? queryClient.getQueryState(states[^0][^0])?.dataUpdatedAt
+      return states?.?.
+        ? queryClient.getQueryState(states)?.dataUpdatedAt
         : 0
     },
   })

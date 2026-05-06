@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Keep state as close to where it's used as possible — don't lift it higher than necessary, because every extra level means extra re-renders and harder maintenance.[^9]
+Keep state as close to where it's used as possible — don't lift it higher than necessary, because every extra level means extra re-renders and harder maintenance.
 
 ## K — Key Concepts
 
@@ -52,7 +52,7 @@ Is this state used by ONLY one component?
 
 ## W — Why It Matters
 
-Over-lifted state is the primary cause of unnecessary re-renders in React apps. When you lift state to the root for "convenience," every state change re-renders the entire tree. Colocation keeps re-renders isolated and fast, and makes components self-contained and reusable.[^9]
+Over-lifted state is the primary cause of unnecessary re-renders in React apps. When you lift state to the root for "convenience," every state change re-renders the entire tree. Colocation keeps re-renders isolated and fast, and makes components self-contained and reusable.
 
 ## I — Interview Q&A
 

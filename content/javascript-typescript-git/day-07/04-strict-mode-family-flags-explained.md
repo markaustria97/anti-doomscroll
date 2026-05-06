@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`"strict": true` is a shortcut that enables 8+ individual flags — understanding each one tells you exactly what category of bug it catches.[^7][^8][^1]
+`"strict": true` is a shortcut that enables 8+ individual flags — understanding each one tells you exactly what category of bug it catches.
 
 ## K — Key Concepts
 
@@ -44,8 +44,8 @@ try { /* ... */ } catch (err) {
 
 // 7. noUncheckedIndexedAccess — index signatures return T | undefined
 const arr = [1, 2, 3]
-const first = arr[^0]    // type: number | undefined (not just number!)
-const safe = arr[^0] ?? 0  // ✅ handle undefined
+const first = arr    // type: number | undefined (not just number!)
+const safe = arr ?? 0  // ✅ handle undefined
 
 const record: Record<string, number> = { a: 1 }
 const val = record["b"]  // type: number | undefined — not just number!
@@ -78,7 +78,7 @@ switch (status) {
 
 ## W — Why It Matters
 
-`noUncheckedIndexedAccess` is arguably the most impactful non-`strict` flag — it catches the entire class of "index out of bounds" bugs that `strict: true` misses. `useUnknownInCatchVariables` forces proper error handling in catch blocks instead of blindly accessing `.message`.[^9][^10]
+`noUncheckedIndexedAccess` is arguably the most impactful non-`strict` flag — it catches the entire class of "index out of bounds" bugs that `strict: true` misses. `useUnknownInCatchVariables` forces proper error handling in catch blocks instead of blindly accessing `.message`.
 
 ## I — Interview Q&A
 
@@ -86,7 +86,7 @@ switch (status) {
 A: With `strictNullChecks: true`, `null` and `undefined` are their own distinct types — they cannot be assigned to `string`, `number`, etc. without explicitly typing as `string | null`. Without it, any variable can silently be `null`, causing runtime crashes that TypeScript doesn't warn you about.
 
 **Q: What is `noUncheckedIndexedAccess` and what does it prevent?**
-A: It makes array index access and object index signature lookups return `T | undefined` instead of just `T`. This forces you to handle the case where the index doesn't exist — preventing the common bug of accessing `arr[^0]` on a possibly-empty array. [^10]
+A: It makes array index access and object index signature lookups return `T | undefined` instead of just `T`. This forces you to handle the case where the index doesn't exist — preventing the common bug of accessing `arr` on a possibly-empty array. 
 
 ## C — Common Pitfalls
 
@@ -94,7 +94,7 @@ A: It makes array index access and object index signature lookups return `T | un
 | :-- | :-- |
 | Suppressing `strictPropertyInitialization` with `!` everywhere | Only use `!` (definite assignment) when you truly guarantee initialization (e.g., `@ViewChild`) |
 | `catch (err) { err.message }` failing after enabling `useUnknownInCatchVariables` | Check: `if (err instanceof Error) { err.message }` |
-| `noUncheckedIndexedAccess` requiring null checks on every array access | Use optional chaining: `arr[^0]?.property` or `arr[^0] ?? defaultValue` |
+| `noUncheckedIndexedAccess` requiring null checks on every array access | Use optional chaining: `arr?.property` or `arr ?? defaultValue` |
 
 ## K — Coding Challenge
 
@@ -102,7 +102,7 @@ A: It makes array index access and object index signature lookups return `T | un
 
 ```ts
 function firstItem(arr) {
-  return arr[^0].toUpperCase()
+  return arr.toUpperCase()
 }
 
 class Counter {
@@ -115,7 +115,7 @@ class Counter {
 
 ```ts
 function firstItem(arr: string[]): string {
-  const item = arr[^0]  // string | undefined with noUncheckedIndexedAccess
+  const item = arr  // string | undefined with noUncheckedIndexedAccess
   if (item === undefined) throw new Error("Empty array")
   return item.toUpperCase()
 }

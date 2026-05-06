@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Debounce delays function execution until a specified time has passed **since the last call** — perfect for search inputs, resize handlers, and any rapid-fire event.[^3]
+Debounce delays function execution until a specified time has passed **since the last call** — perfect for search inputs, resize handlers, and any rapid-fire event.
 
 ## K — Key Concepts
 
@@ -44,7 +44,7 @@ function debounceLeading(fn, delay) {
 
 ## W — Why It Matters
 
-Without debounce, a search input fires an API call on every keystroke — potentially 10+ calls per second. Debounce collapses them into one. It's used in virtually every production search, autocomplete, and form validation implementation.[^3]
+Without debounce, a search input fires an API call on every keystroke — potentially 10+ calls per second. Debounce collapses them into one. It's used in virtually every production search, autocomplete, and form validation implementation.
 
 ## I — Interview Q&A
 

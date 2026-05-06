@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`satisfies` validates that a value matches a type *without widening it* — you get type-checking errors AND retain narrow literal types; `as const satisfies T` combines immutability + validation in one expression.[^3][^6][^7]
+`satisfies` validates that a value matches a type *without widening it* — you get type-checking errors AND retain narrow literal types; `as const satisfies T` combines immutability + validation in one expression.
 
 ## K — Key Concepts
 
@@ -75,12 +75,12 @@ const c = { primary: "#fff" } as ThemeColors
 
 ## W — Why It Matters
 
-`satisfies` (TypeScript 4.9) is the canonical solution for typed configuration objects — you get validation against a known shape AND preserve the narrow types needed for autocomplete and literal type derivation. It replaces the pattern of using type assertions (`as`) for configs.[^6][^3]
+`satisfies` (TypeScript 4.9) is the canonical solution for typed configuration objects — you get validation against a known shape AND preserve the narrow types needed for autocomplete and literal type derivation. It replaces the pattern of using type assertions (`as`) for configs.
 
 ## I — Interview Q&A
 
 **Q: What's the difference between annotating a variable type vs using `satisfies`?**
-A: Annotation (`const x: T = ...`) widens the variable's type to `T` — you lose literal types. `satisfies T` validates against `T` but the variable retains its inferred (narrow) type. The difference: after annotation, `x.color` is `string`; after `satisfies`, `x.color` is `"#007bff"`.[^8]
+A: Annotation (`const x: T = ...`) widens the variable's type to `T` — you lose literal types. `satisfies T` validates against `T` but the variable retains its inferred (narrow) type. The difference: after annotation, `x.color` is `string`; after `satisfies`, `x.color` is `"#007bff"`.
 
 **Q: When would you choose `satisfies` over an explicit type annotation?**
 A: When you need both validation (detect missing/extra properties) AND literal type preservation (for `typeof`, key derivation, exhaustive checks). Configuration objects, route maps, color themes, typed event maps — anywhere you later use `typeof config[key]` for derived types.

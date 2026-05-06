@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-`useSyncExternalStore` safely subscribes a React component to an external store — any data source outside React state — with built-in protection against UI tearing in concurrent rendering.[^3][^11]
+`useSyncExternalStore` safely subscribes a React component to an external store — any data source outside React state — with built-in protection against UI tearing in concurrent rendering.
 
 ## K — Key Concepts
 
-**The API:**[^3]
+**The API:**
 
 ```jsx
 const snapshot = useSyncExternalStore(
@@ -78,7 +78,7 @@ function Counter() {
 }
 ```
 
-**Why `getSnapshot` must return stable references:**[^11]
+**Why `getSnapshot` must return stable references:**
 
 ```jsx
 // ❌ New array reference every call → infinite re-render loop
@@ -91,7 +91,7 @@ getSnapshot: () => state.items  // only changes when you assign a new array
 
 ## W — Why It Matters
 
-Before `useSyncExternalStore`, subscribing to external stores with `useEffect` + `useState` caused "tearing" in React 18's concurrent rendering — different parts of the UI could show different snapshots of the same store in a single render pass. `useSyncExternalStore` is the only React-approved way to subscribe to any external data source safely.[^12][^11]
+Before `useSyncExternalStore`, subscribing to external stores with `useEffect` + `useState` caused "tearing" in React 18's concurrent rendering — different parts of the UI could show different snapshots of the same store in a single render pass. `useSyncExternalStore` is the only React-approved way to subscribe to any external data source safely.
 
 ## I — Interview Q&A
 
@@ -99,10 +99,10 @@ Before `useSyncExternalStore`, subscribing to external stores with `useEffect` +
 **A:** It's a React hook for subscribing to external stores — data that lives outside React state (browser APIs, Zustand, Redux, custom pub-sub systems). It provides two guarantees: (1) your component re-renders when the store changes, and (2) it's safe from tearing in concurrent rendering.
 
 **Q: What is "UI tearing" and how does `useSyncExternalStore` prevent it?**
-**A:** Tearing happens when different components reading the same external store see different values within a single render pass — because React's concurrent renderer can interleave renders. `useSyncExternalStore` forces synchronous reads of the store snapshot, guaranteeing all components see the same value in one render.[^11]
+**A:** Tearing happens when different components reading the same external store see different values within a single render pass — because React's concurrent renderer can interleave renders. `useSyncExternalStore` forces synchronous reads of the store snapshot, guaranteeing all components see the same value in one render.
 
 **Q: Why must `getSnapshot` return a stable reference when data hasn't changed?**
-**A:** React calls `getSnapshot` frequently to check for changes using `Object.is` comparison. If `getSnapshot` returns a new object/array reference every call (even with the same data), React sees a "change" every time and loops into infinite re-renders.[^12][^11]
+**A:** React calls `getSnapshot` frequently to check for changes using `Object.is` comparison. If `getSnapshot` returns a new object/array reference every call (even with the same data), React sees a "change" every time and loops into infinite re-renders.
 
 ## C — Common Pitfalls
 

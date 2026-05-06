@@ -62,7 +62,7 @@ git push --atomic origin main feature/auth    # push multiple refs atomically
 ## I — Interview Q&A
 
 **Q: Why does `git push` sometimes fail with "rejected: non-fast-forward"?**
-A: The remote has commits your local branch doesn't have — pushing would overwrite them, which Git refuses by default. You must integrate the remote changes first (via `pull --rebase` or `fetch` + `rebase`), then push. This is Git protecting you from losing others' work.[^7]
+A: The remote has commits your local branch doesn't have — pushing would overwrite them, which Git refuses by default. You must integrate the remote changes first (via `pull --rebase` or `fetch` + `rebase`), then push. This is Git protecting you from losing others' work.
 
 **Q: What makes `--force-with-lease` safer than `--force`?**
 A: `--force-with-lease` checks that your local remote-tracking ref (`origin/branch`) matches what's actually on the remote. If someone pushed new commits since your last fetch, your local `origin/branch` is stale — and the push fails. `--force` skips this check entirely and overwrites unconditionally.

@@ -2,14 +2,14 @@
 
 ## T — TL;DR
 
-React represents your UI as a component tree — understanding this tree is the key to understanding rendering, re-renders, and performance.[^2]
+React represents your UI as a component tree — understanding this tree is the key to understanding rendering, re-renders, and performance.
 
 ## K — Key Concepts
 
 React builds two types of trees:
 
 - **Component Tree** — the hierarchy of your React components (what you write)
-- **Render Tree** — the tree React constructs at runtime, containing only components (no host elements like `div`)[^2]
+- **Render Tree** — the tree React constructs at runtime, containing only components (no host elements like `div`)
 
 ```
 App
@@ -21,13 +21,13 @@ App
 └── Footer
 ```
 
-React also builds a **module dependency tree** — it tracks which files import which, used by bundlers to create optimal bundles.[^2]
+React also builds a **module dependency tree** — it tracks which files import which, used by bundlers to create optimal bundles.
 
 **Top-level components** (near the root) affect the most children when they re-render. **Leaf components** (no children) re-render often but cheaply.
 
 ## W — Why It Matters
 
-Re-renders cascade *down* the tree. If you put unnecessary state at the top, your whole app re-renders. Understanding the tree model directly improves performance decisions and is the mental model behind tools like React DevTools.[^2]
+Re-renders cascade *down* the tree. If you put unnecessary state at the top, your whole app re-renders. Understanding the tree model directly improves performance decisions and is the mental model behind tools like React DevTools.
 
 ## I — Interview Q&A
 

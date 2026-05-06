@@ -37,7 +37,7 @@ const add = (a, b) => {
 
 ## W — Why It Matters
 
-Arrow functions are the default in modern JS — they're used in array methods, callbacks, and React components. But using them as object methods breaks `this`. Knowing when NOT to use arrows is as important as knowing when to use them.[^4]
+Arrow functions are the default in modern JS — they're used in array methods, callbacks, and React components. But using them as object methods breaks `this`. Knowing when NOT to use arrows is as important as knowing when to use them.
 
 ## I — Interview Q&A
 

@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`Reflect` is a namespace of functions that mirror object internal operations — its primary job is to provide default forwarding behavior inside Proxy traps.[^2]
+`Reflect` is a namespace of functions that mirror object internal operations — its primary job is to provide default forwarding behavior inside Proxy traps.
 
 ## K — Key Concepts
 
@@ -49,12 +49,12 @@ const success = Reflect.defineProperty(Object.freeze({}), "x", { value: 1 })
 
 ## W — Why It Matters
 
-`Reflect` makes introspection and forwarding uniform and functional. In Proxy traps, always use `Reflect` to forward operations — it ensures correct behavior with inheritance, getters, and `receiver` contexts. It also enables cleaner meta-programming without try/catch for property operations.[^7][^2]
+`Reflect` makes introspection and forwarding uniform and functional. In Proxy traps, always use `Reflect` to forward operations — it ensures correct behavior with inheritance, getters, and `receiver` contexts. It also enables cleaner meta-programming without try/catch for property operations.
 
 ## I — Interview Q&A
 
 **Q: Why does `Reflect` exist if you can do the same things with operators?**
-A: `Reflect` provides a functional, consistent API for object operations. It returns booleans instead of throwing (unlike `Object.defineProperty`), correctly handles `receiver` in proxies, and unifies operations that are otherwise scattered across `in`, `delete`, `new`, and method calls.[^2]
+A: `Reflect` provides a functional, consistent API for object operations. It returns booleans instead of throwing (unlike `Object.defineProperty`), correctly handles `receiver` in proxies, and unifies operations that are otherwise scattered across `in`, `delete`, `new`, and method calls.
 
 **Q: What's the difference between `Reflect.apply` and `Function.prototype.call`?**
 A: They're functionally equivalent, but `Reflect.apply(fn, thisArg, argsArray)` is a first-class function call (not a method call) — useful when `fn.call` might be overridden or unavailable. Prefer it inside Proxy `apply` traps.

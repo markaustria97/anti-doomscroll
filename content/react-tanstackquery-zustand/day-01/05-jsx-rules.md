@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-JSX is syntactic sugar for `React.createElement()` — it has strict rules because it compiles to JavaScript.[^6]
+JSX is syntactic sugar for `React.createElement()` — it has strict rules because it compiles to JavaScript.
 
 ## K — Key Concepts
 
@@ -39,7 +39,7 @@ function Bad() {
 
 ## W — Why It Matters
 
-JSX errors are some of the most common beginner mistakes and most cryptic compiler errors. Knowing the rules means you spend zero time debugging syntax and more time building features.[^6]
+JSX errors are some of the most common beginner mistakes and most cryptic compiler errors. Knowing the rules means you spend zero time debugging syntax and more time building features.
 
 ## I — Interview Q&A
 

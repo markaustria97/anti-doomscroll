@@ -60,7 +60,7 @@ u instanceof User   // true — base class preserved
 
 ## W — Why It Matters
 
-Deep inheritance chains are fragile — changing a base class breaks all subclasses. Mixins compose behavior horizontally. React `HOC` (Higher-Order Components), Vue `mixins`, and many framework utilities use this pattern. It's the JS answer to multiple inheritance.[^1]
+Deep inheritance chains are fragile — changing a base class breaks all subclasses. Mixins compose behavior horizontally. React `HOC` (Higher-Order Components), Vue `mixins`, and many framework utilities use this pattern. It's the JS answer to multiple inheritance.
 
 ## I — Interview Q&A
 

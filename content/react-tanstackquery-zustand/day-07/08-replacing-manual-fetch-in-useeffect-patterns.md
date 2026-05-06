@@ -2,43 +2,65 @@
 
 ## T — TL;DR
 
-Every `useEffect` + `useState` data fetching pattern has a direct TanStack Query replacement — the migration is mechanical and the result is less code with more features.[^12][^3]
+Every `useEffect` + `useState` data fetching pattern has a direct TanStack Query replacement — the migration is mechanical and the result is less code with more features.
 
 ## K — Key Concepts
 
-**The migration pattern — side by side:**[^3]
+**The migration pattern — side by side:**
 
 **Pattern 1: Basic fetch on mount**
 
 ```jsx
 // ❌ Before: 15+ lines, 3 state variables, edge cases missing
 function UserList() {
-  const [users, setUsers] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     fetch("/api/users")
-      .then(r => r.json())
-      .then(data => { setUsers(data); setLoading(false) })
-      .catch(err => { setError(err); setLoading(false) })
-  }, [])
+      .then((r) => r.json())
+      .then((data) => {
+        setUsers(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err);
+        setLoading(false);
+      });
+  }, []);
 
-  if (loading) return <Spinner />
-  if (error) return <p>Error</p>
-  return <ul>{users.map(u => <li key={u.id}>{u.name}</li>)}</ul>
+  if (loading) return <Spinner />;
+  if (error) return <p>Error</p>;
+  return (
+    <ul>
+      {users.map((u) => (
+        <li key={u.id}>{u.name}</li>
+      ))}
+    </ul>
+  );
 }
 
 // ✅ After: 3 lines for the same behavior + caching + retry + dedup
 function UserList() {
-  const { data: users = [], isPending, isError } = useQuery({
+  const {
+    data: users = [],
+    isPending,
+    isError,
+  } = useQuery({
     queryKey: ["users"],
-    queryFn: () => fetch("/api/users").then(r => r.json()),
-  })
-  if (isPending) return <Spinner />
-  if (isError) return <p>Error</p>
-  return <ul>{users.map(u => <li key={u.id}>{u.name}</li>)}</ul>
+    queryFn: () => fetch("/api/users").then((r) => r.json()),
+  });
+  if (isPending) return <Spinner />;
+  if (isError) return <p>Error</p>;
+  return (
+    <ul>
+      {users.map((u) => (
+        <li key={u.id}>{u.name}</li>
+      ))}
+    </ul>
+  );
 }
 ```
 
@@ -88,10 +110,9 @@ const { data, refetch } = useQuery({ queryKey: ["data"], queryFn: fetchData })
 <button onClick={() => refetch()}>Refresh</button>
 ```
 
-
 ## W — Why It Matters
 
-Most React codebases have dozens of manual `useEffect` fetching patterns, each subtly different in how they handle edge cases — or don't. Migrating to TanStack Query standardizes all of them into one consistent, battle-tested API. Code reviews become easier, bugs decrease, and new features (caching, retry) become instant wins.[^12][^3]
+Most React codebases have dozens of manual `useEffect` fetching patterns, each subtly different in how they handle edge cases — or don't. Migrating to TanStack Query standardizes all of them into one consistent, battle-tested API. Code reviews become easier, bugs decrease, and new features (caching, retry) become instant wins.
 
 ## I — Interview Q&A
 
@@ -102,16 +123,16 @@ Most React codebases have dozens of manual `useEffect` fetching patterns, each s
 **A:** Automatic caching, request deduplication, background refetching on tab focus, retry on failure (3x with backoff), request cancellation on unmount, race condition prevention, and stale-while-revalidate behavior.
 
 **Q: Should you always replace `useEffect` fetches with `useQuery`?**
-**A:** For any data from a remote API — yes. For mutations (creating/updating/deleting), use `useMutation` instead. For local-only async operations (e.g., reading from `localStorage`), `useEffect` is still appropriate.[^3]
+**A:** For any data from a remote API — yes. For mutations (creating/updating/deleting), use `useMutation` instead. For local-only async operations (e.g., reading from `localStorage`), `useEffect` is still appropriate.
 
 ## C — Common Pitfalls
 
-| Pitfall | Fix |
-| :-- | :-- |
-| Keeping a `useEffect` alongside `useQuery` for the same data | Remove the `useEffect` entirely — `useQuery` manages everything |
+| Pitfall                                                       | Fix                                                                          |
+| :------------------------------------------------------------ | :--------------------------------------------------------------------------- |
+| Keeping a `useEffect` alongside `useQuery` for the same data  | Remove the `useEffect` entirely — `useQuery` manages everything              |
 | Forgetting to remove old `useState` variables after migration | Clean up all `[data, setData]`, `[loading, setLoading]`, `[error, setError]` |
-| Using `useQuery` for mutations (POST/PUT/DELETE) | Mutations use `useMutation` — `useQuery` is for reading data |
-| Not wrapping the app in `QueryClientProvider` after migration | `useQuery` throws if there's no provider — always check the tree |
+| Using `useQuery` for mutations (POST/PUT/DELETE)              | Mutations use `useMutation` — `useQuery` is for reading data                 |
+| Not wrapping the app in `QueryClientProvider` after migration | `useQuery` throws if there's no provider — always check the tree             |
 
 ## K — Coding Challenge
 
@@ -119,114 +140,83 @@ Most React codebases have dozens of manual `useEffect` fetching patterns, each s
 
 ```jsx
 function ProductPage({ productId }) {
-  const [product, setProduct] = useState(null)
-  const [reviews, setReviews] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [product, setProduct] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!productId) return
-    setLoading(true)
-    setError(null)
+    if (!productId) return;
+    setLoading(true);
+    setError(null);
     Promise.all([
-      fetch(`/api/products/${productId}`).then(r => r.json()),
-      fetch(`/api/products/${productId}/reviews`).then(r => r.json()),
+      fetch(`/api/products/${productId}`).then((r) => r.json()),
+      fetch(`/api/products/${productId}/reviews`).then((r) => r.json()),
     ])
       .then(([productData, reviewsData]) => {
-        setProduct(productData)
-        setReviews(reviewsData)
-        setLoading(false)
+        setProduct(productData);
+        setReviews(reviewsData);
+        setLoading(false);
       })
-      .catch(err => {
-        setError(err.message)
-        setLoading(false)
-      })
-  }, [productId])
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [productId]);
 
-  if (loading) return <Spinner />
-  if (error) return <p>Error: {error}</p>
-  return <div><ProductCard product={product} /><ReviewList reviews={reviews} /></div>
+  if (loading) return <Spinner />;
+  if (error) return <p>Error: {error}</p>;
+  return (
+    <div>
+      <ProductCard product={product} />
+      <ReviewList reviews={reviews} />
+    </div>
+  );
 }
 ```
 
 **Solution:**
 
 ```jsx
-import { useQuery } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query";
 
 // ✅ Separate queries — independent caching, loading, error states
 function ProductPage({ productId }) {
   const productQuery = useQuery({
     queryKey: ["product", productId],
     queryFn: ({ signal }) =>
-      fetch(`/api/products/${productId}`, { signal }).then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`)
-        return r.json()
+      fetch(`/api/products/${productId}`, { signal }).then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
       }),
     enabled: !!productId,
     staleTime: 1000 * 60 * 5,
-  })
+  });
 
   const reviewsQuery = useQuery({
     queryKey: ["reviews", "byProduct", productId],
     queryFn: ({ signal }) =>
-      fetch(`/api/products/${productId}/reviews`, { signal }).then(r => r.json()),
+      fetch(`/api/products/${productId}/reviews`, { signal }).then((r) =>
+        r.json()
+      ),
     enabled: !!productId,
-    staleTime: 1000 * 60,  // reviews: shorter stale time (changes more often)
-  })
+    staleTime: 1000 * 60, // reviews: shorter stale time (changes more often)
+  });
 
-  const isPending = productQuery.isPending || reviewsQuery.isPending
-  const isError = productQuery.isError || reviewsQuery.isError
-  const error = productQuery.error ?? reviewsQuery.error
+  const isPending = productQuery.isPending || reviewsQuery.isPending;
+  const isError = productQuery.isError || reviewsQuery.isError;
+  const error = productQuery.error ?? reviewsQuery.error;
 
-  if (isPending) return <Spinner />
-  if (isError) return <p>Error: {error.message}</p>
+  if (isPending) return <Spinner />;
+  if (isError) return <p>Error: {error.message}</p>;
 
   return (
     <div>
       <ProductCard product={productQuery.data} />
       <ReviewList reviews={reviewsQuery.data ?? []} />
     </div>
-  )
+  );
 }
 // Removed: 4 useState calls, 1 useEffect, error string state, manual loading flag
 // Gained: caching, dedup, retry, background refetch, request cancellation ✅
 ```
-
-
-***
-
-> **Your tiny action right now:** Pick subtopic 4 or 8. Read the TL;DR and code comparison. Try the coding challenge in a sandbox or trace it mentally. You're done for this session.
-<span style="display:none">[^13][^14][^15]</span>
-
-<div align="center">⁂</div>
-
-[^1]: https://tanstack.com/query/latest
-
-[^2]: https://blog.ehsan.it/posts/react-query-v5-tanstack-query/
-
-[^3]: https://dev.to/akhildas675/stop-using-useeffect-for-data-fetching-try-tanstack-query-instead-5ejd
-
-[^4]: https://tkdodo.eu/blog/react-query-and-forms
-
-[^5]: https://mohameddewidar.com/blog/react-query-server-state
-
-[^6]: https://openedx.atlassian.net/wiki/spaces/AC/pages/3791290378
-
-[^7]: https://www.cliffordfajardo.com/blog/react-query
-
-[^8]: https://www.9thco.com/labs/using-tanstack-query-for-data-fetching-caching
-
-[^9]: https://skill4agent.com/en/skill/fellipeutaka-leon/tanstack-query
-
-[^10]: https://lobehub.com/bg/skills/madappgang-claude-code-tanstack-query
-
-[^11]: https://imzihad21.github.io/articles/a/master-react-api-management-with-tanstack-react-query-best-practices-examples-1139/
-
-[^12]: https://www.linkedin.com/posts/mohammed-mubarak_reactjs-tanstackquery-reactquery-activity-7329708884984582144-fQoV
-
-[^13]: https://tanstack.com/query/v5/docs/framework/solid/reference/useQuery
-
-[^14]: https://claude-plugins.dev/skills/@MadAppGang/claude-code/tanstack-query
-
-[^15]: https://zh-hant.tanstack.dev/query/v5/docs/reference/QueryClient

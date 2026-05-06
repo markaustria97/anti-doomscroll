@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Flat state updates in Zustand are trivially simple; nested updates require explicit spreading at every level of nesting — or Immer, which lets you write mutations that auto-produce immutable output.[^10]
+Flat state updates in Zustand are trivially simple; nested updates require explicit spreading at every level of nesting — or Immer, which lets you write mutations that auto-produce immutable output.
 
 ## K — Key Concepts
 
-**Flat state updates — one-liner pattern:**[^10]
+**Flat state updates — one-liner pattern:**
 
 ```jsx
 const useCartStore = create((set) => ({
@@ -24,7 +24,7 @@ const useCartStore = create((set) => ({
 }))
 ```
 
-**Single-level nested updates — spread the object:**[^10]
+**Single-level nested updates — spread the object:**
 
 ```jsx
 const useUserStore = create((set) => ({
@@ -37,7 +37,7 @@ const useUserStore = create((set) => ({
 }))
 ```
 
-**Two-level nested updates — spread at every level:**[^10]
+**Two-level nested updates — spread at every level:**
 
 ```jsx
 const useSettingsStore = create((set) => ({
@@ -100,18 +100,18 @@ const useTodoStore = create((set) => ({
 
 ## W — Why It Matters
 
-Immutable updates are required because React's rendering depends on reference equality — if you mutate state in place, React sees the same object reference and doesn't re-render. Each nesting level requires its own spread. This pattern is correct but verbose; at 3+ levels deep it becomes error-prone — which is exactly when to reach for Immer.[^10]
+Immutable updates are required because React's rendering depends on reference equality — if you mutate state in place, React sees the same object reference and doesn't re-render. Each nesting level requires its own spread. This pattern is correct but verbose; at 3+ levels deep it becomes error-prone — which is exactly when to reach for Immer.
 
 ## I — Interview Q&A
 
 **Q: Why can't you just mutate state directly in Zustand — `state.user.name = "Bob"`?**
-**A:** Zustand (and React) depends on reference equality for detecting changes. If you mutate in place, the object reference doesn't change — React sees the same reference and skips the re-render. Immutable updates create new references, signaling to React that something changed.[^10]
+**A:** Zustand (and React) depends on reference equality for detecting changes. If you mutate in place, the object reference doesn't change — React sees the same reference and skips the re-render. Immutable updates create new references, signaling to React that something changed.
 
 **Q: How do you correctly update a property 3 levels deep immutably in Zustand?**
 **A:** Spread at every level: `set(s => ({ a: { ...s.a, b: { ...s.a.b, c: newValue } } }))`. Each level gets a new object reference. Without spreading at every level, you either lose sibling properties or produce no reference change.
 
 **Q: What is the immutable pattern for updating one item in an array?**
-**A:** Use `.map()` — it returns a new array. `todos.map(t => t.id === id ? { ...t, done: !t.done } : t)`. The matched item gets a new spread object; all others return the same reference unchanged (structural sharing).[^10]
+**A:** Use `.map()` — it returns a new array. `todos.map(t => t.id === id ? { ...t, done: !t.done } : t)`. The matched item gets a new spread object; all others return the same reference unchanged (structural sharing).
 
 ## C — Common Pitfalls
 

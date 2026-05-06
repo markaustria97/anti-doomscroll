@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-React events use camelCase names and receive a synthetic event object — attach handlers directly in JSX, never as strings.[^3]
+React events use camelCase names and receive a synthetic event object — attach handlers directly in JSX, never as strings.
 
 ## K — Key Concepts
 
@@ -20,7 +20,7 @@ React events use camelCase names and receive a synthetic event object — attach
 // This runs handleClick on render, not on click
 ```
 
-**The Synthetic Event object:**[^3]
+**The Synthetic Event object:**
 
 React wraps native browser events in a `SyntheticEvent` — it has the same API cross-browser and is passed automatically as the first argument:
 
@@ -55,7 +55,7 @@ function handleSubmit(e) {
 
 ## W — Why It Matters
 
-Event handling is the entry point for all user interaction in React. Misunderstanding the difference between passing a reference vs. calling a function is one of the most common Day 1 bugs. Every form, button, and interactive UI element depends on this.[^3]
+Event handling is the entry point for all user interaction in React. Misunderstanding the difference between passing a reference vs. calling a function is one of the most common Day 1 bugs. Every form, button, and interactive UI element depends on this.
 
 ## I — Interview Q&A
 

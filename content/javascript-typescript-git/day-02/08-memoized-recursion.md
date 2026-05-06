@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Memoization caches expensive recursive results by input so each unique sub-problem is only computed once — turning exponential time into linear.[^3]
+Memoization caches expensive recursive results by input so each unique sub-problem is only computed once — turning exponential time into linear.
 
 ## K — Key Concepts
 
@@ -44,7 +44,7 @@ memoFib(100)  // works instantly
 
 ## W — Why It Matters
 
-Memoization is the core optimization behind React's `useMemo`/`useCallback`, dynamic programming interview problems, and expensive API call caching. Understanding it bridges recursion and performance optimization.[^3]
+Memoization is the core optimization behind React's `useMemo`/`useCallback`, dynamic programming interview problems, and expensive API call caching. Understanding it bridges recursion and performance optimization.
 
 ## I — Interview Q&A
 

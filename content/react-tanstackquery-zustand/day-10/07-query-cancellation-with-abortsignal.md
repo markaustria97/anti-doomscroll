@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-TanStack Query passes an `AbortSignal` to every query function — pass it to `fetch` or `axios` and requests automatically cancel when the query becomes inactive, preventing memory leaks and stale responses.[^7][^8]
+TanStack Query passes an `AbortSignal` to every query function — pass it to `fetch` or `axios` and requests automatically cancel when the query becomes inactive, preventing memory leaks and stale responses.
 
 ## K — Key Concepts
 
-**How TanStack Query provides the signal:**[^8][^7]
+**How TanStack Query provides the signal:**
 
 ```jsx
 useQuery({
@@ -18,7 +18,7 @@ useQuery({
 })
 ```
 
-**When TanStack Query aborts the signal:**[^7]
+**When TanStack Query aborts the signal:**
 
 ```
 1. Component unmounts while fetch is in flight
@@ -75,18 +75,18 @@ await queryClient.cancelQueries({ queryKey: ["todos"] })
 
 ## W — Why It Matters
 
-Without cancellation, a user typing in a search box fires a request per keystroke — old requests resolve after new ones, showing incorrect stale results. On route changes, unmounted components receive data and try to update state, causing React's "can't update unmounted component" errors. Passing the `signal` costs one word of code and eliminates this entire class of bugs.[^8][^7]
+Without cancellation, a user typing in a search box fires a request per keystroke — old requests resolve after new ones, showing incorrect stale results. On route changes, unmounted components receive data and try to update state, causing React's "can't update unmounted component" errors. Passing the `signal` costs one word of code and eliminates this entire class of bugs.
 
 ## I — Interview Q&A
 
 **Q: How does TanStack Query handle request cancellation?**
-**A:** TanStack Query creates an `AbortController` per query and passes its `signal` to the `queryFn` via the context argument. When the query becomes inactive (unmount, key change, `cancelQueries`), the controller aborts the signal. If you pass `signal` to `fetch`, the browser automatically cancels the in-flight HTTP request.[^7][^8]
+**A:** TanStack Query creates an `AbortController` per query and passes its `signal` to the `queryFn` via the context argument. When the query becomes inactive (unmount, key change, `cancelQueries`), the controller aborts the signal. If you pass `signal` to `fetch`, the browser automatically cancels the in-flight HTTP request.
 
 **Q: Do you need to catch `AbortError` in your query function?**
-**A:** No — TanStack Query swallows `AbortError` internally. If the fetch is aborted, TanStack Query knows it was intentional and doesn't set `isError` or trigger retries. You only see errors from actual failed requests, not from intentional cancellations.[^8]
+**A:** No — TanStack Query swallows `AbortError` internally. If the fetch is aborted, TanStack Query knows it was intentional and doesn't set `isError` or trigger retries. You only see errors from actual failed requests, not from intentional cancellations.
 
 **Q: What happens if you don't pass `signal` to `fetch`?**
-**A:** The HTTP request continues even after the component unmounts or the key changes — using network bandwidth and potentially causing state updates on unmounted components. The response is received but TanStack Query ignores it (the query is already inactive). Always pass `signal` to prevent wasted requests.[^7]
+**A:** The HTTP request continues even after the component unmounts or the key changes — using network bandwidth and potentially causing state updates on unmounted components. The response is received but TanStack Query ignores it (the query is already inactive). Always pass `signal` to prevent wasted requests.
 
 ## C — Common Pitfalls
 

@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`Proxy` wraps an object and intercepts operations — get, set, delete, apply, construct — letting you add validation, logging, reactivity, or access control transparently.[^4]
+`Proxy` wraps an object and intercepts operations — get, set, delete, apply, construct — letting you add validation, logging, reactivity, or access control transparently.
 
 ## K — Key Concepts
 
@@ -72,15 +72,15 @@ timedSum(1, 2)  // logs timing, returns 3
 
 ## W — Why It Matters
 
-Vue 3's reactivity system is built on `Proxy`. MobX uses it for observable state. `Proxy` enables immutability enforcement, auto-validation, access logging, and virtual properties. It's the modern replacement for `Object.defineProperty` for reactive patterns.[^6][^4]
+Vue 3's reactivity system is built on `Proxy`. MobX uses it for observable state. `Proxy` enables immutability enforcement, auto-validation, access logging, and virtual properties. It's the modern replacement for `Object.defineProperty` for reactive patterns.
 
 ## I — Interview Q&A
 
 **Q: What is a Proxy trap and name three common ones?**
-A: A trap is a method on the handler object that intercepts a specific object operation. Common traps: `get` (property reads), `set` (property assignments), `has` (the `in` operator), `deleteProperty`, `apply` (function calls).[^4]
+A: A trap is a method on the handler object that intercepts a specific object operation. Common traps: `get` (property reads), `set` (property assignments), `has` (the `in` operator), `deleteProperty`, `apply` (function calls).
 
 **Q: Why use `Reflect.get` inside a `get` trap instead of `target[prop]`?**
-A: `Reflect.get(target, prop, receiver)` correctly handles getters that use `this` — the `receiver` ensures `this` inside the getter refers to the proxy, not the raw target. Using `target[prop]` directly would bypass that.[^2][^4]
+A: `Reflect.get(target, prop, receiver)` correctly handles getters that use `this` — the `receiver` ensures `this` inside the getter refers to the proxy, not the raw target. Using `target[prop]` directly would bypass that.
 
 ## C — Common Pitfalls
 

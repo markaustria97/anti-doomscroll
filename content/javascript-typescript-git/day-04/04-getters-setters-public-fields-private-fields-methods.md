@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Public fields initialize instance properties declaratively; private fields (`#name`) are truly inaccessible from outside the class — not just a convention like `_name`.[^1]
+Public fields initialize instance properties declaratively; private fields (`#name`) are truly inaccessible from outside the class — not just a convention like `_name`.
 
 ## K — Key Concepts
 

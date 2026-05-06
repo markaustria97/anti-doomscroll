@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-TanStack Query retries failed queries 3 times with exponential backoff by default — catching transient network errors automatically without any manual retry logic.[^1]
+TanStack Query retries failed queries 3 times with exponential backoff by default — catching transient network errors automatically without any manual retry logic.
 
 ## K — Key Concepts
 
-**Default retry behavior:**[^1]
+**Default retry behavior:**
 
 ```
 Query fails on attempt 1
@@ -84,18 +84,18 @@ const queryClient = new QueryClient({
 
 ## W — Why It Matters
 
-Automatic retries are the difference between a flaky app and a resilient one. Network hiccups, momentary server overloads, and cold starts all cause transient errors that resolve on retry. But retrying `401 Unauthorized` three times wastes 3 failed requests — smart retry logic that skips client errors is a production necessity.[^1]
+Automatic retries are the difference between a flaky app and a resilient one. Network hiccups, momentary server overloads, and cold starts all cause transient errors that resolve on retry. But retrying `401 Unauthorized` three times wastes 3 failed requests — smart retry logic that skips client errors is a production necessity.
 
 ## I — Interview Q&A
 
 **Q: What are TanStack Query's default retry settings?**
-**A:** 3 retries (4 total attempts) with exponential backoff — approximately 1s, 2s, 4s between retries, capped at 30 seconds. After all retries are exhausted, the query transitions to `isError = true`.[^1]
+**A:** 3 retries (4 total attempts) with exponential backoff — approximately 1s, 2s, 4s between retries, capped at 30 seconds. After all retries are exhausted, the query transitions to `isError = true`.
 
 **Q: Should you retry `401 Unauthorized` errors?**
-**A:** No — a 401 means the user is not authenticated, which won't change with a retry. Retrying wastes requests and delays showing the user an error. Use a custom `retry` function to return `false` for 401, 403, and 404 status codes.[^1]
+**A:** No — a 401 means the user is not authenticated, which won't change with a retry. Retrying wastes requests and delays showing the user an error. Use a custom `retry` function to return `false` for 401, 403, and 404 status codes.
 
 **Q: How does the `retry` function signature work?**
-**A:** It receives `(failureCount, error)` and returns a boolean. `failureCount` is how many retries have already occurred (starts at 0). Return `true` to retry, `false` to stop. Return `false` for any error type that retrying won't fix.[^1]
+**A:** It receives `(failureCount, error)` and returns a boolean. `failureCount` is how many retries have already occurred (starts at 0). Return `true` to retry, `false` to stop. Return `false` for any error type that retrying won't fix.
 
 ## C — Common Pitfalls
 

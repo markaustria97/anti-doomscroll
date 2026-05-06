@@ -75,15 +75,15 @@ git commit -m "feat: user login feature"
 
 ## W — Why It Matters
 
-`--no-ff` (no fast-forward) creates merge commits that preserve branch topology — you can see in `git log --graph` that a feature existed as a branch. Without it, fast-forward merges make it impossible to tell what was a branch vs. linear commits. Different teams have strong opinions: `--no-ff` (GitHub flow style) vs. rebase + ff (linear history style).[^4]
+`--no-ff` (no fast-forward) creates merge commits that preserve branch topology — you can see in `git log --graph` that a feature existed as a branch. Without it, fast-forward merges make it impossible to tell what was a branch vs. linear commits. Different teams have strong opinions: `--no-ff` (GitHub flow style) vs. rebase + ff (linear history style).
 
 ## I — Interview Q&A
 
 **Q: What's the difference between fast-forward and three-way merge?**
-A: Fast-forward happens when the target branch has no diverged commits — Git just moves the pointer forward, no merge commit needed. Three-way merge happens when both branches have diverged — Git uses the common ancestor plus both tips to create a new merge commit with two parents.[^4]
+A: Fast-forward happens when the target branch has no diverged commits — Git just moves the pointer forward, no merge commit needed. Three-way merge happens when both branches have diverged — Git uses the common ancestor plus both tips to create a new merge commit with two parents.
 
 **Q: When would you use `--squash` vs `--no-ff` vs regular merge?**
-A: `--squash` gives you one clean commit in main — great for feature branches with many WIP commits but loses individual commit history. `--no-ff` preserves the branch in graph history. Regular merge fast-forwards when possible — clean linear history but no branch topology visible.[^8][^4]
+A: `--squash` gives you one clean commit in main — great for feature branches with many WIP commits but loses individual commit history. `--no-ff` preserves the branch in graph history. Regular merge fast-forwards when possible — clean linear history but no branch topology visible.
 
 ## C — Common Pitfalls
 

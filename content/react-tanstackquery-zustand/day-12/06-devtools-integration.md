@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-The `devtools` middleware connects Zustand to Redux DevTools, giving you a time-travel debugger, action log, and state diff viewer with a single wrapper — no Redux required.[^9][^10]
+The `devtools` middleware connects Zustand to Redux DevTools, giving you a time-travel debugger, action log, and state diff viewer with a single wrapper — no Redux required.
 
 ## K — Key Concepts
 
@@ -103,18 +103,18 @@ const useStore = create(
 
 ## W — Why It Matters
 
-DevTools transforms debugging from "console.log everywhere" to a visual timeline of every state change, what triggered it, what the state was before and after, and the ability to jump to any prior state. For complex apps with slices and cross-slice actions, named actions in DevTools make the data flow immediately readable. It's the single highest-leverage debugging tool for Zustand.[^10][^9]
+DevTools transforms debugging from "console.log everywhere" to a visual timeline of every state change, what triggered it, what the state was before and after, and the ability to jump to any prior state. For complex apps with slices and cross-slice actions, named actions in DevTools make the data flow immediately readable. It's the single highest-leverage debugging tool for Zustand.
 
 ## I — Interview Q&A
 
 **Q: How do you connect Zustand to Redux DevTools?**
-**A:** Wrap the store creator with `devtools(...)` from `zustand/middleware`. Install the Redux DevTools browser extension. Open the DevTools panel — your store appears automatically. No Redux dependency required.[^10]
+**A:** Wrap the store creator with `devtools(...)` from `zustand/middleware`. Install the Redux DevTools browser extension. Open the DevTools panel — your store appears automatically. No Redux dependency required.
 
 **Q: How do you name actions in the DevTools timeline?**
-**A:** Pass a string as the third argument to `set()`: `set(updater, false, "actionName")`. This labels the action in the DevTools history. Without names, all actions show as `"anonymous"` — useless in a large store with many actions.[^9]
+**A:** Pass a string as the third argument to `set()`: `set(updater, false, "actionName")`. This labels the action in the DevTools history. Without names, all actions show as `"anonymous"` — useless in a large store with many actions.
 
 **Q: Should DevTools be enabled in production?**
-**A:** No — DevTools adds overhead and exposes your store structure to anyone with the browser extension. Use `enabled: process.env.NODE_ENV === "development"` to disable in production builds.[^10]
+**A:** No — DevTools adds overhead and exposes your store structure to anyone with the browser extension. Use `enabled: process.env.NODE_ENV === "development"` to disable in production builds.
 
 ## C — Common Pitfalls
 

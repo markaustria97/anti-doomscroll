@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Dependent queries run in serial — the second query waits for the first to finish before firing, achieved by setting `enabled` to a condition derived from the first query's data.[^1]
+Dependent queries run in serial — the second query waits for the first to finish before firing, achieved by setting `enabled` to a condition derived from the first query's data.
 
 ## K — Key Concepts
 
-**The pattern — `enabled` as the bridge:**[^1]
+**The pattern — `enabled` as the bridge:**
 
 ```jsx
 function UserDashboard({ userId }) {
@@ -77,18 +77,18 @@ t=500  Query #3 resolves → all data available
 
 ## W — Why It Matters
 
-Dependent queries replace the anti-pattern of nesting `useEffect` calls or awaiting fetches sequentially inside a single effect. The `enabled` API makes the dependency explicit, declarative, and debuggable — and each query independently benefits from caching, retries, and background refetching.[^1]
+Dependent queries replace the anti-pattern of nesting `useEffect` calls or awaiting fetches sequentially inside a single effect. The `enabled` API makes the dependency explicit, declarative, and debuggable — and each query independently benefits from caching, retries, and background refetching.
 
 ## I — Interview Q&A
 
 **Q: How do you implement a dependent query in TanStack Query?**
-**A:** Use the `enabled` option on the downstream query, setting it to a truthy check on the data returned by the upstream query. The downstream query stays paused (`isPending: true`, no network activity) until `enabled` becomes truthy.[^1]
+**A:** Use the `enabled` option on the downstream query, setting it to a truthy check on the data returned by the upstream query. The downstream query stays paused (`isPending: true`, no network activity) until `enabled` becomes truthy.
 
 **Q: What is `isPending` for a query with `enabled: false`?**
 **A:** `isPending` is `true` — the query has no data and is not actively fetching. This correctly represents "waiting for the condition" without showing a fetch error. It's indistinguishable from a loading state to the UI, which is intentional.
 
 **Q: Can you have more than two queries in a dependent chain?**
-**A:** Yes — any length chain works. Each query's `enabled` checks the previous query's data. The tradeoff is serial latency — 3 sequential fetches take 3× the RTT. If queries can be parallelized, prefer `useQueries` instead.[^1]
+**A:** Yes — any length chain works. Each query's `enabled` checks the previous query's data. The tradeoff is serial latency — 3 sequential fetches take 3× the RTT. If queries can be parallelized, prefer `useQueries` instead.
 
 ## C — Common Pitfalls
 

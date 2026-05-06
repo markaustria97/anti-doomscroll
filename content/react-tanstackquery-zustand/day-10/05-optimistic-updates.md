@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Optimistic updates apply the expected server change to the cache immediately — before the network request completes — giving instant UI feedback, then rolling back if the server disagrees.[^5][^1]
+Optimistic updates apply the expected server change to the cache immediately — before the network request completes — giving instant UI feedback, then rolling back if the server disagrees.
 
 ## K — Key Concepts
 
-**The 4-step optimistic update pattern:**[^1]
+**The 4-step optimistic update pattern:**
 
 ```jsx
 useMutation({
@@ -39,7 +39,7 @@ useMutation({
 })
 ```
 
-**The "variables" pattern — lightweight optimistic UI (v5):**[^4]
+**The "variables" pattern — lightweight optimistic UI (v5):**
 
 ```jsx
 // No cache manipulation — use mutation variables directly in the UI
@@ -77,18 +77,18 @@ return (
 
 ## W — Why It Matters
 
-Optimistic updates make write operations feel instantaneous — critical for interactive UX like liking posts, reordering lists, or checking todo items. The user sees the change immediately rather than waiting for a server round-trip. The rollback mechanism means the app is still correct when the server disagrees — no permanent data corruption from failed requests.[^5][^1]
+Optimistic updates make write operations feel instantaneous — critical for interactive UX like liking posts, reordering lists, or checking todo items. The user sees the change immediately rather than waiting for a server round-trip. The rollback mechanism means the app is still correct when the server disagrees — no permanent data corruption from failed requests.
 
 ## I — Interview Q&A
 
 **Q: Why must you call `cancelQueries` at the start of `onMutate`?**
-**A:** If a background refetch is in flight, it could resolve after your optimistic update and overwrite it with the old server data — a race condition. `cancelQueries` aborts in-flight requests for that key so they don't clobber the optimistic state.[^1]
+**A:** If a background refetch is in flight, it could resolve after your optimistic update and overwrite it with the old server data — a race condition. `cancelQueries` aborts in-flight requests for that key so they don't clobber the optimistic state.
 
 **Q: What is the "variables" optimistic pattern and when should you prefer it?**
-**A:** Instead of manipulating the cache, you render the pending item directly from `variables` (the mutation's arguments) while `isPending` is `true`. It's simpler — no snapshot, no rollback needed for the list itself. Best for creating new items appended to a list; use cache manipulation for updates to existing items.[^4]
+**A:** Instead of manipulating the cache, you render the pending item directly from `variables` (the mutation's arguments) while `isPending` is `true`. It's simpler — no snapshot, no rollback needed for the list itself. Best for creating new items appended to a list; use cache manipulation for updates to existing items.
 
 **Q: What is the rollback mechanism in optimistic updates?**
-**A:** In `onMutate`, take a snapshot of the cache with `getQueryData` and return it as `context`. In `onError`, restore the snapshot with `setQueryData(key, context.previousData)`. Then in `onSettled`, invalidate to sync with true server state.[^1]
+**A:** In `onMutate`, take a snapshot of the cache with `getQueryData` and return it as `context`. In `onError`, restore the snapshot with `setQueryData(key, context.previousData)`. Then in `onSettled`, invalidate to sync with true server state.
 
 ## C — Common Pitfalls
 

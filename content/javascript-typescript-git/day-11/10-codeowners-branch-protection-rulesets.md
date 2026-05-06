@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`CODEOWNERS` assigns automatic reviewers based on file paths; branch protection rules prevent direct pushes to `main` and require PRs, reviews, and CI; rulesets (GitHub's newer system) apply these at org scale.[^3][^10][^4]
+`CODEOWNERS` assigns automatic reviewers based on file paths; branch protection rules prevent direct pushes to `main` and require PRs, reviews, and CI; rulesets (GitHub's newer system) apply these at org scale.
 
 ## K — Key Concepts
 
@@ -75,15 +75,15 @@ Key advantages over classic branch protection:
 
 ## W — Why It Matters
 
-CODEOWNERS is how organizations ensure security-sensitive changes (auth, infra, payments) always get reviewed by the right team — even when someone forgets to add a reviewer manually. Branch protection with required CI prevents the classic "it worked on my machine" merge that breaks production.[^10][^3]
+CODEOWNERS is how organizations ensure security-sensitive changes (auth, infra, payments) always get reviewed by the right team — even when someone forgets to add a reviewer manually. Branch protection with required CI prevents the classic "it worked on my machine" merge that breaks production.
 
 ## I — Interview Q&A
 
 **Q: What happens if a CODEOWNERS file has conflicting rules?**
-A: The last matching rule wins. CODEOWNERS patterns are evaluated bottom-to-top (like `.gitignore`) — more specific rules at the bottom override general ones at the top. Organizing with general rules first and specific overrides last is best practice.[^3]
+A: The last matching rule wins. CODEOWNERS patterns are evaluated bottom-to-top (like `.gitignore`) — more specific rules at the bottom override general ones at the top. Organizing with general rules first and specific overrides last is best practice.
 
 **Q: What's the difference between branch protection rules and GitHub Rulesets?**
-A: Branch protection rules are per-repo and configured manually. Rulesets can be applied at the organization level (enforcing across all repos simultaneously), support bypassing with named actors, apply to both branches and tags, and allow requiring review from specific teams — not just code owners.[^10]
+A: Branch protection rules are per-repo and configured manually. Rulesets can be applied at the organization level (enforcing across all repos simultaneously), support bypassing with named actors, apply to both branches and tags, and allow requiring review from specific teams — not just code owners.
 
 ## C — Common Pitfalls
 

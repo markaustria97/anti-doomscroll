@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`useEffect` runs code *after* render to synchronize your component with something outside React — DOM APIs, timers, subscriptions, and network requests.[^1]
+`useEffect` runs code *after* render to synchronize your component with something outside React — DOM APIs, timers, subscriptions, and network requests.
 
 ## K — Key Concepts
 
@@ -20,7 +20,7 @@ useEffect(() => {
 }, [topic]) // 3. Dependencies: when to re-run
 ```
 
-**The three dependency array forms:**[^1]
+**The three dependency array forms:**
 
 ```jsx
 // Runs after EVERY render
@@ -42,7 +42,7 @@ useEffect(() => { ... }, [roomId, userId])
 | `componentDidUpdate` | `useEffect(() => {...}, [dep])` |
 | `componentWillUnmount` | cleanup function in `useEffect` |
 
-**Common use cases:**[^1]
+**Common use cases:**
 
 - Fetching data: `useEffect(() => { fetch(url).then(...) }, [url])`
 - DOM manipulation: `useEffect(() => { ref.current.focus() }, [])`
@@ -52,7 +52,7 @@ useEffect(() => { ... }, [roomId, userId])
 
 ## W — Why It Matters
 
-`useEffect` is the escape hatch from React's pure render model into the imperative world. Almost every real app — data fetching, WebSocket connections, analytics, third-party library integration — goes through `useEffect`. Misusing it is the single most common source of React bugs.[^4][^1]
+`useEffect` is the escape hatch from React's pure render model into the imperative world. Almost every real app — data fetching, WebSocket connections, analytics, third-party library integration — goes through `useEffect`. Misusing it is the single most common source of React bugs.
 
 ## I — Interview Q&A
 

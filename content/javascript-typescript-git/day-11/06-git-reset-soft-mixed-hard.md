@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-`git reset` moves HEAD (and optionally the branch pointer) to a different commit — `--soft` keeps everything staged, `--mixed` unstages changes, `--hard` discards all changes completely.[^8]
+`git reset` moves HEAD (and optionally the branch pointer) to a different commit — `--soft` keeps everything staged, `--mixed` unstages changes, `--hard` discards all changes completely.
 
 ## K — Key Concepts
 
@@ -65,7 +65,7 @@ git reset --hard abc1234      # restore to before the disaster
 ## I — Interview Q&A
 
 **Q: What's the difference between `git reset --soft`, `--mixed`, and `--hard`?**
-A: All three move HEAD and the branch pointer to the target commit. They differ in what happens to the changes: `--soft` keeps them staged, `--mixed` keeps them in the working directory (unstaged), `--hard` discards them entirely. Think of it as "how far back do you want to wind the clock?"[^8]
+A: All three move HEAD and the branch pointer to the target commit. They differ in what happens to the changes: `--soft` keeps them staged, `--mixed` keeps them in the working directory (unstaged), `--hard` discards them entirely. Think of it as "how far back do you want to wind the clock?"
 
 **Q: Can you undo a `git reset --hard`?**
 A: Yes — for ~30 days via `git reflog`. The "lost" commits are still in Git's object store, just not referenced by any branch. Find the SHA in `git reflog` and `git reset --hard <sha>` to restore.

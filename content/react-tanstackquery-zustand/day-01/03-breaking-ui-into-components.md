@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-A component should do one thing — if it does more, break it apart.[^1]
+A component should do one thing — if it does more, break it apart.
 
 ## K — Key Concepts
 
-**Three heuristics for splitting components:**[^1]
+**Three heuristics for splitting components:**
 
 1. **Single Responsibility Principle** — one component, one concern
 2. **CSS class selector intuition** — if you'd give it a class, it might be a component
@@ -22,7 +22,7 @@ Too coarse:             Too fine:             Just right:
 
 ## W — Why It Matters
 
-Poorly split components become unmaintainable fast. Good decomposition = reusability, testability, and readability. In large teams, small well-scoped components are independently developable.[^5]
+Poorly split components become unmaintainable fast. Good decomposition = reusability, testability, and readability. In large teams, small well-scoped components are independently developable.
 
 ## I — Interview Q&A
 

@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-CommonJS (`require`/`module.exports`) is Node.js's legacy synchronous module system; ES Modules (`import`/`export`) are the async, tree-shakable standard that works in both browsers and Node.js.[^2]
+CommonJS (`require`/`module.exports`) is Node.js's legacy synchronous module system; ES Modules (`import`/`export`) are the async, tree-shakable standard that works in both browsers and Node.js.
 
 ## K — Key Concepts
 
@@ -49,12 +49,12 @@ const legacyCJS = require("./legacy.cjs")
 
 ## W — Why It Matters
 
-The entire npm ecosystem is converging on ESM — Node.js, Deno, Bun, and all modern bundlers (Vite, Rollup) default to it. CJS is being deprecated in new libraries. Tree-shaking (dead code elimination) only works reliably with ESM, directly impacting bundle size.[^5][^1]
+The entire npm ecosystem is converging on ESM — Node.js, Deno, Bun, and all modern bundlers (Vite, Rollup) default to it. CJS is being deprecated in new libraries. Tree-shaking (dead code elimination) only works reliably with ESM, directly impacting bundle size.
 
 ## I — Interview Q&A
 
 **Q: What are "live bindings" in ES Modules and why do they matter?**
-A: When you import a named export from an ESM, you get a live read-only view of the export — if the exporting module updates the variable, your import reflects the change. CJS gives you a snapshot copy at require-time. Live bindings enable patterns like hot module replacement and circular dependency handling.[^2]
+A: When you import a named export from an ESM, you get a live read-only view of the export — if the exporting module updates the variable, your import reflects the change. CJS gives you a snapshot copy at require-time. Live bindings enable patterns like hot module replacement and circular dependency handling.
 
 **Q: Can you `require()` an ES Module in Node.js?**
 A: Not synchronously — `require()` is sync but ESM loading is async. From Node 22+, you can `require()` synchronous ESM files. Generally, use `import()` (dynamic) to load ESM from CJS, or use `createRequire` for the reverse.

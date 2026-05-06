@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Never mutate state objects directly — always create a new object with spread syntax `{ ...prev, key: newValue }` and pass it to the setter.[^8][^9]
+Never mutate state objects directly — always create a new object with spread syntax `{ ...prev, key: newValue }` and pass it to the setter.
 
 ## K — Key Concepts
 
-**Why immutability matters:** React detects changes by reference comparison. If you mutate the existing object, its reference stays the same — React thinks nothing changed and skips the re-render.[^8]
+**Why immutability matters:** React detects changes by reference comparison. If you mutate the existing object, its reference stays the same — React thinks nothing changed and skips the re-render.
 
 ```jsx
 // ❌ Mutation — React won't re-render
@@ -51,7 +51,7 @@ setProfile(produce(draft => {
 
 ## W — Why It Matters
 
-Immutable updates are non-negotiable in React. Mutation bugs are silent — the state changes but the UI doesn't update, which looks like a React bug but is actually incorrect code. Every professional React codebase enforces this pattern.[^9][^8]
+Immutable updates are non-negotiable in React. Mutation bugs are silent — the state changes but the UI doesn't update, which looks like a React bug but is actually incorrect code. Every professional React codebase enforces this pattern.
 
 ## I — Interview Q&A
 

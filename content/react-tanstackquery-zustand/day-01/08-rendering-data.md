@@ -2,7 +2,7 @@
 
 ## T — TL;DR
 
-Use JavaScript's `map()` inside JSX to transform arrays of data into arrays of JSX elements.[^7]
+Use JavaScript's `map()` inside JSX to transform arrays of data into arrays of JSX elements.
 
 ## K — Key Concepts
 
@@ -43,7 +43,7 @@ function UserList() {
 
 ## W — Why It Matters
 
-Almost every real app renders dynamic data from APIs. The `map()` → JSX pattern is used in every React codebase, every day. Getting comfortable with chaining `.filter().map()` makes you effective immediately.[^7]
+Almost every real app renders dynamic data from APIs. The `map()` → JSX pattern is used in every React codebase, every day. Getting comfortable with chaining `.filter().map()` makes you effective immediately.
 
 ## I — Interview Q&A
 

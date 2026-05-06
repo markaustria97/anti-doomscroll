@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-TanStack Query defaults `staleTime` to `0` — every query is considered stale immediately after fetching, triggering a background refetch on every mount, focus, and reconnect by default.[^1][^2]
+TanStack Query defaults `staleTime` to `0` — every query is considered stale immediately after fetching, triggering a background refetch on every mount, focus, and reconnect by default.
 
 ## K — Key Concepts
 
-**The two states of cached data:**[^2][^1]
+**The two states of cached data:**
 
 ```
 FRESH → data is within the staleTime window → NO background refetch
@@ -73,18 +73,18 @@ useQuery({
 
 ## W — Why It Matters
 
-The default `staleTime: 0` is intentionally aggressive — React apps feel "live" and always show the latest data, at the cost of more network requests. Understanding this default is what stops developers from being surprised by "why is my data being re-fetched every time?" and empowers them to tune it appropriately per query type.[^1][^2]
+The default `staleTime: 0` is intentionally aggressive — React apps feel "live" and always show the latest data, at the cost of more network requests. Understanding this default is what stops developers from being surprised by "why is my data being re-fetched every time?" and empowers them to tune it appropriately per query type.
 
 ## I — Interview Q&A
 
 **Q: Why does TanStack Query default `staleTime` to `0`?**
-**A:** It prioritizes data freshness by default — every mount, focus, or reconnect triggers a background refetch to silently update data. The user always sees the cached value instantly while new data loads in the background. It's the "always fresh" default rather than the "avoid network" default.[^1]
+**A:** It prioritizes data freshness by default — every mount, focus, or reconnect triggers a background refetch to silently update data. The user always sees the cached value instantly while new data loads in the background. It's the "always fresh" default rather than the "avoid network" default.
 
 **Q: What is the difference between data being "stale" and data being "missing from cache"?**
 **A:** Stale data is still in the cache and shown to the user immediately — it's just older than `staleTime` and triggers a background refetch. Data missing from cache triggers a foreground fetch (`isPending = true`). Stale = instant display + background update. Missing = spinner first.
 
 **Q: When should you set `staleTime: Infinity`?**
-**A:** For static or rarely changing data — app configuration, reference data (countries, currencies), user permissions that change only on explicit action. Use manual `invalidateQueries` to refresh when you know the data has changed rather than relying on time-based staleness.[^1]
+**A:** For static or rarely changing data — app configuration, reference data (countries, currencies), user permissions that change only on explicit action. Use manual `invalidateQueries` to refresh when you know the data has changed rather than relying on time-based staleness.
 
 ## C — Common Pitfalls
 

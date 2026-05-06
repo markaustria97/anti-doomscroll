@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-The `enabled` option pauses a query entirely until a condition is met — no network request fires, no loading state shows — making it the declarative way to gate fetches on user input, auth state, or upstream data.[^4]
+The `enabled` option pauses a query entirely until a condition is met — no network request fires, no loading state shows — making it the declarative way to gate fetches on user input, auth state, or upstream data.
 
 ## K — Key Concepts
 
-**`enabled` use cases:**[^4]
+**`enabled` use cases:**
 
 ```jsx
 // 1. Wait for an ID to exist
@@ -52,7 +52,7 @@ enabled: true  → status: "pending", fetchStatus: "fetching"
                  Fetch fires immediately
 ```
 
-**Detecting "disabled pending" vs "loading pending":**[^5]
+**Detecting "disabled pending" vs "loading pending":**
 
 ```jsx
 const { isPending, isFetching, fetchStatus } = useQuery({
@@ -96,18 +96,18 @@ function ConditionalSearch({ filters }) {
 
 ## W — Why It Matters
 
-`enabled` is the replacement for `if (!id) return` guards inside `useEffect` — but cleaner, cacheable, and part of TanStack Query's state machine. It's also the backbone of dependent query chains, auth-gated data, and search-on-submit UX patterns. Every non-trivial app uses it extensively.[^4]
+`enabled` is the replacement for `if (!id) return` guards inside `useEffect` — but cleaner, cacheable, and part of TanStack Query's state machine. It's also the backbone of dependent query chains, auth-gated data, and search-on-submit UX patterns. Every non-trivial app uses it extensively.
 
 ## I — Interview Q&A
 
 **Q: What is `isPending` when `enabled` is `false`?**
-**A:** `true` — the query has no data and is not fetching. The component correctly shows a loading-equivalent state. Use `fetchStatus === "idle"` to distinguish a disabled query (`idle`) from an actual in-flight fetch (`fetching`).[^4]
+**A:** `true` — the query has no data and is not fetching. The component correctly shows a loading-equivalent state. Use `fetchStatus === "idle"` to distinguish a disabled query (`idle`) from an actual in-flight fetch (`fetching`).
 
 **Q: How do you implement "search on submit" (not on every keystroke)?**
-**A:** Keep two state values: the live input value and the submitted search term. Set `queryKey` and `enabled` from the submitted term — the query fires when the user presses search, not on every keystroke. This also means each submitted search term gets its own cache entry.[^4]
+**A:** Keep two state values: the live input value and the submitted search term. Set `queryKey` and `enabled` from the submitted term — the query fires when the user presses search, not on every keystroke. This also means each submitted search term gets its own cache entry.
 
 **Q: Can `enabled` change from `false` to `true` after mount?**
-**A:** Yes — `enabled` is reactive. When it transitions from `false` to `true`, TanStack Query immediately fires the fetch. This is how dependent queries work — the downstream query's `enabled` flips to `true` when upstream data arrives.[^1]
+**A:** Yes — `enabled` is reactive. When it transitions from `false` to `true`, TanStack Query immediately fires the fetch. This is how dependent queries work — the downstream query's `enabled` flips to `true` when upstream data arrives.
 
 ## C — Common Pitfalls
 

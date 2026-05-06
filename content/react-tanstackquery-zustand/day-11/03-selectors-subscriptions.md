@@ -2,11 +2,11 @@
 
 ## T — TL;DR
 
-Selectors are functions passed to the store hook that extract a slice of state — components only re-render when their specific selector's return value changes, making Zustand surgically efficient.[^7][^5]
+Selectors are functions passed to the store hook that extract a slice of state — components only re-render when their specific selector's return value changes, making Zustand surgically efficient.
 
 ## K — Key Concepts
 
-**Selector forms — from broad to narrow:**[^5]
+**Selector forms — from broad to narrow:**
 
 ```jsx
 // 1. No selector — subscribes to ENTIRE store, re-renders on any change
@@ -31,7 +31,7 @@ const doubleCount = useStore((s) => s.count * 2)
 const increment = useStore((s) => s.increment)
 ```
 
-**`useShallow` — the v5 way to select multiple values:**[^8][^5]
+**`useShallow` — the v5 way to select multiple values:**
 
 ```jsx
 import { useShallow } from "zustand/shallow"
@@ -72,18 +72,18 @@ const unsubscribe = useStore.subscribe((state) => {
 
 ## W — Why It Matters
 
-Selectors are Zustand's performance mechanism. A large store with 20 state properties — if accessed without selectors — re-renders every subscriber on every single update. With selectors, each component subscribes only to the exact values it needs, giving Zustand the re-render efficiency of atomic state managers (Jotai, Recoil) with a fraction of the API surface.[^7][^5]
+Selectors are Zustand's performance mechanism. A large store with 20 state properties — if accessed without selectors — re-renders every subscriber on every single update. With selectors, each component subscribes only to the exact values it needs, giving Zustand the re-render efficiency of atomic state managers (Jotai, Recoil) with a fraction of the API surface.
 
 ## I — Interview Q&A
 
 **Q: What is a selector in Zustand and why does it matter for performance?**
-**A:** A selector is the function you pass to the store hook — `useStore(s => s.count)`. Zustand runs this function after every state change and compares the result to the previous result by reference equality. If unchanged, the component doesn't re-render. Without a selector, any state change in the store re-renders the component.[^5]
+**A:** A selector is the function you pass to the store hook — `useStore(s => s.count)`. Zustand runs this function after every state change and compares the result to the previous result by reference equality. If unchanged, the component doesn't re-render. Without a selector, any state change in the store re-renders the component.
 
 **Q: When do you need `useShallow` in v5?**
-**A:** When selecting multiple values as an object or array. A selector that returns `{ a, b }` creates a new object reference on every call, causing re-renders even when `a` and `b` haven't changed. `useShallow` wraps the selector and performs a shallow (one-level property) equality check instead of reference equality.[^8]
+**A:** When selecting multiple values as an object or array. A selector that returns `{ a, b }` creates a new object reference on every call, causing re-renders even when `a` and `b` haven't changed. `useShallow` wraps the selector and performs a shallow (one-level property) equality check instead of reference equality.
 
 **Q: How do you subscribe to store changes outside a React component?**
-**A:** Call `store.subscribe(selector, callback)` — `selector` picks the value to watch, `callback` fires when it changes with `(newValue, previousValue)`. Returns an unsubscribe function. Use this for side effects like analytics, persistence, or logging.[^5]
+**A:** Call `store.subscribe(selector, callback)` — `selector` picks the value to watch, `callback` fires when it changes with `(newValue, previousValue)`. Returns an unsubscribe function. Use this for side effects like analytics, persistence, or logging.
 
 ## C — Common Pitfalls
 

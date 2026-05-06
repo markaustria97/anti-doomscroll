@@ -34,7 +34,7 @@ undefined ?? "default" // "default"
 const user = null
 user?.profile?.name      // undefined (no crash)
 user?.getName?.()        // undefined (safe method call)
-arr?.[^0]                 // undefined (safe array access)
+arr?.                 // undefined (safe array access)
 
 // Short-circuit evaluation
 const name = user && user.name   // old pattern
