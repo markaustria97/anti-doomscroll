@@ -78,10 +78,9 @@ git config --global pull.rebase true    # always rebase on pull
 git config --global pull.ff only        # only allow fast-forward
 ```
 
-
 ## W — Why It Matters
 
-`git fetch --prune` is a hygiene must — without it, your list of remote branches grows indefinitely with deleted branches nobody uses anymore. `pull --rebase` is the preferred strategy for most teams because it avoids cluttering history with "Merge branch 'main'" commits when integrating remote updates.
+`git fetch --prune` is a hygiene must — without it, your list of remote branches grows indefinitely with deleted branches nobody uses anymore. `pull --rebase` is the preferred strategy for most teams because it avoids cluttering history with "Merge branch 'main'" commits when integrating remote updates.[^7]
 
 ## I — Interview Q&A
 
@@ -93,11 +92,11 @@ A: Your local branch has 2 commits that aren't on the remote yet (ahead), and th
 
 ## C — Common Pitfalls
 
-| Pitfall | Fix |
-| :-- | :-- |
-| `git pull` creating noisy merge commits | Use `git pull --rebase` or configure `pull.rebase true` globally |
-| Remote-tracking branches not pruned = confusing `git branch -r` | `git fetch --prune` or configure `fetch.prune true` |
-| Pulling without a tracking branch set | Specify explicitly: `git pull origin main` or set upstream with `-u` |
+| Pitfall                                                         | Fix                                                                  |
+| :-------------------------------------------------------------- | :------------------------------------------------------------------- |
+| `git pull` creating noisy merge commits                         | Use `git pull --rebase` or configure `pull.rebase true` globally     |
+| Remote-tracking branches not pruned = confusing `git branch -r` | `git fetch --prune` or configure `fetch.prune true`                  |
+| Pulling without a tracking branch set                           | Specify explicitly: `git pull origin main` or set upstream with `-u` |
 
 ## K — Coding Challenge
 
@@ -113,5 +112,4 @@ git fetch origin
 git rebase origin/main    # explicit equivalent
 ```
 
-
-***
+---
