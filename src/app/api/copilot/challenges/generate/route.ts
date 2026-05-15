@@ -19,8 +19,9 @@ import { randomUUID } from "node:crypto";
 export const runtime = "nodejs";
 
 const MAX_TOPIC_COUNT = 3;
-const MAX_LESSON_CONTEXT_CHARS = 1800;
-const MAX_CHALLENGE_CONTEXT_CHARS = 700;
+const MAX_LESSON_CONTEXT_CHARS = 900;
+const MAX_CHALLENGE_CONTEXT_CHARS = 350;
+const GENERATION_TIMEOUT_MS = 90000;
 
 function truncate(value: string, maxLength: number): string {
   return value.trim().slice(0, maxLength);
@@ -37,6 +38,17 @@ function extractJsonPayload(value: string): unknown {
   }
 
   return JSON.parse(jsonText.slice(firstBrace, lastBrace + 1)) as unknown;
+}
+
+function toGenerateErrorMessage(message: string): string {
+  if (/Timeout after \d+ms waiting for session\.idle/i.test(message)) {
+    return "Copilot challenge generation timed out before the model finished. Retry once, or reduce the selected scope if it keeps happening.";
+  }
+
+  return (
+    "Copilot challenge generation is unavailable right now. Ensure GitHub Copilot authentication is available in this runtime. " +
+    message
+  );
 }
 
 function isUiCapableTopic(value: string): boolean {
@@ -353,6 +365,7 @@ export async function POST(request: NextRequest) {
     const rawResponse = await runCopilotPrompt({
       githubToken,
       prompt,
+      timeoutMs: GENERATION_TIMEOUT_MS,
       systemMessage: [
         "You design coding challenges for a focused learning app.",
         "Return strict JSON only.",
@@ -385,9 +398,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        error:
-          "Copilot challenge generation is unavailable right now. Ensure GitHub Copilot authentication is available in this runtime. " +
-          message,
+        error: toGenerateErrorMessage(message),
       },
       { status: 500 }
     );
