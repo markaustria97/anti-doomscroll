@@ -102,6 +102,25 @@ export interface TopicChallenge {
   solutionMarkdown: string;
 }
 
+export interface ChallengeCatalogTopic {
+  key: string;
+  groupId: string;
+  groupLabel: string;
+  groupTitle: string;
+  dayId: string;
+  dayLabel: string;
+  dayTitle: string;
+  topicId: string;
+  topicTitle: string;
+  hasEmbeddedChallenge: boolean;
+  lessonExcerpt: string;
+}
+
+export interface ChallengeTopicContext extends ChallengeCatalogTopic {
+  lessonContent: string;
+  embeddedChallenge: TopicChallenge | null;
+}
+
 interface ParsedTopicSections {
   lessonContent: string;
   challenge: TopicChallenge | null;
@@ -139,9 +158,9 @@ function parseDayTitle(dayId: string, indexContent: string | null): string {
     if (match) {
       let title = match[1].trim();
       // Replace markdown links like [Text](url) with just the Text
-      title = title.replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1");
+      title = title.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
       // Unescape any backslash-escaped ampersands
-      title = title.replace(/\\&/g, "&");
+      title = title.replaceAll(String.raw`\&`, "&");
       return title;
     }
   }
@@ -247,6 +266,46 @@ function extractChallenge(content: string): ParsedTopicSections {
   };
 }
 
+function buildLessonExcerpt(content: string): string {
+  return content
+    .replace(/^#.+$/gm, "")
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\[(.*?)\]\([^)]+\)/g, "$1")
+    .replace(/[>*_#-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 320);
+}
+
+export function createChallengeTopicKey(
+  groupId: string,
+  dayId: string,
+  topicId: string
+): string {
+  return `${groupId}::${dayId}::${topicId}`;
+}
+
+function toChallengeCatalogTopic(
+  group: TechGroup,
+  day: Day,
+  topic: Topic
+): ChallengeCatalogTopic {
+  return {
+    key: createChallengeTopicKey(group.id, day.id, topic.id),
+    groupId: group.id,
+    groupLabel: group.label,
+    groupTitle: group.title,
+    dayId: day.id,
+    dayLabel: day.label,
+    dayTitle: day.title,
+    topicId: topic.id,
+    topicTitle: topic.title,
+    hasEmbeddedChallenge: Boolean(topic.challenge),
+    lessonExcerpt: buildLessonExcerpt(topic.lessonContent || topic.content),
+  };
+}
+
 function loadDays(contentDir: string): Day[] {
   let indexContent: string | null = null;
   const indexPath = path.join(contentDir, "index.md");
@@ -326,6 +385,49 @@ export function getAllGroups(): TechGroup[] {
     if (orderDiff !== 0) return orderDiff;
     return left.title.localeCompare(right.title);
   });
+}
+
+export function getChallengeCatalog(groupIds?: string[]): ChallengeCatalogTopic[] {
+  const allowedGroups = groupIds?.length ? new Set(groupIds) : null;
+
+  return getAllGroups().flatMap((group) => {
+    if (allowedGroups && !allowedGroups.has(group.id)) {
+      return [];
+    }
+
+    return group.days.flatMap((day) =>
+      day.topics.map((topic) => toChallengeCatalogTopic(group, day, topic))
+    );
+  });
+}
+
+export function getChallengeTopicContexts(
+  topicKeys: string[]
+): ChallengeTopicContext[] {
+  const requested = new Set(topicKeys);
+
+  if (requested.size === 0) {
+    return [];
+  }
+
+  return getAllGroups().flatMap((group) =>
+    group.days.flatMap((day) =>
+      day.topics.flatMap((topic) => {
+        const catalogTopic = toChallengeCatalogTopic(group, day, topic);
+        if (!requested.has(catalogTopic.key)) {
+          return [];
+        }
+
+        return [
+          {
+            ...catalogTopic,
+            lessonContent: topic.lessonContent,
+            embeddedChallenge: topic.challenge,
+          },
+        ];
+      })
+    )
+  );
 }
 
 export function getGroup(groupId: string): TechGroup | undefined {

@@ -42,20 +42,28 @@ export default async function GroupPage({ params }: Readonly<PageProps>) {
         <header className="mb-10">
           <Link
             href="/"
-            className="inline-flex items-center text-sm text-[var(--accent)] hover:underline"
+            className="inline-flex items-center text-sm text-(--accent) hover:underline"
           >
             TECH GROUPS
           </Link>
-          <div className="mt-4 flex items-center gap-3 text-xs font-mono uppercase tracking-widest text-[var(--accent)]">
+          <div className="mt-4 flex items-center gap-3 text-xs font-mono uppercase tracking-widest text-(--accent)">
             <span>{group.label}</span>
-            <span className="text-[var(--text-muted)]">
+            <span className="text-(--text-muted)">
               {group.days.length} days
             </span>
           </div>
           <h1 className="mt-3 text-3xl sm:text-4xl font-bold">{group.title}</h1>
-          <p className="mt-3 max-w-3xl text-sm sm:text-base text-[var(--text-muted)]">
+          <p className="mt-3 max-w-3xl text-sm sm:text-base text-(--text-muted)">
             {group.description}
           </p>
+          <div className="mt-4">
+            <Link
+              href={`/challenges?groups=${group.id}`}
+              className="inline-flex items-center gap-2 rounded-lg border border-(--border) px-4 py-2 text-sm font-medium text-(--text) transition-colors hover:border-(--accent-dim) hover:text-white"
+            >
+              Practice This Group In Challenge Lab
+            </Link>
+          </div>
         </header>
 
         <div className="auto-grid">
@@ -64,17 +72,17 @@ export default async function GroupPage({ params }: Readonly<PageProps>) {
               key={day.id}
               href={`/group/${group.id}/day/${day.id}/${day.topics[0]?.id || ""}`}
               prefetch={false}
-              className="group block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all hover:border-[var(--accent-dim)] hover:shadow-lg hover:shadow-purple-900/10 card-large"
+              className="group block rounded-xl border border-(--border) bg-(--bg-card) p-6 transition-all hover:border-(--accent-dim) hover:shadow-lg hover:shadow-purple-900/10 card-large"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-mono uppercase tracking-widest text-[var(--accent)]">
+                <span className="text-xs font-mono uppercase tracking-widest text-(--accent)">
                   {day.label}
                 </span>
-                <span className="text-xs text-[var(--text-muted)]">
+                <span className="text-xs text-(--text-muted)">
                   {day.topics.length} topics
                 </span>
               </div>
-              <h2 className="text-2xl font-semibold text-[var(--text)] group-hover:text-white transition-colors">
+              <h2 className="text-2xl font-semibold text-(--text) group-hover:text-white transition-colors">
                 {day.title}
               </h2>
             </Link>

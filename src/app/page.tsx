@@ -20,7 +20,15 @@ export default function Home() {
           A structured study hub that replaces feed-scrolling with focused
           tech-group tracks.
         </p>
-        <ResumeButton />
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <ResumeButton />
+          <Link
+            href="/challenges"
+            className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--text)] transition-colors hover:border-[var(--accent-dim)] hover:text-white"
+          >
+            Open Challenge Lab
+          </Link>
+        </div>
       </header>
 
       <div className="auto-grid">

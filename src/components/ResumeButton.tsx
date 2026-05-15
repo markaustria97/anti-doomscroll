@@ -16,7 +16,7 @@ export function ResumeButton() {
   return (
     <Link
       href={lastPath}
-      className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[var(--accent-dim)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--accent)]"
+      className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent-dim)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--accent)]"
     >
       <svg
         className="w-4 h-4"
