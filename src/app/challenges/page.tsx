@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
 import { ChallengeLab } from "@/components/ChallengeLab";
 import { getAllGroups, getChallengeCatalog } from "@/lib/content";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Challenge Lab | Anti-Doom Scroll",

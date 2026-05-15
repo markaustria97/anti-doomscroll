@@ -1,5 +1,5 @@
-import { CopilotClient } from "@github/copilot-sdk";
 import type { PermissionRequestResult } from "@github/copilot-sdk";
+import { CopilotClient } from "@github/copilot-sdk";
 import { existsSync } from "node:fs";
 import path from "node:path";
 
@@ -26,11 +26,7 @@ export function resolveCopilotCliPath(): string {
     "linux:x64": path.join(basePath, "copilot-linux-x64", "copilot"),
     "linux:arm64": path.join(basePath, "copilot-linux-arm64", "copilot"),
     "win32:x64": path.join(basePath, "copilot-win32-x64", "copilot.exe"),
-    "win32:arm64": path.join(
-      basePath,
-      "copilot-win32-arm64",
-      "copilot.exe"
-    ),
+    "win32:arm64": path.join(basePath, "copilot-win32-arm64", "copilot.exe"),
     "darwin:x64": path.join(basePath, "copilot-darwin-x64", "copilot"),
     "darwin:arm64": path.join(basePath, "copilot-darwin-arm64", "copilot"),
   };
@@ -81,7 +77,8 @@ export async function runCopilotPrompt({
   timeoutMs?: number;
 }): Promise<string> {
   const client = createCopilotClient(githubToken);
-  let session: Awaited<ReturnType<CopilotClient["createSession"]>> | null = null;
+  let session: Awaited<ReturnType<CopilotClient["createSession"]>> | null =
+    null;
   let finalMessage = "";
   let streamedMessage = "";
 

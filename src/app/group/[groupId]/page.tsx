@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { getAllGroups, getGroup } from "@/lib/content";
 import { SwipeNavigator } from "@/components/SwipeNavigator";
+import { getAllGroups, getGroup } from "@/lib/content";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface PageProps {

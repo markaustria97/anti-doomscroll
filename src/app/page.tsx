@@ -1,6 +1,6 @@
+import { ResumeButton } from "@/components/ResumeButton";
 import { getAllGroups } from "@/lib/content";
 import Link from "next/link";
-import { ResumeButton } from "@/components/ResumeButton";
 
 export default function Home() {
   const groups = getAllGroups();

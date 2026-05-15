@@ -1,6 +1,9 @@
+import {
+  isValidChallengeLanguage,
+  type ChallengeLanguage,
+} from "@/lib/challenge-lab";
 import { transform } from "esbuild";
 import { NextRequest, NextResponse } from "next/server";
-import { isValidChallengeLanguage, type ChallengeLanguage } from "@/lib/challenge-lab";
 
 export const runtime = "nodejs";
 
@@ -14,7 +17,9 @@ interface PreviewRequestBody {
 
 function getImportSpecifiers(source: string): string[] {
   return Array.from(
-    source.matchAll(/(?:import|export)\s+(?:[\s\S]*?\s+from\s+)?["']([^"']+)["']/g),
+    source.matchAll(
+      /(?:import|export)\s+(?:[\s\S]*?\s+from\s+)?["']([^"']+)["']/g
+    ),
     (match) => match[1]
   );
 }
@@ -63,8 +68,7 @@ export async function POST(request: NextRequest) {
     if (invalidImport) {
       return NextResponse.json(
         {
-          error:
-            `Unsupported import "${invalidImport}" in preview code. Use a single-file component with no external imports.`,
+          error: `Unsupported import "${invalidImport}" in preview code. Use a single-file component with no external imports.`,
         },
         { status: 400 }
       );

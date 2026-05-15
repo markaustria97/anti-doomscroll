@@ -58,7 +58,9 @@ export interface ChallengeReviewRequest {
 }
 
 function isStringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.every((item) => typeof item === "string");
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "string")
+  );
 }
 
 export function isValidLearnerLevel(
@@ -81,7 +83,9 @@ export function isValidChallengeLanguage(
   return value === "js" || value === "jsx" || value === "ts" || value === "tsx";
 }
 
-export function isChallengeSubtopic(value: unknown): value is ChallengeSubtopic {
+export function isChallengeSubtopic(
+  value: unknown
+): value is ChallengeSubtopic {
   if (!value || typeof value !== "object") {
     return false;
   }
@@ -102,7 +106,9 @@ export function isChallengeSubtopic(value: unknown): value is ChallengeSubtopic 
   );
 }
 
-export function isGeneratedChallenge(value: unknown): value is GeneratedChallenge {
+export function isGeneratedChallenge(
+  value: unknown
+): value is GeneratedChallenge {
   if (!value || typeof value !== "object") {
     return false;
   }
@@ -119,7 +125,8 @@ export function isGeneratedChallenge(value: unknown): value is GeneratedChalleng
     typeof candidate.instructionsMarkdown === "string" &&
     typeof candidate.starterCode === "string" &&
     typeof candidate.referenceSolution === "string" &&
-    (candidate.previewCode === null || typeof candidate.previewCode === "string") &&
+    (candidate.previewCode === null ||
+      typeof candidate.previewCode === "string") &&
     isStringArray(candidate.passCriteria) &&
     isStringArray(candidate.reviewFocus) &&
     typeof candidate.estimatedMinutes === "number" &&

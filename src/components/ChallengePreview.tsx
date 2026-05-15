@@ -1,7 +1,7 @@
 "use client";
 
-import { useDeferredValue, useEffect, useState } from "react";
 import type { ChallengeLanguage } from "@/lib/challenge-lab";
+import { useDeferredValue, useEffect, useState } from "react";
 
 type ChallengePreviewProps = Readonly<{
   title: string;
@@ -187,7 +187,9 @@ export function ChallengePreview({
           signal: controller.signal,
         });
 
-        const payload = (await response.json().catch(() => ({ error: undefined }))) as {
+        const payload = (await response
+          .json()
+          .catch(() => ({ error: undefined }))) as {
           code?: string;
           error?: string;
         };
@@ -221,7 +223,8 @@ export function ChallengePreview({
     };
   }, [deferredSource, language]);
 
-  const statusMessage = error || (isLoading ? "Compiling preview..." : emptyMessage);
+  const statusMessage =
+    error || (isLoading ? "Compiling preview..." : emptyMessage);
 
   return (
     <section className="rounded-2xl border border-(--border) bg-black/20 p-4">
@@ -237,7 +240,9 @@ export function ChallengePreview({
         {compiledCode ? (
           <button
             type="button"
-            onClick={() => setFrameVersion((currentVersion) => currentVersion + 1)}
+            onClick={() =>
+              setFrameVersion((currentVersion) => currentVersion + 1)
+            }
             className="rounded-lg border border-(--border) px-3 py-2 text-xs font-medium text-(--text-muted) transition-colors hover:border-(--accent-dim) hover:text-white"
           >
             Reset frame

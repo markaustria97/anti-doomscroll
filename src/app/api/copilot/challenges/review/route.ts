@@ -1,4 +1,3 @@
-import { NextRequest, NextResponse } from "next/server";
 import {
   isGeneratedChallenge,
   isValidLearnerLevel,
@@ -10,6 +9,7 @@ import {
   OAUTH_TOKEN_COOKIE,
   runCopilotPrompt,
 } from "@/lib/copilot";
+import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
@@ -117,7 +117,9 @@ export async function POST(request: NextRequest) {
 
     const body = (await request.json()) as ChallengeReviewRequest;
     const learnerLevel = body.learnerLevel;
-    const attempt = Number.isFinite(body.attempt) ? Math.max(1, body.attempt || 1) : 1;
+    const attempt = Number.isFinite(body.attempt)
+      ? Math.max(1, body.attempt || 1)
+      : 1;
     const userCode = truncate(body.userCode);
 
     if (!isValidLearnerLevel(learnerLevel)) {

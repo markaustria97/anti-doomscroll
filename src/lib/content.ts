@@ -387,7 +387,9 @@ export function getAllGroups(): TechGroup[] {
   });
 }
 
-export function getChallengeCatalog(groupIds?: string[]): ChallengeCatalogTopic[] {
+export function getChallengeCatalog(
+  groupIds?: string[]
+): ChallengeCatalogTopic[] {
   const allowedGroups = groupIds?.length ? new Set(groupIds) : null;
 
   return getAllGroups().flatMap((group) => {

@@ -1,8 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import type { ChallengeCatalogTopic } from "@/lib/content";
 import {
   isChallengeReviewResult,
   isGeneratedChallenge,
@@ -11,8 +8,11 @@ import {
   type GeneratedChallenge,
   type LearnerLevel,
 } from "@/lib/challenge-lab";
-import { MarkdownRenderer } from "./MarkdownRenderer";
+import type { ChallengeCatalogTopic } from "@/lib/content";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { ChallengePreview } from "./ChallengePreview";
+import { MarkdownRenderer } from "./MarkdownRenderer";
 
 const STORAGE_KEYS = {
   groupIds: "challenge-lab:selected-groups",
@@ -65,11 +65,13 @@ const learnerLevelCopy: Record<
   },
   intermediate: {
     label: "Intermediate",
-    description: "Blend two subtopics and expect cleaner code and edge-case handling.",
+    description:
+      "Blend two subtopics and expect cleaner code and edge-case handling.",
   },
   advanced: {
     label: "Advanced",
-    description: "Blend three subtopics and hold the solution to a stricter standard.",
+    description:
+      "Blend three subtopics and hold the solution to a stricter standard.",
   },
 };
 
@@ -87,7 +89,8 @@ function isChallengeHistory(value: unknown): value is ChallengeHistory {
     return (
       typeof candidate.count === "number" &&
       typeof candidate.lastGeneratedAt === "string" &&
-      (candidate.lastPassedAt === undefined || typeof candidate.lastPassedAt === "string")
+      (candidate.lastPassedAt === undefined ||
+        typeof candidate.lastPassedAt === "string")
     );
   });
 }
@@ -102,7 +105,9 @@ function isPersistedSession(value: unknown): value is PersistedSession {
   return (
     isGeneratedChallenge(candidate.challenge) &&
     typeof candidate.userCode === "string" &&
-    (candidate.review === null || candidate.review === undefined || isChallengeReviewResult(candidate.review)) &&
+    (candidate.review === null ||
+      candidate.review === undefined ||
+      isChallengeReviewResult(candidate.review)) &&
     typeof candidate.attemptCount === "number" &&
     (candidate.copilotModel === null ||
       candidate.copilotModel === undefined ||
@@ -145,7 +150,10 @@ function pickChallengeTopics({
   history: ChallengeHistory;
   learnerLevel: LearnerLevel;
 }): ChallengeCatalogTopic[] {
-  const desiredCount = Math.min(getTopicCountForLevel(learnerLevel), catalog.length);
+  const desiredCount = Math.min(
+    getTopicCountForLevel(learnerLevel),
+    catalog.length
+  );
 
   if (desiredCount === 0) {
     return [];
@@ -334,9 +342,11 @@ function ScopeSidebar({
         </div>
 
         <div className="mt-5 space-y-3">
-          {(Object.entries(learnerLevelCopy) as Array<
-            [LearnerLevel, (typeof learnerLevelCopy)[LearnerLevel]]
-          >).map(([value, copy]) => {
+          {(
+            Object.entries(learnerLevelCopy) as Array<
+              [LearnerLevel, (typeof learnerLevelCopy)[LearnerLevel]]
+            >
+          ).map(([value, copy]) => {
             const isActive = learnerLevel === value;
 
             return (
@@ -350,7 +360,9 @@ function ScopeSidebar({
                     : "border-(--border) hover:border-(--accent-dim)"
                 }`}
               >
-                <div className="text-sm font-semibold text-white">{copy.label}</div>
+                <div className="text-sm font-semibold text-white">
+                  {copy.label}
+                </div>
                 <div className="mt-2 text-sm leading-6 text-(--text-muted)">
                   {copy.description}
                 </div>
@@ -373,7 +385,9 @@ function ScopeSidebar({
         <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
           Tech Groups
         </p>
-        <h2 className="mt-2 text-xl font-semibold text-white">Filter subtopics</h2>
+        <h2 className="mt-2 text-xl font-semibold text-white">
+          Filter subtopics
+        </h2>
         <p className="mt-2 text-sm leading-6 text-(--text-muted)">
           Leave everything unselected to let the generator pull from the full
           catalog.
@@ -408,7 +422,9 @@ function ScopeSidebar({
             >
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <div className="text-sm font-semibold text-white">{group.title}</div>
+                  <div className="text-sm font-semibold text-white">
+                    {group.title}
+                  </div>
                   <div className="mt-1 text-sm leading-6 text-(--text-muted)">
                     {group.description}
                   </div>
@@ -528,7 +544,10 @@ function ChallengeSummaryCard({
             </p>
             <ul className="mt-4 space-y-3 text-sm leading-6 text-(--text-muted)">
               {challenge.passCriteria.map((criterion) => (
-                <li key={criterion} className="rounded-xl border border-(--border) px-4 py-3">
+                <li
+                  key={criterion}
+                  className="rounded-xl border border-(--border) px-4 py-3"
+                >
                   {criterion}
                 </li>
               ))}
@@ -607,7 +626,10 @@ function ChallengeEditorCard({
         </div>
       </div>
 
-      <label className="mt-6 block text-sm font-medium text-white" htmlFor="challenge-lab-editor">
+      <label
+        className="mt-6 block text-sm font-medium text-white"
+        htmlFor="challenge-lab-editor"
+      >
         Your code
       </label>
       <textarea
@@ -644,7 +666,10 @@ function ChallengeEditorCard({
         </summary>
         <div className="markdown-body mt-4 max-h-96 overflow-auto">
           <MarkdownRenderer
-            content={buildCodeBlock(challenge.referenceSolution, challenge.language)}
+            content={buildCodeBlock(
+              challenge.referenceSolution,
+              challenge.language
+            )}
           />
         </div>
       </details>
@@ -714,7 +739,9 @@ function ChallengeReviewCard({
         <div className="text-xs font-mono uppercase tracking-[0.18em] text-white/70">
           Next step
         </div>
-        <div className="mt-2 text-sm leading-7 text-white/90">{review.nextStep}</div>
+        <div className="mt-2 text-sm leading-7 text-white/90">
+          {review.nextStep}
+        </div>
       </div>
 
       {review.bestPractices.length > 0 ? (
@@ -844,7 +871,10 @@ export function ChallengeLab({
       return;
     }
 
-    localStorage.setItem(STORAGE_KEYS.groupIds, JSON.stringify(selectedGroupIds));
+    localStorage.setItem(
+      STORAGE_KEYS.groupIds,
+      JSON.stringify(selectedGroupIds)
+    );
   }, [isHydrated, selectedGroupIds]);
 
   useEffect(() => {
@@ -882,7 +912,14 @@ export function ChallengeLab({
     };
 
     localStorage.setItem(STORAGE_KEYS.session, JSON.stringify(session));
-  }, [attemptCount, copilotModel, currentChallenge, isHydrated, review, userCode]);
+  }, [
+    attemptCount,
+    copilotModel,
+    currentChallenge,
+    isHydrated,
+    review,
+    userCode,
+  ]);
 
   const filteredCatalog = useMemo(() => {
     if (selectedGroupIds.length === 0) {
@@ -899,7 +936,9 @@ export function ChallengeLab({
   );
 
   const untouchedInScope = useMemo(
-    () => filteredCatalog.filter((topic) => (history[topic.key]?.count || 0) <= 0).length,
+    () =>
+      filteredCatalog.filter((topic) => (history[topic.key]?.count || 0) <= 0)
+        .length,
     [filteredCatalog, history]
   );
 
@@ -960,7 +999,9 @@ export function ChallengeLab({
         }),
       });
 
-      const payload = (await response.json().catch(() => ({ error: undefined }))) as {
+      const payload = (await response
+        .json()
+        .catch(() => ({ error: undefined }))) as {
         challenge?: unknown;
         model?: string;
         error?: string;
@@ -1026,7 +1067,9 @@ export function ChallengeLab({
         }),
       });
 
-      const payload = (await response.json().catch(() => ({ error: undefined }))) as {
+      const payload = (await response
+        .json()
+        .catch(() => ({ error: undefined }))) as {
         review?: unknown;
         model?: string;
         error?: string;
@@ -1042,7 +1085,9 @@ export function ChallengeLab({
 
       setAttemptCount(nextAttempt);
       setReview(reviewResult);
-      setCopilotModel(typeof payload.model === "string" ? payload.model : copilotModel);
+      setCopilotModel(
+        typeof payload.model === "string" ? payload.model : copilotModel
+      );
 
       if (reviewResult.passed) {
         setHistory((currentHistory) =>
@@ -1108,7 +1153,10 @@ export function ChallengeLab({
         <div className="space-y-6">
           {currentChallenge ? (
             <>
-              <ChallengeSummaryCard challenge={currentChallenge} userCode={userCode} />
+              <ChallengeSummaryCard
+                challenge={currentChallenge}
+                userCode={userCode}
+              />
               <ChallengeEditorCard
                 challenge={currentChallenge}
                 userCode={userCode}

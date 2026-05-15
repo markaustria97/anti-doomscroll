@@ -1,5 +1,3 @@
-import { randomUUID } from "node:crypto";
-import { NextRequest, NextResponse } from "next/server";
 import {
   clampEstimatedMinutes,
   isValidChallengeKind,
@@ -15,6 +13,8 @@ import {
   OAUTH_TOKEN_COOKIE,
   runCopilotPrompt,
 } from "@/lib/copilot";
+import { NextRequest, NextResponse } from "next/server";
+import { randomUUID } from "node:crypto";
 
 export const runtime = "nodejs";
 
@@ -68,7 +68,10 @@ function buildTopicContext(
   return contexts
     .map((context, index) => {
       const embeddedChallenge = context.embeddedChallenge
-        ? truncate(context.embeddedChallenge.challengeMarkdown, MAX_CHALLENGE_CONTEXT_CHARS)
+        ? truncate(
+            context.embeddedChallenge.challengeMarkdown,
+            MAX_CHALLENGE_CONTEXT_CHARS
+          )
         : "None";
 
       return [
@@ -106,7 +109,10 @@ function buildStarterCode(kind: GeneratedChallenge["challengeKind"]): string {
   ].join("\n");
 }
 
-function getStringValue(candidate: Record<string, unknown>, key: string): string {
+function getStringValue(
+  candidate: Record<string, unknown>,
+  key: string
+): string {
   const value = candidate[key];
   return typeof value === "string" ? value.trim() : "";
 }
@@ -199,7 +205,7 @@ function buildPrompt({
       ? [
           'Set "challengeKind" to "ui-react-tailwind" unless the selected topics make that impossible.',
           'For "ui-react-tailwind", set "language" to "tsx" and make both "starterCode" and "referenceSolution" a single-file React component with `export default function ChallengeSolution()`.',
-          'For UI solutions, use Tailwind utility classes only and avoid external component libraries or icon packages.',
+          "For UI solutions, use Tailwind utility classes only and avoid external component libraries or icon packages.",
           'For UI challenges, set "previewCode" to a working TSX component that renders the expected finished UI.',
         ].join("\n")
       : [
@@ -241,7 +247,8 @@ function normalizeGeneratedChallenge({
     throw new Error("Copilot did not return a reference solution.");
   }
 
-  const starterCode = getStringValue(candidate, "starterCode") || buildStarterCode(candidateKind);
+  const starterCode =
+    getStringValue(candidate, "starterCode") || buildStarterCode(candidateKind);
   const previewCode = resolvePreviewCode({
     candidate,
     challengeKind: candidateKind,
@@ -313,12 +320,17 @@ export async function POST(request: NextRequest) {
 
     if (topicKeys.length === 0) {
       return NextResponse.json(
-        { error: "Choose at least one subtopic before generating a challenge." },
+        {
+          error: "Choose at least one subtopic before generating a challenge.",
+        },
         { status: 400 }
       );
     }
 
-    const uniqueTopicKeys = Array.from(new Set(topicKeys)).slice(0, MAX_TOPIC_COUNT);
+    const uniqueTopicKeys = Array.from(new Set(topicKeys)).slice(
+      0,
+      MAX_TOPIC_COUNT
+    );
     const contexts = getChallengeTopicContexts(uniqueTopicKeys);
 
     if (contexts.length !== uniqueTopicKeys.length) {
