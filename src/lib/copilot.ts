@@ -1,6 +1,7 @@
 import type { PermissionRequestResult } from "@github/copilot-sdk";
 import { CopilotClient } from "@github/copilot-sdk";
-import { existsSync } from "node:fs";
+import { existsSync, mkdirSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 
 export const OAUTH_TOKEN_COOKIE = "copilot_github_token";
@@ -11,6 +12,27 @@ export const denyAllPermissions = (): PermissionRequestResult => ({
   kind: "denied-by-rules",
   rules: [],
 });
+
+function ensureDirectory(directoryPath: string): string {
+  mkdirSync(directoryPath, { recursive: true });
+  return directoryPath;
+}
+
+function resolveCopilotRuntimeDirectories() {
+  const runtimeRoot = ensureDirectory(
+    process.env.COPILOT_RUNTIME_DIR?.trim() ||
+      path.join(tmpdir(), "copilot-sdk-runtime")
+  );
+  const homeDir = ensureDirectory(path.join(runtimeRoot, "home"));
+  const cacheRoot = ensureDirectory(path.join(runtimeRoot, "cache"));
+
+  return {
+    homeDir,
+    cacheRoot,
+    copilotHomeDir: ensureDirectory(path.join(runtimeRoot, ".copilot")),
+    copilotCacheDir: ensureDirectory(path.join(cacheRoot, "copilot")),
+  };
+}
 
 export function resolveCopilotCliPath(): string {
   const configuredPath = process.env.COPILOT_CLI_PATH?.trim();
@@ -51,6 +73,9 @@ export function resolveCopilotCliPath(): string {
 }
 
 export function createCopilotClient(githubToken: string): CopilotClient {
+  const runtimeDirectories = resolveCopilotRuntimeDirectories();
+  const runtimeTempDir = tmpdir();
+
   return new CopilotClient({
     cliPath: resolveCopilotCliPath(),
     githubToken,
@@ -58,7 +83,14 @@ export function createCopilotClient(githubToken: string): CopilotClient {
     env: {
       ...process.env,
       COPILOT_GITHUB_TOKEN: githubToken,
-      HOME: process.env.HOME ?? process.env.USERPROFILE ?? process.cwd(),
+      HOME: runtimeDirectories.homeDir,
+      USERPROFILE: runtimeDirectories.homeDir,
+      XDG_CACHE_HOME: runtimeDirectories.cacheRoot,
+      COPILOT_HOME: runtimeDirectories.copilotHomeDir,
+      COPILOT_CACHE_HOME: runtimeDirectories.copilotCacheDir,
+      TMPDIR: runtimeTempDir,
+      TMP: runtimeTempDir,
+      TEMP: runtimeTempDir,
     },
   });
 }
