@@ -41,26 +41,8 @@ export function resolveCopilotCliPath(): string {
     return configuredPath;
   }
 
-  const platform = process.platform;
-  const arch = process.arch;
-  const basePath = path.join(process.cwd(), "node_modules", "@github");
-
-  const platformBinaryMap: Record<string, string> = {
-    "linux:x64": path.join(basePath, "copilot-linux-x64", "copilot"),
-    "linux:arm64": path.join(basePath, "copilot-linux-arm64", "copilot"),
-    "win32:x64": path.join(basePath, "copilot-win32-x64", "copilot.exe"),
-    "win32:arm64": path.join(basePath, "copilot-win32-arm64", "copilot.exe"),
-    "darwin:x64": path.join(basePath, "copilot-darwin-x64", "copilot"),
-    "darwin:arm64": path.join(basePath, "copilot-darwin-arm64", "copilot"),
-  };
-
-  const resolvedBinary = platformBinaryMap[`${platform}:${arch}`];
-  if (resolvedBinary && existsSync(resolvedBinary)) {
-    return resolvedBinary;
-  }
-
   const npmLoaderPath = path.join(
-    process.cwd(),
+    /* turbopackIgnore: true */ process.cwd(),
     "node_modules",
     "@github",
     "copilot",

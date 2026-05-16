@@ -2,7 +2,6 @@ import {
   clampEstimatedMinutes,
   createChallengeGenerationPlan,
   getProgressionForChallengeCount,
-  isValidChallengeKind,
   isValidChallengeLanguage,
   isValidLearnerLevel,
   type ChallengeGenerationPlan,

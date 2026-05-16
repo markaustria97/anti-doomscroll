@@ -1,10 +1,10 @@
-import { Prisma } from "@prisma/client";
 import { normalizeAppStateKeys, type AppStateEntry } from "@/lib/app-state";
 import {
   applyAppStateScopeCookies,
   resolveAppStateScope,
 } from "@/lib/app-state-server";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -50,40 +50,75 @@ function normalizeEntries(entries: unknown): AppStateEntry[] {
 }
 
 function respondWithSession(
-  resolvedScope: Awaited<ReturnType<typeof resolveAppStateScope>>,
+  resolvedScope: ReturnType<typeof resolveAppStateScope>,
   response: NextResponse
 ): NextResponse {
   return applyAppStateScopeCookies(response, resolvedScope);
 }
 
-async function promoteSessionEntries({
+async function promoteLegacyEntries({
   scopeId,
-  sessionId,
+  legacyScopeIds,
   keys,
 }: {
   scopeId: string;
-  sessionId: string | null;
+  legacyScopeIds: string[];
   keys: string[];
 }) {
-  if (!sessionId || sessionId === scopeId || keys.length === 0) {
+  if (legacyScopeIds.length === 0 || keys.length === 0) {
     return;
   }
 
-  const sessionRows = await prisma.appState.findMany({
-    where: {
-      sessionId,
-      key: {
-        in: keys,
+  const [globalRows, legacyRows] = await Promise.all([
+    prisma.appState.findMany({
+      where: {
+        sessionId: scopeId,
+        key: {
+          in: keys,
+        },
       },
-    },
-  });
+    }),
+    prisma.appState.findMany({
+      where: {
+        sessionId: {
+          in: legacyScopeIds,
+        },
+        key: {
+          in: keys,
+        },
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    }),
+  ]);
 
-  if (sessionRows.length === 0) {
+  if (legacyRows.length === 0) {
     return;
   }
+
+  const latestLegacyRowsByKey = new Map<string, (typeof legacyRows)[number]>();
+  for (const row of legacyRows) {
+    if (!latestLegacyRowsByKey.has(row.key)) {
+      latestLegacyRowsByKey.set(row.key, row);
+    }
+  }
+
+  const globalUpdatedAtByKey = new Map(
+    globalRows.map((row) => [row.key, row.updatedAt.getTime()])
+  );
+  const rowsToPromote = Array.from(latestLegacyRowsByKey.values()).filter(
+    (row) => {
+      const globalUpdatedAt = globalUpdatedAtByKey.get(row.key);
+      return (
+        globalUpdatedAt === undefined ||
+        row.updatedAt.getTime() > globalUpdatedAt
+      );
+    }
+  );
 
   await prisma.$transaction([
-    ...sessionRows.map((row) =>
+    ...rowsToPromote.map((row) =>
       prisma.appState.upsert({
         where: {
           sessionId_key: {
@@ -103,7 +138,9 @@ async function promoteSessionEntries({
     ),
     prisma.appState.deleteMany({
       where: {
-        sessionId,
+        sessionId: {
+          in: legacyScopeIds,
+        },
         key: {
           in: keys,
         },
@@ -117,7 +154,7 @@ export async function GET(request: NextRequest) {
     const keys = normalizeAppStateKeys(
       request.nextUrl.searchParams.getAll("key")
     ).slice(0, MAX_KEYS_PER_REQUEST);
-    const resolvedScope = await resolveAppStateScope(request);
+    const resolvedScope = resolveAppStateScope(request);
 
     if (keys.length === 0) {
       return respondWithSession(
@@ -126,9 +163,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    await promoteSessionEntries({
+    await promoteLegacyEntries({
       scopeId: resolvedScope.scopeId,
-      sessionId: resolvedScope.sessionId,
+      legacyScopeIds: resolvedScope.legacyScopeIds,
       keys,
     });
 
@@ -160,7 +197,7 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const resolvedScope = await resolveAppStateScope(request);
+    const resolvedScope = resolveAppStateScope(request);
     const body = (await request.json()) as { entries?: unknown };
     const entries = normalizeEntries(body.entries);
     const keys = entries.map((entry) => entry.key);
@@ -175,9 +212,9 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    await promoteSessionEntries({
+    await promoteLegacyEntries({
       scopeId: resolvedScope.scopeId,
-      sessionId: resolvedScope.sessionId,
+      legacyScopeIds: resolvedScope.legacyScopeIds,
       keys,
     });
 
@@ -219,7 +256,7 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const resolvedScope = await resolveAppStateScope(request);
+    const resolvedScope = resolveAppStateScope(request);
     const body = (await request.json()) as { keys?: unknown };
     const keys = normalizeAppStateKeys(
       Array.isArray(body.keys)
@@ -237,20 +274,16 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    await promoteSessionEntries({
+    await promoteLegacyEntries({
       scopeId: resolvedScope.scopeId,
-      sessionId: resolvedScope.sessionId,
+      legacyScopeIds: resolvedScope.legacyScopeIds,
       keys,
     });
 
     await prisma.appState.deleteMany({
       where: {
         sessionId: {
-          in:
-            resolvedScope.sessionId &&
-            resolvedScope.sessionId !== resolvedScope.scopeId
-              ? [resolvedScope.scopeId, resolvedScope.sessionId]
-              : [resolvedScope.scopeId],
+          in: [resolvedScope.scopeId, ...resolvedScope.legacyScopeIds],
         },
         key: {
           in: keys,

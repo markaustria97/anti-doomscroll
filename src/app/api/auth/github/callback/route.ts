@@ -1,13 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  APP_STATE_SESSION_MAX_AGE,
-  APP_STATE_USER_COOKIE,
-} from "@/lib/app-state";
 
 const OAUTH_STATE_COOKIE = "copilot_oauth_state";
 const OAUTH_RETURN_TO_COOKIE = "copilot_oauth_return_to";
 const OAUTH_TOKEN_COOKIE = "copilot_github_token";
-const GITHUB_USER_ENDPOINT = "https://api.github.com/user";
 
 export async function GET(request: NextRequest) {
   const secureCookies = process.env.NODE_ENV === "production";
@@ -69,19 +64,6 @@ export async function GET(request: NextRequest) {
   const returnTo = request.cookies.get(OAUTH_RETURN_TO_COOKIE)?.value || "/";
   const safeReturnTo = returnTo.startsWith("/") ? returnTo : "/";
 
-  const githubUserResponse = await fetch(GITHUB_USER_ENDPOINT, {
-    headers: {
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${data.access_token}`,
-      "X-GitHub-Api-Version": "2022-11-28",
-    },
-    cache: "no-store",
-  });
-
-  const githubUser = githubUserResponse.ok
-    ? ((await githubUserResponse.json()) as { id?: number })
-    : null;
-
   const response = NextResponse.redirect(new URL(safeReturnTo, request.url));
   response.cookies.set(OAUTH_TOKEN_COOKIE, data.access_token, {
     httpOnly: true,
@@ -90,15 +72,6 @@ export async function GET(request: NextRequest) {
     path: "/",
     maxAge: 60 * 60 * 24 * 30,
   });
-  if (typeof githubUser?.id === "number") {
-    response.cookies.set(APP_STATE_USER_COOKIE, `github:${githubUser.id}`, {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: secureCookies,
-      path: "/",
-      maxAge: APP_STATE_SESSION_MAX_AGE,
-    });
-  }
   response.cookies.delete(OAUTH_STATE_COOKIE);
   response.cookies.delete(OAUTH_RETURN_TO_COOKIE);
 

@@ -1,7 +1,7 @@
 "use client";
 
-import type { AppStateEntry } from "@/lib/app-state";
 import { useDebouncedEffect } from "@/hooks/useDebouncedEffect";
+import type { AppStateEntry } from "@/lib/app-state";
 import {
   deleteAppState,
   readAppState,
@@ -9,10 +9,10 @@ import {
 } from "@/lib/app-state-client";
 import {
   createChallengeReference,
-  getProgressionForChallengeCount,
   getChallengeStarterModeLabel,
   getChallengeTrackLabel,
   getChallengeUiScopeLabel,
+  getProgressionForChallengeCount,
   isChallengeAiUsage,
   isChallengeReviewResult,
   isGeneratedChallenge,
@@ -1225,7 +1225,7 @@ export function ChallengeLab({
         </div>
 
         <div className="rounded-2xl border border-(--border) bg-(--bg-card) px-4 py-3 text-sm text-(--text-muted)">
-          <div>Progress syncs when you are signed in.</div>
+          <div>Progress is shared across all sessions and browsers.</div>
           <div className="mt-1 text-xs uppercase tracking-[0.16em] text-(--accent)">
             Model: {copilotModel || "gpt-5-mini"}
           </div>

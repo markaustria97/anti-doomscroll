@@ -1,15 +1,13 @@
-import { CopilotClient } from "@github/copilot-sdk";
-import type { PermissionRequestResult } from "@github/copilot-sdk";
+import {
+  DEFAULT_COPILOT_MODEL,
+  OAUTH_TOKEN_COOKIE,
+  runCopilotPrompt,
+} from "@/lib/copilot";
 import { NextRequest, NextResponse } from "next/server";
-import { existsSync } from "node:fs";
-import path from "node:path";
 
 export const runtime = "nodejs";
 
-const DEFAULT_MODEL =
-  process.env.COPILOT_CHALLENGE_MODEL?.trim() || "gpt-5-mini";
 const MAX_INPUT_LENGTH = 12000;
-const OAUTH_TOKEN_COOKIE = "copilot_github_token";
 
 type AssistantMode = "review" | "hint";
 type LearnerLevel = "beginner" | "intermediate" | "advanced";
@@ -23,38 +21,6 @@ interface ChallengeRequestBody {
   solutionMarkdown?: string;
   userCode?: string;
   learnerLevel?: LearnerLevel;
-}
-
-const denyAllPermissions = (): PermissionRequestResult => ({
-  kind: "denied-by-rules",
-  rules: [],
-});
-
-function resolveCliPath(): string {
-  const configuredPath = process.env.COPILOT_CLI_PATH?.trim();
-  if (configuredPath) {
-    return configuredPath;
-  }
-
-  const platform = process.platform;
-  const arch = process.arch;
-  const basePath = path.join(process.cwd(), "node_modules", "@github");
-
-  const platformBinaryMap: Record<string, string> = {
-    "linux:x64": path.join(basePath, "copilot-linux-x64", "copilot"),
-    "linux:arm64": path.join(basePath, "copilot-linux-arm64", "copilot"),
-    "win32:x64": path.join(basePath, "copilot-win32-x64", "copilot.exe"),
-    "win32:arm64": path.join(basePath, "copilot-win32-arm64", "copilot.exe"),
-    "darwin:x64": path.join(basePath, "copilot-darwin-x64", "copilot"),
-    "darwin:arm64": path.join(basePath, "copilot-darwin-arm64", "copilot"),
-  };
-
-  const resolvedBinary = platformBinaryMap[`${platform}:${arch}`];
-  if (resolvedBinary && existsSync(resolvedBinary)) {
-    return resolvedBinary;
-  }
-
-  return "copilot";
 }
 
 function isValidMode(value: string | undefined): value is AssistantMode {
@@ -195,12 +161,6 @@ export async function POST(request: NextRequest) {
 
     const stream = new ReadableStream<Uint8Array>({
       async start(controller) {
-        let client: CopilotClient | null = null;
-        let session: Awaited<
-          ReturnType<CopilotClient["createSession"]>
-        > | null = null;
-        let streamedFeedback = "";
-        let finalFeedback = "";
         const updatedAt = new Date().toISOString();
 
         const sendEvent = (event: Record<string, string>) => {
@@ -208,46 +168,6 @@ export async function POST(request: NextRequest) {
         };
 
         try {
-          client = new CopilotClient({
-            cliPath: resolveCliPath(),
-            githubToken,
-            useLoggedInUser: false,
-            env: {
-              ...process.env,
-              COPILOT_GITHUB_TOKEN: githubToken,
-              HOME: process.env.HOME ?? "/tmp",
-            },
-          });
-          session = await client.createSession({
-            model: DEFAULT_MODEL,
-            infiniteSessions: { enabled: false },
-            streaming: true,
-            onPermissionRequest: denyAllPermissions,
-            systemMessage: {
-              content: [
-                "You are evaluating learner-submitted JavaScript and TypeScript challenge answers.",
-                "Never execute code, modify files, browse the web, or rely on tools.",
-                "Prefer short, corrective feedback over long explanations.",
-              ].join("\n"),
-            },
-          });
-
-          session.on("assistant.message_delta", (event) => {
-            streamedFeedback += event.data.deltaContent;
-            sendEvent({
-              type: "delta",
-              delta: event.data.deltaContent,
-            });
-          });
-
-          session.on("assistant.message", (event) => {
-            finalFeedback = event.data.content.trim();
-          });
-
-          session.on("session.error", (error) => {
-            console.error("[Copilot Challenge] Session error event:", error);
-          });
-
           const promptText = buildPrompt({
             mode,
             learnerLevel,
@@ -257,17 +177,34 @@ export async function POST(request: NextRequest) {
             userCode,
           });
 
-          await session.sendAndWait({ prompt: promptText }, 45000);
+          const copilotResult = await runCopilotPrompt({
+            githubToken,
+            model: DEFAULT_COPILOT_MODEL,
+            prompt: promptText,
+            timeoutMs: 45000,
+            systemMessage: [
+              "You are evaluating learner-submitted JavaScript and TypeScript challenge answers.",
+              "Never execute code, modify files, browse the web, or rely on tools.",
+              "Prefer short, corrective feedback over long explanations.",
+            ].join("\n"),
+            onDelta(delta) {
+              sendEvent({
+                type: "delta",
+                delta,
+              });
+            },
+          });
 
-          const feedback = (finalFeedback || streamedFeedback).trim();
+          const feedback = copilotResult.message.trim();
 
           if (!feedback) {
             throw new Error("Copilot returned an empty response.");
           }
+
           sendEvent({
             type: "complete",
             feedback,
-            model: DEFAULT_MODEL,
+            model: DEFAULT_COPILOT_MODEL,
             mode,
             learnerLevel,
             updatedAt,
@@ -287,21 +224,6 @@ export async function POST(request: NextRequest) {
             error: "Error: " + message,
           });
         } finally {
-          if (session) {
-            await session.disconnect().catch((err) => {
-              console.warn(
-                "[Copilot Challenge] Error disconnecting session:",
-                err
-              );
-            });
-          }
-
-          if (client) {
-            await client.stop().catch((err) => {
-              console.warn("[Copilot Challenge] Error stopping client:", err);
-            });
-          }
-
           controller.close();
         }
       },

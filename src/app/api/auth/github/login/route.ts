@@ -1,5 +1,5 @@
-import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
+import { randomUUID } from "node:crypto";
 
 const OAUTH_STATE_COOKIE = "copilot_oauth_state";
 const OAUTH_RETURN_TO_COOKIE = "copilot_oauth_return_to";
