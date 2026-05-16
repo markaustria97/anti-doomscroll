@@ -97,24 +97,25 @@ function selectRepresentativeTopicKeys({
 
   const startIndex = (challengeCount * MAX_TOPIC_COUNT) % groupCatalog.length;
 
-  return [...groupCatalog.slice(startIndex), ...groupCatalog.slice(0, startIndex)]
+  return [
+    ...groupCatalog.slice(startIndex),
+    ...groupCatalog.slice(0, startIndex),
+  ]
     .slice(0, MAX_TOPIC_COUNT)
     .map((topic) => topic.key);
 }
 
-function buildTopicContext(
-  {
-    groupLabel,
-    groupTitle,
-    groupDescription,
-    contexts,
-  }: {
-    groupLabel: string;
-    groupTitle: string;
-    groupDescription: string;
-    contexts: ReturnType<typeof getChallengeTopicContexts>;
-  }
-): string {
+function buildTopicContext({
+  groupLabel,
+  groupTitle,
+  groupDescription,
+  contexts,
+}: {
+  groupLabel: string;
+  groupTitle: string;
+  groupDescription: string;
+  contexts: ReturnType<typeof getChallengeTopicContexts>;
+}): string {
   return [
     `Group: ${groupLabel} — ${groupTitle}`,
     `Description: ${groupDescription}`,
@@ -299,12 +300,12 @@ function buildPrompt({
     "Keep the instructions concrete and testable.",
     "Provide a correct reference solution.",
     "Make the starter code incomplete but runnable after basic edits.",
-        "Use `passCriteria` as the challenge specs section: concise, verifiable implementation requirements.",
+    "Use `passCriteria` as the challenge specs section: concise, verifiable implementation requirements.",
     "Use this JSON schema exactly:",
     '{"title":"string","summary":"string","challengeKind":"logic|ui-react-tailwind","language":"js|jsx|ts|tsx","instructionsMarkdown":"string","starterCode":"string","referenceSolution":"string","previewCode":"string|null","passCriteria":["string"],"reviewFocus":["string"],"estimatedMinutes":25}',
-        `Automatic progression stage: ${progressionLabel}`,
+    `Automatic progression stage: ${progressionLabel}`,
     `Learner level: ${learnerLevel}`,
-        "Group context:",
+    "Group context:",
     topicContext,
   ].join("\n\n");
 }
@@ -455,7 +456,9 @@ export async function POST(request: NextRequest) {
 
     if (representativeTopicKeys.length === 0) {
       return NextResponse.json(
-        { error: "The selected group does not have any challenge context yet." },
+        {
+          error: "The selected group does not have any challenge context yet.",
+        },
         { status: 400 }
       );
     }

@@ -77,7 +77,9 @@ function isErrorEvent(value: unknown): value is ErrorEvent {
   );
 }
 
-function isGenerateCompleteEvent(value: unknown): value is GenerateCompleteEvent {
+function isGenerateCompleteEvent(
+  value: unknown
+): value is GenerateCompleteEvent {
   return (
     Boolean(value) &&
     typeof value === "object" &&
@@ -211,7 +213,9 @@ export async function readGeneratedChallengeStream({
 
       if (isGenerateCompleteEvent(event)) {
         if (!isGeneratedChallenge(event.challenge)) {
-          throw new Error("Challenge generation stream returned an invalid payload.");
+          throw new Error(
+            "Challenge generation stream returned an invalid payload."
+          );
         }
 
         generatedChallenge = event.challenge;
@@ -221,7 +225,9 @@ export async function readGeneratedChallengeStream({
   });
 
   if (!generatedChallenge) {
-    throw new Error("Challenge generation ended before a challenge was returned.");
+    throw new Error(
+      "Challenge generation ended before a challenge was returned."
+    );
   }
 
   return {
@@ -278,7 +284,9 @@ export async function readReviewStream({
 
       if (isReviewCompleteEvent(event)) {
         if (!isChallengeReviewResult(event.review)) {
-          throw new Error("Challenge review stream returned an invalid payload.");
+          throw new Error(
+            "Challenge review stream returned an invalid payload."
+          );
         }
 
         reviewResult = event.review;

@@ -134,7 +134,8 @@ export function isGeneratedChallenge(
     typeof candidate.title === "string" &&
     typeof candidate.summary === "string" &&
     isValidLearnerLevel(candidate.learnerLevel) &&
-    (candidate.groupId === undefined || typeof candidate.groupId === "string") &&
+    (candidate.groupId === undefined ||
+      typeof candidate.groupId === "string") &&
     (candidate.groupLabel === undefined ||
       typeof candidate.groupLabel === "string") &&
     (candidate.groupTitle === undefined ||
@@ -214,5 +215,8 @@ export function createChallengeReference({
   title,
   summary,
 }: Pick<GeneratedChallenge, "title" | "summary">): string {
-  return [title.trim(), summary.trim()].filter(Boolean).join(" :: ").slice(0, 240);
+  return [title.trim(), summary.trim()]
+    .filter(Boolean)
+    .join(" :: ")
+    .slice(0, 240);
 }

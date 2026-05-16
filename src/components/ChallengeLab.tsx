@@ -914,7 +914,10 @@ export function ChallengeLab({
   );
 
   const progression = useMemo(
-    () => getProgressionForChallengeCount(currentHistoryEntry.createdChallenges.length),
+    () =>
+      getProgressionForChallengeCount(
+        currentHistoryEntry.createdChallenges.length
+      ),
     [currentHistoryEntry.createdChallenges.length]
   );
   const generatedChallengeCount = currentHistoryEntry.createdChallenges.length;
