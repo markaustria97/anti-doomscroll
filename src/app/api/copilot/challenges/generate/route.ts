@@ -505,7 +505,7 @@ export async function POST(request: NextRequest) {
         });
 
         try {
-          const rawResponse = await runCopilotPrompt({
+          const copilotResult = await runCopilotPrompt({
             githubToken,
             prompt,
             timeoutMs: GENERATION_TIMEOUT_MS,
@@ -524,7 +524,7 @@ export async function POST(request: NextRequest) {
             },
           });
           const challenge = normalizeGeneratedChallenge({
-            value: extractJsonPayload(rawResponse),
+            value: extractJsonPayload(copilotResult.message),
             learnerLevel,
             selectedSubtopics: toSelectedSubtopics(contexts),
             uiPreferred,
@@ -537,6 +537,7 @@ export async function POST(request: NextRequest) {
             type: "complete",
             challenge,
             model: DEFAULT_COPILOT_MODEL,
+            usage: copilotResult.usage,
           });
         } catch (error) {
           const message =

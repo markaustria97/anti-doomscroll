@@ -1,6 +1,8 @@
 import {
+  isChallengeAiUsage,
   isChallengeReviewResult,
   isGeneratedChallenge,
+  type ChallengeAiUsage,
   type ChallengeGenerationRequest,
   type ChallengeReviewRequest,
   type ChallengeReviewResult,
@@ -31,6 +33,7 @@ interface GenerateCompleteEvent extends StreamEventBase {
   type: "complete";
   challenge: unknown;
   model?: string;
+  usage?: unknown;
 }
 
 interface ReviewCompleteEvent extends StreamEventBase {
@@ -174,6 +177,7 @@ export async function readGeneratedChallengeStream({
 }): Promise<{
   challenge: GeneratedChallenge;
   model: string | null;
+  usage: ChallengeAiUsage | null;
 }> {
   const response = await fetch("/api/copilot/challenges/generate", {
     method: "POST",
@@ -193,6 +197,7 @@ export async function readGeneratedChallengeStream({
 
   let generatedChallenge: GeneratedChallenge | null = null;
   let model: string | null = null;
+  let usage: ChallengeAiUsage | null = null;
 
   await consumeNdjsonStream({
     response,
@@ -220,6 +225,7 @@ export async function readGeneratedChallengeStream({
 
         generatedChallenge = event.challenge;
         model = typeof event.model === "string" ? event.model : null;
+        usage = isChallengeAiUsage(event.usage) ? event.usage : null;
       }
     },
   });
@@ -233,6 +239,7 @@ export async function readGeneratedChallengeStream({
   return {
     challenge: generatedChallenge,
     model,
+    usage,
   };
 }
 

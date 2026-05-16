@@ -1,7 +1,36 @@
 "use client";
 
 import type { ChallengeLanguage } from "@/lib/challenge-lab";
+import type { Monaco } from "@monaco-editor/react";
 import dynamic from "next/dynamic";
+
+const JSX_TYPES_PATH = "file:///challenge-lab/react-jsx-runtime.d.ts";
+const JSX_TYPES_SOURCE = `declare module "react" {
+  const React: any;
+  export default React;
+  export const Fragment: any;
+  export const useEffect: any;
+  export const useMemo: any;
+  export const useRef: any;
+  export const useState: any;
+  export const useReducer: any;
+  export const startTransition: any;
+}
+
+declare module "react/jsx-runtime" {
+  export const Fragment: any;
+  export function jsx(type: any, props: any, key?: any): any;
+  export function jsxs(type: any, props: any, key?: any): any;
+}
+
+declare namespace JSX {
+  interface IntrinsicElements {
+    [elementName: string]: any;
+  }
+}
+`;
+
+let isMonacoConfigured = false;
 
 const Editor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
@@ -49,6 +78,51 @@ function getEditorModel(language: ChallengeLanguage): {
   };
 }
 
+function configureMonaco(monaco: Monaco) {
+  if (isMonacoConfigured) {
+    return;
+  }
+
+  const compilerOptions = {
+    allowJs: true,
+    allowNonTsExtensions: true,
+    esModuleInterop: true,
+    isolatedModules: true,
+    jsx: monaco.languages.typescript.JsxEmit.ReactJSX,
+    jsxImportSource: "react",
+    lib: ["dom", "es2020"],
+    module: monaco.languages.typescript.ModuleKind.ESNext,
+    moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+    noEmit: true,
+    target: monaco.languages.typescript.ScriptTarget.ES2020,
+  };
+
+  monaco.languages.typescript.typescriptDefaults.setCompilerOptions(
+    compilerOptions
+  );
+  monaco.languages.typescript.javascriptDefaults.setCompilerOptions(
+    compilerOptions
+  );
+  monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+    noSemanticValidation: false,
+    noSyntaxValidation: false,
+  });
+  monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+    noSemanticValidation: false,
+    noSyntaxValidation: false,
+  });
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    JSX_TYPES_SOURCE,
+    JSX_TYPES_PATH
+  );
+  monaco.languages.typescript.javascriptDefaults.addExtraLib(
+    JSX_TYPES_SOURCE,
+    JSX_TYPES_PATH
+  );
+
+  isMonacoConfigured = true;
+}
+
 export function MonacoCodeEditor({
   language,
   value,
@@ -59,6 +133,7 @@ export function MonacoCodeEditor({
   return (
     <div className="mt-3 overflow-hidden rounded-2xl border border-(--border) bg-[#111317]">
       <Editor
+        beforeMount={configureMonaco}
         height="32rem"
         language={model.language}
         path={model.path}

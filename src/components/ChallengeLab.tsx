@@ -3,8 +3,10 @@
 import {
   createChallengeReference,
   getProgressionForChallengeCount,
+  isChallengeAiUsage,
   isChallengeReviewResult,
   isGeneratedChallenge,
+  type ChallengeAiUsage,
   type ChallengeProgression,
   type ChallengeReviewResult,
   type GeneratedChallenge,
@@ -56,7 +58,12 @@ type PersistedSession = {
   review: ChallengeReviewResult | null;
   attemptCount: number;
   copilotModel: string | null;
+  generationUsage: ChallengeAiUsage | null;
 };
+
+function formatCount(value: number | undefined): string | null {
+  return typeof value === "number" ? value.toLocaleString() : null;
+}
 
 const progressionCopy: Record<
   ChallengeProgression,
@@ -136,7 +143,10 @@ function isPersistedSession(value: unknown): value is PersistedSession {
     typeof candidate.attemptCount === "number" &&
     (candidate.copilotModel === null ||
       candidate.copilotModel === undefined ||
-      typeof candidate.copilotModel === "string")
+      typeof candidate.copilotModel === "string") &&
+    (candidate.generationUsage === null ||
+      candidate.generationUsage === undefined ||
+      isChallengeAiUsage(candidate.generationUsage))
   );
 }
 
@@ -409,7 +419,7 @@ function ScopeSidebar({
         </div>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
+      <section className="grid gap-4 md:grid-cols-3 2xl:grid-cols-1">
         <div className="rounded-2xl border border-(--border) bg-(--bg-card) p-5">
           <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
             Created
@@ -436,13 +446,14 @@ function ScopeSidebar({
 
         <div className="rounded-2xl border border-(--border) bg-(--bg-card) p-5">
           <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
-            In Group
+            Context Pool
           </p>
           <div className="mt-3 text-3xl font-semibold text-white">
             {selectedGroupTopicCount}
           </div>
           <p className="mt-2 text-sm leading-6 text-(--text-muted)">
-            Topics available in the currently selected study group.
+            Informational only. The generator samples context from this group,
+            but this count does not directly change challenge size.
           </p>
         </div>
       </section>
@@ -452,11 +463,13 @@ function ScopeSidebar({
 
 type ChallengeSummaryCardProps = Readonly<{
   challenge: GeneratedChallenge;
+  generationUsage: ChallengeAiUsage | null;
   userCode: string;
 }>;
 
 function ChallengeSummaryCard({
   challenge,
+  generationUsage,
   userCode,
 }: ChallengeSummaryCardProps) {
   const isUiChallenge = challenge.challengeKind === "ui-react-tailwind";
@@ -470,6 +483,9 @@ function ChallengeSummaryCard({
   const progressionTitle = challenge.progressionLabel
     ? progressionCopy[challenge.progressionLabel].label
     : null;
+  const totalTokens = formatCount(generationUsage?.totalTokens);
+  const inputTokens = formatCount(generationUsage?.inputTokens);
+  const outputTokens = formatCount(generationUsage?.outputTokens);
 
   return (
     <>
@@ -489,6 +505,14 @@ function ChallengeSummaryCard({
 
           <div className="rounded-2xl border border-(--border) bg-black/20 px-4 py-3 text-right text-sm text-(--text-muted)">
             <div>{challenge.estimatedMinutes} min target</div>
+            {totalTokens ? (
+              <div className="mt-1">{totalTokens} tokens</div>
+            ) : null}
+            {inputTokens || outputTokens ? (
+              <div className="mt-1 text-xs text-(--text-muted)">
+                {inputTokens || "0"} in / {outputTokens || "0"} out
+              </div>
+            ) : null}
             <div className="mt-1 text-xs uppercase tracking-[0.16em] text-(--accent)">
               {challengeKindLabel}
             </div>
@@ -820,6 +844,8 @@ export function ChallengeLab({
   const [review, setReview] = useState<ChallengeReviewResult | null>(null);
   const [attemptCount, setAttemptCount] = useState(0);
   const [copilotModel, setCopilotModel] = useState<string | null>(null);
+  const [generationUsage, setGenerationUsage] =
+    useState<ChallengeAiUsage | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isReviewing, setIsReviewing] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
@@ -849,6 +875,7 @@ export function ChallengeLab({
       setReview(storedSession.review ?? null);
       setAttemptCount(storedSession.attemptCount);
       setCopilotModel(storedSession.copilotModel ?? null);
+      setGenerationUsage(storedSession.generationUsage ?? null);
     }
 
     setIsHydrated(true);
@@ -891,6 +918,7 @@ export function ChallengeLab({
       review,
       attemptCount,
       copilotModel,
+      generationUsage,
     };
 
     localStorage.setItem(STORAGE_KEYS.session, JSON.stringify(session));
@@ -901,6 +929,7 @@ export function ChallengeLab({
     isHydrated,
     review,
     userCode,
+    generationUsage,
   ]);
 
   const selectedGroup = useMemo(
@@ -964,6 +993,7 @@ export function ChallengeLab({
       setReview(null);
       setAttemptCount(0);
       setCopilotModel(payload.model ?? copilotModel);
+      setGenerationUsage(payload.usage);
       setHistory((currentHistory) =>
         updateGeneratedHistory({
           history: currentHistory,
@@ -1042,7 +1072,7 @@ export function ChallengeLab({
   };
 
   return (
-    <main className="mx-auto min-h-screen max-w-7xl px-6 py-8 sm:px-12">
+    <main className="mx-auto min-h-screen w-full max-w-none px-4 py-6 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
       <header className="mb-10 flex flex-wrap items-end justify-between gap-6">
         <div>
           <Link
@@ -1065,10 +1095,15 @@ export function ChallengeLab({
           <div className="mt-1 text-xs uppercase tracking-[0.16em] text-(--accent)">
             Model: {copilotModel || "gpt-5-mini"}
           </div>
+          {generationUsage?.totalTokens ? (
+            <div className="mt-1 text-xs uppercase tracking-[0.16em] text-(--accent)">
+              Challenge tokens: {generationUsage.totalTokens.toLocaleString()}
+            </div>
+          ) : null}
         </div>
       </header>
 
-      <div className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
+      <div className="grid gap-6 2xl:grid-cols-[320px_minmax(0,1fr)] 2xl:items-start">
         <ScopeSidebar
           groups={groups}
           selectedGroupId={selectedGroupId}
@@ -1087,6 +1122,7 @@ export function ChallengeLab({
             <>
               <ChallengeSummaryCard
                 challenge={currentChallenge}
+                generationUsage={generationUsage}
                 userCode={userCode}
               />
               <ChallengeEditorCard

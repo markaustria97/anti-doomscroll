@@ -35,16 +35,39 @@ function buildPreviewDocument({
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
       html, body {
         margin: 0;
         min-height: 100%;
-        background: #09090b;
-        color: #f5f5f5;
+        background: #f8fafc;
+        color: #0f172a;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
 
       #root {
         min-height: 100vh;
+      }
+
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
+      }
+
+      input,
+      textarea,
+      select {
+        color: #0f172a;
+        caret-color: #0f172a;
+      }
+
+      ::placeholder {
+        color: #64748b;
+        opacity: 1;
       }
 
       .preview-error {
@@ -257,10 +280,10 @@ export function ChallengePreview({
             title={title}
             sandbox="allow-scripts"
             srcDoc={buildPreviewDocument({ title, compiledCode })}
-            className="h-90 w-full border-0 bg-[#09090b]"
+            className="h-[30rem] w-full border-0 bg-[#f8fafc] lg:h-[34rem]"
           />
         ) : (
-          <div className="flex h-90 items-center justify-center px-6 text-center">
+          <div className="flex h-[30rem] items-center justify-center px-6 text-center lg:h-[34rem]">
             <p
               className={`max-w-md text-sm leading-7 ${
                 error ? "text-red-200" : "text-(--text-muted)"

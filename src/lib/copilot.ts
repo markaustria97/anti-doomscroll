@@ -3,6 +3,7 @@ import { CopilotClient } from "@github/copilot-sdk";
 import { existsSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import type { ChallengeAiUsage } from "./challenge-lab";
 
 export const OAUTH_TOKEN_COOKIE = "copilot_github_token";
 export const DEFAULT_COPILOT_MODEL =
@@ -95,6 +96,46 @@ export function createCopilotClient(githubToken: string): CopilotClient {
   });
 }
 
+function toUsageSummary(event: {
+  data: {
+    inputTokens?: number;
+    outputTokens?: number;
+    duration?: number;
+    ttftMs?: number;
+    copilotUsage?: {
+      tokenDetails: Array<{
+        tokenCount: number;
+      }>;
+    };
+  };
+}): ChallengeAiUsage {
+  const inputTokens =
+    typeof event.data.inputTokens === "number"
+      ? event.data.inputTokens
+      : undefined;
+  const outputTokens =
+    typeof event.data.outputTokens === "number"
+      ? event.data.outputTokens
+      : undefined;
+  const totalTokens =
+    inputTokens !== undefined || outputTokens !== undefined
+      ? (inputTokens ?? 0) + (outputTokens ?? 0)
+      : event.data.copilotUsage?.tokenDetails.reduce(
+          (total, detail) => total + detail.tokenCount,
+          0
+        );
+
+  return {
+    inputTokens,
+    outputTokens,
+    totalTokens,
+    durationMs:
+      typeof event.data.duration === "number" ? event.data.duration : undefined,
+    ttftMs:
+      typeof event.data.ttftMs === "number" ? event.data.ttftMs : undefined,
+  };
+}
+
 export async function runCopilotPrompt({
   githubToken,
   model = DEFAULT_COPILOT_MODEL,
@@ -109,12 +150,16 @@ export async function runCopilotPrompt({
   systemMessage: string;
   timeoutMs?: number;
   onDelta?: (delta: string) => void;
-}): Promise<string> {
+}): Promise<{
+  message: string;
+  usage: ChallengeAiUsage | null;
+}> {
   const client = createCopilotClient(githubToken);
   let session: Awaited<ReturnType<CopilotClient["createSession"]>> | null =
     null;
   let finalMessage = "";
   let streamedMessage = "";
+  let usage: ChallengeAiUsage | null = null;
 
   try {
     session = await client.createSession({
@@ -136,6 +181,10 @@ export async function runCopilotPrompt({
       finalMessage = event.data.content.trim();
     });
 
+    session.on("assistant.usage", (event) => {
+      usage = toUsageSummary(event);
+    });
+
     session.on("session.error", (error) => {
       console.error("[Copilot] Session error event:", error);
     });
@@ -147,7 +196,10 @@ export async function runCopilotPrompt({
       throw new Error("Copilot returned an empty response.");
     }
 
-    return response;
+    return {
+      message: response,
+      usage,
+    };
   } finally {
     if (session) {
       await session.disconnect().catch((error) => {

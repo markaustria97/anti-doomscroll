@@ -5,6 +5,14 @@ export type ChallengeKind = "logic" | "ui-react-tailwind";
 export type ChallengeLanguage = "js" | "jsx" | "ts" | "tsx";
 export type ChallengeProgression = "foundation" | "core" | "stretch";
 
+export interface ChallengeAiUsage {
+  inputTokens?: number;
+  outputTokens?: number;
+  totalTokens?: number;
+  durationMs?: number;
+  ttftMs?: number;
+}
+
 export type ChallengeSubtopic = Pick<
   ChallengeCatalogTopic,
   | "key"
@@ -68,6 +76,26 @@ export interface ChallengeReviewRequest {
 function isStringArray(value: unknown): value is string[] {
   return (
     Array.isArray(value) && value.every((item) => typeof item === "string")
+  );
+}
+
+export function isChallengeAiUsage(value: unknown): value is ChallengeAiUsage {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const candidate = value as Partial<ChallengeAiUsage>;
+
+  return (
+    (candidate.inputTokens === undefined ||
+      typeof candidate.inputTokens === "number") &&
+    (candidate.outputTokens === undefined ||
+      typeof candidate.outputTokens === "number") &&
+    (candidate.totalTokens === undefined ||
+      typeof candidate.totalTokens === "number") &&
+    (candidate.durationMs === undefined ||
+      typeof candidate.durationMs === "number") &&
+    (candidate.ttftMs === undefined || typeof candidate.ttftMs === "number")
   );
 }
 

@@ -168,7 +168,7 @@ export async function POST(request: NextRequest) {
         });
 
         try {
-          const rawResponse = await runCopilotPrompt({
+          const copilotResult = await runCopilotPrompt({
             githubToken,
             prompt,
             systemMessage: [
@@ -184,7 +184,9 @@ export async function POST(request: NextRequest) {
               });
             },
           });
-          const review = normalizeReviewResult(extractJsonPayload(rawResponse));
+          const review = normalizeReviewResult(
+            extractJsonPayload(copilotResult.message)
+          );
 
           sendEvent({
             type: "complete",
