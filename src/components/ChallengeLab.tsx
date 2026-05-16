@@ -40,8 +40,6 @@ const STORAGE_KEYS = {
   archive: "challenge-lab:archive",
 } as const;
 
-const MAX_SAVED_SESSIONS_PER_GROUP = 12;
-
 type GroupSummary = {
   id: string;
   label: string;
@@ -98,7 +96,7 @@ const progressionCopy: Record<
   },
   stretch: {
     label: "Stretch round",
-    description: "Harder variants after the core patterns are covered.",
+    description: "Harder variants continue after 5+ passed challenges.",
   },
 };
 
@@ -211,7 +209,7 @@ function upsertSavedSession({
     ...currentSessions.filter(
       (entry) => entry.challenge.id !== session.challenge.id
     ),
-  ].slice(0, MAX_SAVED_SESSIONS_PER_GROUP);
+  ];
 
   return {
     ...archive,
@@ -407,14 +405,19 @@ function formatSavedSessionTime(value: string): string {
   });
 }
 
+function truncateCardText(value: string, maxLength: number): string {
+  const normalized = value.replace(/\s+/g, " ").trim();
+  if (normalized.length <= maxLength) {
+    return normalized;
+  }
+
+  return `${normalized.slice(0, maxLength).trimEnd()}...`;
+}
+
 type ScopeSidebarProps = Readonly<{
   groups: GroupSummary[];
   selectedGroupId: string | null;
   progressionLabel: ChallengeProgression;
-  nextChallengeNumber: number;
-  generatedChallengeCount: number;
-  passedChallengeCount: number;
-  selectedGroupTopicCount: number;
   savedSessions: SavedChallengeSession[];
   activeChallengeId: string | null;
   isGenerating: boolean;
@@ -427,10 +430,6 @@ function ScopeSidebar({
   groups,
   selectedGroupId,
   progressionLabel,
-  nextChallengeNumber,
-  generatedChallengeCount,
-  passedChallengeCount,
-  selectedGroupTopicCount,
   savedSessions,
   activeChallengeId,
   isGenerating,
@@ -441,71 +440,82 @@ function ScopeSidebar({
   const activeGroup =
     groups.find((group) => group.id === selectedGroupId) ?? null;
   const progression = progressionCopy[progressionLabel];
-  const stats = [
-    {
-      label: "Created",
-      value: generatedChallengeCount.toLocaleString(),
-      description: "Saved to prevent duplicate prompts.",
-    },
-    {
-      label: "Passed",
-      value: passedChallengeCount.toLocaleString(),
-      description: "Passed reviews in this group.",
-    },
-    {
-      label: "Context Pool",
-      value: selectedGroupTopicCount.toLocaleString(),
-      description: "Topics available for generation context.",
-    },
-  ];
 
   return (
     <aside className="space-y-6">
       <section className="rounded-2xl border border-(--border) bg-(--bg-card) p-5">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
-              Challenge Scope
-            </p>
-            <h2 className="mt-2 text-xl font-semibold text-white">
-              Interview sequence
-            </h2>
-          </div>
-          <span className="rounded-full border border-(--border) px-3 py-1 text-xs text-(--text-muted)">
-            Challenge #{nextChallengeNumber}
-          </span>
+        <div>
+          <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
+            Challenge Scope
+          </p>
+          <h2 className="mt-2 text-xl font-semibold text-white">
+            Interview sequence
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-(--text-muted)">
+            Generate the next challenge for the active tech group and keep
+            iterating until review passes.
+          </p>
         </div>
 
         <div className="mt-5 rounded-2xl border border-(--border) bg-black/20 p-4">
-          <div className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
-            Current progression
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full border border-(--border) px-3 py-1 text-[11px] uppercase tracking-[0.14em] text-(--accent)">
+              {progression.label}
+            </span>
+            {activeGroup ? (
+              <span className="rounded-full border border-(--border) px-3 py-1 text-[11px] uppercase tracking-[0.14em] text-(--text-muted)">
+                {activeGroup.title}
+              </span>
+            ) : null}
           </div>
-          <div className="mt-2 text-lg font-semibold text-white">
-            {progression.label}
-          </div>
-          <div className="mt-2 text-sm leading-6 text-(--text-muted)">
-            {progression.description}
+          <div className="mt-3 text-sm leading-6 text-(--text-muted)">
+            {activeGroup
+              ? `${progression.description} ${activeGroup.description}`
+              : "Pick one group to scope the next challenge."}
           </div>
         </div>
 
-        <div className="mt-4 rounded-2xl border border-(--border) bg-black/20 p-4">
-          <div className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
-            Selected group
+        <div className="mt-5 border-t border-(--border) pt-5">
+          <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
+            Tech Groups
+          </p>
+          <p className="mt-2 text-sm leading-6 text-(--text-muted)">
+            Select one track to define the challenge sequence.
+          </p>
+
+          <div className="mt-4 grid gap-2">
+            {groups.map((group) => {
+              const isActive = selectedGroupId === group.id;
+              const description = truncateCardText(group.description, 88);
+
+              return (
+                <button
+                  key={group.id}
+                  type="button"
+                  onClick={() => onSelectGroup(group.id)}
+                  className={`w-full rounded-xl border px-3 py-3 text-left transition-colors ${
+                    isActive
+                      ? "border-(--accent-dim) bg-(--accent-dim)/10"
+                      : "border-(--border) hover:border-(--accent-dim)"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-semibold text-white">
+                        {group.title}
+                      </div>
+                      <div className="mt-1 text-xs leading-5 text-(--text-muted)">
+                        {description}
+                      </div>
+                    </div>
+                    <span className="shrink-0 rounded-full border border-(--border) px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-(--text-muted)">
+                      {isActive ? "Active" : `${group.dayCount}d`}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
           </div>
-          {activeGroup ? (
-            <>
-              <div className="mt-2 text-sm font-semibold text-white">
-                {activeGroup.title}
-              </div>
-              <div className="mt-2 text-sm leading-6 text-(--text-muted)">
-                {activeGroup.description}
-              </div>
-            </>
-          ) : (
-            <div className="mt-2 text-sm leading-6 text-(--text-muted)">
-              Pick one group to scope the next challenge.
-            </div>
-          )}
         </div>
 
         <button
@@ -520,82 +530,25 @@ function ScopeSidebar({
 
       <section className="rounded-2xl border border-(--border) bg-(--bg-card) p-5">
         <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
-          Tech Groups
+          Previous Challenges
         </p>
         <h2 className="mt-2 text-xl font-semibold text-white">
-          Choose one group
+          Resume saved work
         </h2>
         <p className="mt-2 text-sm leading-6 text-(--text-muted)">
-          Generate interview-style challenges for one track at a time.
+          Reopen any previously generated challenge with its latest saved draft,
+          review result, and working state.
         </p>
 
-        <div className="mt-5 space-y-3">
-          {groups.map((group) => {
-            const isActive = selectedGroupId === group.id;
-
-            return (
-              <button
-                key={group.id}
-                type="button"
-                onClick={() => onSelectGroup(group.id)}
-                className={`w-full rounded-2xl border px-4 py-4 text-left transition-colors ${
-                  isActive
-                    ? "border-(--accent-dim) bg-(--accent-dim)/10"
-                    : "border-(--border) hover:border-(--accent-dim)"
-                }`}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <div className="text-sm font-semibold text-white">
-                      {group.title}
-                    </div>
-                    <div className="mt-2 text-sm leading-6 text-(--text-muted)">
-                      {group.description}
-                    </div>
-                  </div>
-                  <span className="shrink-0 text-xs text-(--text-muted)">
-                    {group.topicCount} topics
-                  </span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-2xl border border-(--border) bg-(--bg-card) p-5"
-          >
-            <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
-              {stat.label}
-            </p>
-            <div className="mt-3 text-3xl font-semibold text-white">
-              {stat.value}
-            </div>
-            <p className="mt-2 text-sm leading-6 text-(--text-muted)">
-              {stat.description}
-            </p>
-          </div>
-        ))}
-      </section>
-
-      <section className="rounded-2xl border border-(--border) bg-(--bg-card) p-5">
-        <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
-          Saved Challenges
-        </p>
-        <h2 className="mt-2 text-xl font-semibold text-white">Return later</h2>
-        <p className="mt-2 text-sm leading-6 text-(--text-muted)">
-          Restore a previous generated challenge together with the latest saved
-          draft solution.
-        </p>
-
-        <div className="mt-5 space-y-3">
+        <div className="mt-5 max-h-[28rem] space-y-2 overflow-y-auto pr-1">
           {savedSessions.length > 0 ? (
             savedSessions.map((session) => {
               const isCurrent = session.challenge.id === activeChallengeId;
+              const trackLabel = getChallengeTrackLabel(
+                session.challenge.challengeTrack,
+                session.challenge.challengeKind
+              );
+              const summary = truncateCardText(session.challenge.summary, 92);
 
               return (
                 <button
@@ -603,35 +556,40 @@ function ScopeSidebar({
                   type="button"
                   onClick={() => onRestoreSession(session)}
                   disabled={isCurrent}
-                  className={`w-full rounded-2xl border px-4 py-4 text-left transition-colors ${
+                  className={`w-full rounded-xl border px-3 py-3 text-left transition-colors ${
                     isCurrent
                       ? "border-(--accent-dim) bg-(--accent-dim)/10"
                       : "border-(--border) hover:border-(--accent-dim)"
                   } disabled:cursor-default disabled:opacity-100`}
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <div className="text-sm font-semibold text-white">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-semibold leading-5 text-white">
                         {session.challenge.title}
                       </div>
-                      <div className="mt-2 text-sm leading-6 text-(--text-muted)">
-                        {session.challenge.summary}
-                      </div>
+                      {summary ? (
+                        <div className="mt-1 text-xs leading-5 text-(--text-muted)">
+                          {summary}
+                        </div>
+                      ) : null}
                     </div>
-                    <span className="shrink-0 rounded-full border border-(--border) px-3 py-1 text-[11px] uppercase tracking-[0.14em] text-(--text-muted)">
+                    <span className="shrink-0 rounded-full border border-(--border) px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-(--text-muted)">
                       {isCurrent ? "Current" : getSavedSessionStatus(session)}
                     </span>
                   </div>
-                  <div className="mt-3 text-xs uppercase tracking-[0.14em] text-(--accent)">
-                    {formatSavedSessionTime(session.updatedAt)}
+                  <div className="mt-2 flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.14em]">
+                    <span className="text-(--accent)">
+                      {formatSavedSessionTime(session.updatedAt)}
+                    </span>
+                    <span className="text-(--text-muted)">{trackLabel}</span>
                   </div>
                 </button>
               );
             })
           ) : (
-            <div className="rounded-2xl border border-(--border) bg-black/20 px-4 py-4 text-sm leading-6 text-(--text-muted)">
-              Generated challenges for this group will appear here after you
-              start a session.
+            <div className="rounded-xl border border-(--border) bg-black/20 px-4 py-4 text-sm leading-6 text-(--text-muted)">
+              Saved challenge sessions for this group will appear here after you
+              generate your first challenge.
             </div>
           )}
         </div>
@@ -729,7 +687,7 @@ function ChallengeSummaryCard({
             <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
               Challenge brief
             </p>
-            <div className="markdown-body mt-4">
+            <div className="markdown-body mt-4 text-sm leading-7 text-(--text-muted)">
               <MarkdownRenderer content={challenge.instructionsMarkdown} />
             </div>
           </section>
@@ -1305,10 +1263,6 @@ export function ChallengeLab({
       ),
     [currentHistoryEntry.passedChallenges.length]
   );
-  const generatedChallengeCount = currentHistoryEntry.createdChallenges.length;
-  const passedChallengeCount = currentHistoryEntry.passedChallenges.length;
-  const selectedGroupTopicCount = selectedGroup?.topicCount ?? 0;
-  const nextChallengeNumber = generatedChallengeCount + 1;
   let reviewStatusLabel = "Awaiting review";
   if (review) {
     reviewStatusLabel = review.passed ? "Passed" : "Retry open";
@@ -1526,10 +1480,6 @@ export function ChallengeLab({
           groups={groups}
           selectedGroupId={selectedGroupId}
           progressionLabel={progression.progressionLabel}
-          nextChallengeNumber={nextChallengeNumber}
-          generatedChallengeCount={generatedChallengeCount}
-          passedChallengeCount={passedChallengeCount}
-          selectedGroupTopicCount={selectedGroupTopicCount}
           savedSessions={currentSavedSessions}
           activeChallengeId={currentChallenge?.id ?? null}
           isGenerating={isGenerating}
