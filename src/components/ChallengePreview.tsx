@@ -50,6 +50,74 @@ function buildPreviewDocument({
 
       #root {
         min-height: 100vh;
+        background:
+          radial-gradient(circle at top, rgba(37, 99, 235, 0.14), transparent 36%),
+          linear-gradient(180deg, #020617 0%, #050816 100%);
+        color: #e5eefb;
+      }
+
+      .bg-white,
+      .bg-slate-50,
+      .bg-slate-100,
+      .bg-gray-50,
+      .bg-gray-100,
+      .bg-zinc-50,
+      .bg-zinc-100,
+      .bg-neutral-50,
+      .bg-neutral-100,
+      .bg-stone-50,
+      .bg-stone-100 {
+        background-color: #0f172a !important;
+      }
+
+      .bg-blue-50,
+      .bg-sky-50,
+      .bg-indigo-50,
+      .bg-cyan-50 {
+        background-color: rgba(59, 130, 246, 0.18) !important;
+      }
+
+      .text-black,
+      .text-slate-900,
+      .text-slate-800,
+      .text-gray-900,
+      .text-gray-800,
+      .text-zinc-900,
+      .text-zinc-800,
+      .text-neutral-900,
+      .text-neutral-800,
+      .text-stone-900,
+      .text-stone-800 {
+        color: #e5eefb !important;
+      }
+
+      .text-slate-700,
+      .text-slate-600,
+      .text-slate-500,
+      .text-gray-700,
+      .text-gray-600,
+      .text-gray-500,
+      .text-zinc-700,
+      .text-zinc-600,
+      .text-neutral-700,
+      .text-neutral-600,
+      .text-stone-700,
+      .text-stone-600 {
+        color: #9fb3cf !important;
+      }
+
+      .border-white,
+      .border-slate-100,
+      .border-slate-200,
+      .border-gray-100,
+      .border-gray-200,
+      .border-zinc-100,
+      .border-zinc-200,
+      .border-neutral-100,
+      .border-neutral-200,
+      .border-stone-100,
+      .border-stone-200 {
+        border-color: rgba(148, 163, 184, 0.22) !important;
       }
 
       button,
@@ -71,6 +139,10 @@ function buildPreviewDocument({
       button {
         background: rgba(15, 23, 42, 0.88);
         color: #e5eefb;
+      }
+
+      button:disabled {
+        opacity: 0.58;
       }
 
       ::placeholder {

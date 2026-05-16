@@ -1,5 +1,12 @@
 "use client";
 
+import type { AppStateEntry } from "@/lib/app-state";
+import { useDebouncedEffect } from "@/hooks/useDebouncedEffect";
+import {
+  deleteAppState,
+  readAppState,
+  writeAppState,
+} from "@/lib/app-state-client";
 import type { ChallengeLanguage } from "@/lib/challenge-lab";
 import type { TopicChallenge } from "@/lib/content";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -86,6 +93,16 @@ const learnerLevelCopy: Record<
       "Be direct, stricter about edge cases, and closer to interview-style review.",
   },
 };
+
+function ignorePersistenceError(task: Promise<unknown>) {
+  void task.catch(() => undefined);
+}
+
+function isLearnerLevel(value: unknown): value is LearnerLevel {
+  return (
+    value === "beginner" || value === "intermediate" || value === "advanced"
+  );
+}
 
 function isChallengeAssistantResponse(
   value: unknown
@@ -391,55 +408,189 @@ export function ChallengeAssistant({
   const [error, setError] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    const savedDraft = localStorage.getItem(storageKey);
-    if (savedDraft) {
-      setUserCode(savedDraft);
-    }
+    let isCancelled = false;
 
-    const savedLevel = localStorage.getItem(levelStorageKey);
-    if (
-      savedLevel === "beginner" ||
-      savedLevel === "intermediate" ||
-      savedLevel === "advanced"
-    ) {
-      setLearnerLevel(savedLevel);
-    }
+    const hydrate = async () => {
+      try {
+        const storedValues = await readAppState([
+          storageKey,
+          responseStorageKey,
+          levelStorageKey,
+        ]);
 
-    const savedResponse = localStorage.getItem(responseStorageKey);
-    if (!savedResponse) {
-      return;
-    }
+        if (isCancelled) {
+          return;
+        }
 
-    try {
-      const parsedResponse = JSON.parse(savedResponse) as unknown;
+        const storedDraft =
+          typeof storedValues[storageKey] === "string"
+            ? storedValues[storageKey]
+            : null;
+        const legacyDraft = storedDraft
+          ? null
+          : localStorage.getItem(storageKey);
+        if (storedDraft || legacyDraft) {
+          setUserCode(storedDraft || legacyDraft || "");
+        }
 
-      if (isChallengeAssistantResponse(parsedResponse)) {
-        setAssistantReply(parsedResponse);
+        const storedLevelValue = storedValues[levelStorageKey];
+        const storedLevel = isLearnerLevel(storedLevelValue)
+          ? storedLevelValue
+          : null;
+        const legacyLevel = storedLevel
+          ? null
+          : localStorage.getItem(levelStorageKey);
+        const initialLevel =
+          storedLevel || (isLearnerLevel(legacyLevel) ? legacyLevel : null);
+        if (initialLevel) {
+          setLearnerLevel(initialLevel);
+        }
+
+        const storedResponse = isChallengeAssistantResponse(
+          storedValues[responseStorageKey]
+        )
+          ? storedValues[responseStorageKey]
+          : null;
+        let legacyResponse: ChallengeAssistantResponse | null = null;
+
+        if (!storedResponse) {
+          const savedResponse = localStorage.getItem(responseStorageKey);
+          if (savedResponse) {
+            try {
+              const parsedResponse = JSON.parse(savedResponse) as unknown;
+              if (isChallengeAssistantResponse(parsedResponse)) {
+                legacyResponse = parsedResponse;
+              }
+            } catch {
+              localStorage.removeItem(responseStorageKey);
+            }
+          }
+        }
+
+        if (storedResponse || legacyResponse) {
+          setAssistantReply(storedResponse || legacyResponse);
+        }
+
+        const migrationEntries: AppStateEntry[] = [];
+
+        if (!storedDraft && legacyDraft) {
+          migrationEntries.push({ key: storageKey, value: legacyDraft });
+        }
+
+        if (!storedLevel && isLearnerLevel(legacyLevel)) {
+          migrationEntries.push({ key: levelStorageKey, value: legacyLevel });
+        }
+
+        if (!storedResponse && legacyResponse) {
+          migrationEntries.push({
+            key: responseStorageKey,
+            value: legacyResponse,
+          });
+        }
+
+        if (migrationEntries.length > 0) {
+          ignorePersistenceError(writeAppState(migrationEntries));
+        }
+      } catch {
+        if (isCancelled) {
+          return;
+        }
+
+        const savedDraft = localStorage.getItem(storageKey);
+        if (savedDraft) {
+          setUserCode(savedDraft);
+        }
+
+        const savedLevel = localStorage.getItem(levelStorageKey);
+        if (isLearnerLevel(savedLevel)) {
+          setLearnerLevel(savedLevel);
+        }
+
+        const savedResponse = localStorage.getItem(responseStorageKey);
+        if (!savedResponse) {
+          return;
+        }
+
+        try {
+          const parsedResponse = JSON.parse(savedResponse) as unknown;
+
+          if (isChallengeAssistantResponse(parsedResponse)) {
+            setAssistantReply(parsedResponse);
+          }
+        } catch {
+          localStorage.removeItem(responseStorageKey);
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsHydrated(true);
+        }
       }
-    } catch {
-      localStorage.removeItem(responseStorageKey);
-    }
+    };
+
+    void hydrate();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [levelStorageKey, responseStorageKey, storageKey]);
 
-  useEffect(() => {
-    localStorage.setItem(storageKey, userCode);
-  }, [storageKey, userCode]);
+  useDebouncedEffect(
+    () => {
+      if (!isHydrated) {
+        return;
+      }
+
+      ignorePersistenceError(
+        writeAppState([
+          {
+            key: storageKey,
+            value: userCode,
+          },
+        ])
+      );
+    },
+    [isHydrated, storageKey, userCode],
+    400
+  );
 
   useEffect(() => {
-    localStorage.setItem(levelStorageKey, learnerLevel);
-  }, [learnerLevel, levelStorageKey]);
-
-  useEffect(() => {
-    if (!assistantReply) {
-      localStorage.removeItem(responseStorageKey);
+    if (!isHydrated) {
       return;
     }
 
-    localStorage.setItem(responseStorageKey, JSON.stringify(assistantReply));
-  }, [assistantReply, responseStorageKey]);
+    ignorePersistenceError(
+      writeAppState([
+        {
+          key: levelStorageKey,
+          value: learnerLevel,
+        },
+      ])
+    );
+  }, [isHydrated, learnerLevel, levelStorageKey]);
+
+  useEffect(() => {
+    if (!isHydrated || isStreaming) {
+      return;
+    }
+
+    if (!assistantReply) {
+      ignorePersistenceError(deleteAppState([responseStorageKey]));
+      return;
+    }
+
+    ignorePersistenceError(
+      writeAppState([
+        {
+          key: responseStorageKey,
+          value: assistantReply,
+        },
+      ])
+    );
+  }, [assistantReply, isHydrated, isStreaming, responseStorageKey]);
 
   useEffect(() => {
     return () => {

@@ -16,6 +16,7 @@
     "@github/copilot": "^1.0.34",
     "@github/copilot-sdk": "^0.2.2",
     "@monaco-editor/react": "^4.7.0",
+    "@prisma/client": "^6.11.1",
     "@serwist/turbopack": "^9.5.7",
     "esbuild": "^0.25.11",
     "monaco-editor": "^0.54.0",
@@ -31,7 +32,9 @@
     "@tailwindcss/postcss": "^4.2.2",
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
+    "dotenv": "^17.2.3",
     "postcss": "^8.5.10",
+    "prisma": "^6.11.1",
     "tailwindcss": "^4.2.2",
     "typescript": "^6.0.3"
   }

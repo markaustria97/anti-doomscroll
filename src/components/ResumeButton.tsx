@@ -1,14 +1,62 @@
 "use client";
 
+import { LAST_VISITED_STATE_KEY } from "@/lib/app-state";
+import { readAppState, writeAppState } from "@/lib/app-state-client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+
+function ignorePersistenceError(task: Promise<unknown>) {
+  void task.catch(() => undefined);
+}
 
 export function ResumeButton() {
   const [lastPath, setLastPath] = useState<string | null>(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem("lastVisited");
-    if (stored) setLastPath(stored);
+    let isCancelled = false;
+
+    const hydrate = async () => {
+      try {
+        const values = await readAppState([LAST_VISITED_STATE_KEY]);
+
+        if (isCancelled) {
+          return;
+        }
+
+        const storedPath =
+          typeof values[LAST_VISITED_STATE_KEY] === "string"
+            ? values[LAST_VISITED_STATE_KEY]
+            : null;
+
+        if (storedPath) {
+          setLastPath(storedPath);
+          return;
+        }
+      } catch {
+        if (isCancelled) {
+          return;
+        }
+      }
+
+      const legacyPath = localStorage.getItem(LAST_VISITED_STATE_KEY);
+      if (legacyPath) {
+        setLastPath(legacyPath);
+        ignorePersistenceError(
+          writeAppState([
+            {
+              key: LAST_VISITED_STATE_KEY,
+              value: legacyPath,
+            },
+          ])
+        );
+      }
+    };
+
+    void hydrate();
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   if (!lastPath) return null;

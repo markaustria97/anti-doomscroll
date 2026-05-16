@@ -1,5 +1,7 @@
 "use client";
 
+import { LAST_VISITED_STATE_KEY } from "@/lib/app-state";
+import { writeAppState } from "@/lib/app-state-client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSwipe } from "@/hooks/useSwipe";
@@ -8,6 +10,10 @@ import type { TopicChallenge } from "@/lib/content";
 import { Sidebar } from "./Sidebar";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 import { ChallengeAssistant } from "./ChallengeAssistant";
+
+function ignorePersistenceError(task: Promise<unknown>) {
+  void task.catch(() => undefined);
+}
 
 interface SidebarGroup {
   id: string;
@@ -64,9 +70,13 @@ export function TopicView({
   const router = useRouter();
 
   useEffect(() => {
-    localStorage.setItem(
-      "lastVisited",
-      `/group/${groupId}/day/${dayId}/${topicId}`
+    ignorePersistenceError(
+      writeAppState([
+        {
+          key: LAST_VISITED_STATE_KEY,
+          value: `/group/${groupId}/day/${dayId}/${topicId}`,
+        },
+      ])
     );
   }, [groupId, dayId, topicId]);
 

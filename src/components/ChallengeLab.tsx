@@ -1,5 +1,12 @@
 "use client";
 
+import type { AppStateEntry } from "@/lib/app-state";
+import { useDebouncedEffect } from "@/hooks/useDebouncedEffect";
+import {
+  deleteAppState,
+  readAppState,
+  writeAppState,
+} from "@/lib/app-state-client";
 import {
   createChallengeReference,
   getProgressionForChallengeCount,
@@ -202,7 +209,21 @@ function toAuthErrorMessage(payload: { error?: string; authUrl?: string }) {
   return payload.error || "Copilot is unavailable right now.";
 }
 
-function readStoredGroupId(allowedGroupIds: Set<string>): string | null {
+function ignorePersistenceError(task: Promise<unknown>) {
+  void task.catch(() => undefined);
+}
+
+function parseStoredGroupId(
+  value: unknown,
+  allowedGroupIds: Set<string>
+): string | null {
+  const normalizedValue = typeof value === "string" ? value.trim() : "";
+  return normalizedValue && allowedGroupIds.has(normalizedValue)
+    ? normalizedValue
+    : null;
+}
+
+function readLegacyStoredGroupId(allowedGroupIds: Set<string>): string | null {
   const savedGroupId = localStorage.getItem(STORAGE_KEYS.groupId)?.trim();
   if (savedGroupId && allowedGroupIds.has(savedGroupId)) {
     return savedGroupId;
@@ -231,7 +252,7 @@ function readStoredGroupId(allowedGroupIds: Set<string>): string | null {
   }
 }
 
-function readStoredHistory(): ChallengeHistory | null {
+function readLegacyStoredHistory(): ChallengeHistory | null {
   const savedHistory = localStorage.getItem(STORAGE_KEYS.history);
   if (!savedHistory) {
     return null;
@@ -250,7 +271,7 @@ function readStoredHistory(): ChallengeHistory | null {
   }
 }
 
-function readStoredSession(): PersistedSession | null {
+function readLegacyStoredSession(): PersistedSession | null {
   const savedSession = localStorage.getItem(STORAGE_KEYS.session);
   if (!savedSession) {
     return null;
@@ -415,7 +436,7 @@ function ScopeSidebar({
         </div>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-3 2xl:grid-cols-1">
+      <section className="grid gap-4 md:grid-cols-3 min-[1500px]:grid-cols-1">
         <div className="rounded-2xl border border-(--border) bg-(--bg-card) p-5">
           <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
             Created
@@ -529,7 +550,7 @@ function ChallengeSummaryCard({
           ) : null}
         </div>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <div className="mt-6 grid gap-6 min-[1600px]:grid-cols-2">
           <section className="rounded-2xl border border-(--border) bg-black/20 p-5">
             <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
               Challenge brief
@@ -558,7 +579,7 @@ function ChallengeSummaryCard({
       </section>
 
       {isUiChallenge ? (
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-6 min-[1750px]:grid-cols-2">
           <ChallengePreview
             title="Target Preview"
             subtitle="This renders the generated reference output so the UI target is visible without revealing the code immediately."
@@ -849,31 +870,123 @@ export function ChallengeLab({
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
+    let isCancelled = false;
     const allowedGroupIds = new Set(groups.map((group) => group.id));
 
-    const storedGroupId = readStoredGroupId(allowedGroupIds);
-    if (storedGroupId) {
-      setSelectedGroupId(storedGroupId);
-    } else if (defaultGroupId) {
-      setSelectedGroupId(defaultGroupId);
-    }
+    const hydrate = async () => {
+      try {
+        const storedValues = await readAppState([
+          STORAGE_KEYS.groupId,
+          STORAGE_KEYS.history,
+          STORAGE_KEYS.session,
+        ]);
 
-    const storedHistory = readStoredHistory();
-    if (storedHistory) {
-      setHistory(storedHistory);
-    }
+        if (isCancelled) {
+          return;
+        }
 
-    const storedSession = readStoredSession();
-    if (storedSession) {
-      setCurrentChallenge(storedSession.challenge);
-      setUserCode(storedSession.userCode);
-      setReview(storedSession.review ?? null);
-      setAttemptCount(storedSession.attemptCount);
-      setCopilotModel(storedSession.copilotModel ?? null);
-      setGenerationUsage(storedSession.generationUsage ?? null);
-    }
+        const storedGroupId = parseStoredGroupId(
+          storedValues[STORAGE_KEYS.groupId],
+          allowedGroupIds
+        );
+        const legacyGroupId = storedGroupId
+          ? null
+          : readLegacyStoredGroupId(allowedGroupIds);
+        const initialGroupId = storedGroupId || legacyGroupId || defaultGroupId;
 
-    setIsHydrated(true);
+        if (initialGroupId) {
+          setSelectedGroupId(initialGroupId);
+        }
+
+        const storedHistoryValue = storedValues[STORAGE_KEYS.history];
+        const storedHistory = isChallengeHistory(storedHistoryValue)
+          ? storedHistoryValue
+          : null;
+        const legacyHistory = storedHistory ? null : readLegacyStoredHistory();
+        const initialHistory = storedHistory || legacyHistory;
+        if (initialHistory) {
+          setHistory(initialHistory);
+        }
+
+        const storedSessionValue = storedValues[STORAGE_KEYS.session];
+        const storedSession = isPersistedSession(storedSessionValue)
+          ? storedSessionValue
+          : null;
+        const legacySession = storedSession ? null : readLegacyStoredSession();
+        const initialSession = storedSession || legacySession;
+
+        if (initialSession) {
+          setCurrentChallenge(initialSession.challenge);
+          setUserCode(initialSession.userCode);
+          setReview(initialSession.review ?? null);
+          setAttemptCount(initialSession.attemptCount);
+          setCopilotModel(initialSession.copilotModel ?? null);
+          setGenerationUsage(initialSession.generationUsage ?? null);
+        }
+
+        const migrationEntries: AppStateEntry[] = [];
+
+        if (!storedGroupId && legacyGroupId) {
+          migrationEntries.push({
+            key: STORAGE_KEYS.groupId,
+            value: legacyGroupId,
+          });
+        }
+
+        if (!storedHistory && legacyHistory) {
+          migrationEntries.push({
+            key: STORAGE_KEYS.history,
+            value: legacyHistory,
+          });
+        }
+
+        if (!storedSession && legacySession) {
+          migrationEntries.push({
+            key: STORAGE_KEYS.session,
+            value: legacySession,
+          });
+        }
+
+        if (migrationEntries.length > 0) {
+          ignorePersistenceError(writeAppState(migrationEntries));
+        }
+      } catch {
+        if (isCancelled) {
+          return;
+        }
+
+        const legacyGroupId = readLegacyStoredGroupId(allowedGroupIds);
+        const legacyHistory = readLegacyStoredHistory();
+        const legacySession = readLegacyStoredSession();
+
+        if (legacyGroupId || defaultGroupId) {
+          setSelectedGroupId(legacyGroupId || defaultGroupId);
+        }
+
+        if (legacyHistory) {
+          setHistory(legacyHistory);
+        }
+
+        if (legacySession) {
+          setCurrentChallenge(legacySession.challenge);
+          setUserCode(legacySession.userCode);
+          setReview(legacySession.review ?? null);
+          setAttemptCount(legacySession.attemptCount);
+          setCopilotModel(legacySession.copilotModel ?? null);
+          setGenerationUsage(legacySession.generationUsage ?? null);
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsHydrated(true);
+        }
+      }
+    };
+
+    void hydrate();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [defaultGroupId, groups]);
 
   useEffect(() => {
@@ -882,11 +995,18 @@ export function ChallengeLab({
     }
 
     if (!selectedGroupId) {
-      localStorage.removeItem(STORAGE_KEYS.groupId);
+      ignorePersistenceError(deleteAppState([STORAGE_KEYS.groupId]));
       return;
     }
 
-    localStorage.setItem(STORAGE_KEYS.groupId, selectedGroupId);
+    ignorePersistenceError(
+      writeAppState([
+        {
+          key: STORAGE_KEYS.groupId,
+          value: selectedGroupId,
+        },
+      ])
+    );
   }, [isHydrated, selectedGroupId]);
 
   useEffect(() => {
@@ -894,38 +1014,56 @@ export function ChallengeLab({
       return;
     }
 
-    localStorage.setItem(STORAGE_KEYS.history, JSON.stringify(history));
+    ignorePersistenceError(
+      writeAppState([
+        {
+          key: STORAGE_KEYS.history,
+          value: history,
+        },
+      ])
+    );
   }, [history, isHydrated]);
 
-  useEffect(() => {
-    if (!isHydrated) {
-      return;
-    }
+  useDebouncedEffect(
+    () => {
+      if (!isHydrated) {
+        return;
+      }
 
-    if (!currentChallenge) {
-      localStorage.removeItem(STORAGE_KEYS.session);
-      return;
-    }
+      if (!currentChallenge) {
+        ignorePersistenceError(deleteAppState([STORAGE_KEYS.session]));
+        return;
+      }
 
-    const session: PersistedSession = {
-      challenge: currentChallenge,
-      userCode,
-      review,
+      const session: PersistedSession = {
+        challenge: currentChallenge,
+        userCode,
+        review,
+        attemptCount,
+        copilotModel,
+        generationUsage,
+      };
+
+      ignorePersistenceError(
+        writeAppState([
+          {
+            key: STORAGE_KEYS.session,
+            value: session,
+          },
+        ])
+      );
+    },
+    [
       attemptCount,
       copilotModel,
+      currentChallenge,
+      isHydrated,
+      review,
+      userCode,
       generationUsage,
-    };
-
-    localStorage.setItem(STORAGE_KEYS.session, JSON.stringify(session));
-  }, [
-    attemptCount,
-    copilotModel,
-    currentChallenge,
-    isHydrated,
-    review,
-    userCode,
-    generationUsage,
-  ]);
+    ],
+    400
+  );
 
   const selectedGroup = useMemo(
     () => groups.find((group) => group.id === selectedGroupId) ?? null,
@@ -1099,7 +1237,7 @@ export function ChallengeLab({
         </div>
       </header>
 
-      <div className="grid gap-6 2xl:grid-cols-[320px_minmax(0,1fr)] 2xl:items-start">
+      <div className="grid gap-6 min-[1500px]:grid-cols-[300px_minmax(0,1fr)] min-[1500px]:items-start">
         <ScopeSidebar
           groups={groups}
           selectedGroupId={selectedGroupId}

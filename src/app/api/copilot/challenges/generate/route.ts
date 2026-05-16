@@ -163,6 +163,53 @@ function buildStarterCode(kind: GeneratedChallenge["challengeKind"]): string {
   ].join("\n");
 }
 
+function normalizeDarkUiCode(code: string): string {
+  const replacements: Array<[RegExp, string]> = [
+    [/\bbg-white\b/g, "bg-slate-950"],
+    [/\bbg-slate-50\b/g, "bg-slate-950"],
+    [/\bbg-slate-100\b/g, "bg-slate-900"],
+    [/\bbg-gray-50\b/g, "bg-slate-950"],
+    [/\bbg-gray-100\b/g, "bg-slate-900"],
+    [/\bbg-zinc-50\b/g, "bg-slate-950"],
+    [/\bbg-zinc-100\b/g, "bg-slate-900"],
+    [/\bbg-neutral-50\b/g, "bg-slate-950"],
+    [/\bbg-neutral-100\b/g, "bg-slate-900"],
+    [/\bbg-stone-50\b/g, "bg-slate-950"],
+    [/\bbg-stone-100\b/g, "bg-slate-900"],
+    [/\bbg-blue-50\b/g, "bg-blue-500/15"],
+    [/\bbg-sky-50\b/g, "bg-sky-500/15"],
+    [/\bbg-indigo-50\b/g, "bg-indigo-500/15"],
+    [/\btext-black\b/g, "text-slate-100"],
+    [/\btext-slate-900\b/g, "text-slate-100"],
+    [/\btext-slate-800\b/g, "text-slate-100"],
+    [/\btext-gray-900\b/g, "text-slate-100"],
+    [/\btext-gray-800\b/g, "text-slate-100"],
+    [/\btext-zinc-900\b/g, "text-slate-100"],
+    [/\btext-zinc-800\b/g, "text-slate-100"],
+    [/\btext-neutral-900\b/g, "text-slate-100"],
+    [/\btext-neutral-800\b/g, "text-slate-100"],
+    [/\bborder-slate-100\b/g, "border-slate-800"],
+    [/\bborder-slate-200\b/g, "border-slate-800"],
+    [/\bborder-gray-100\b/g, "border-slate-800"],
+    [/\bborder-gray-200\b/g, "border-slate-800"],
+    [/\bborder-zinc-100\b/g, "border-slate-800"],
+    [/\bborder-zinc-200\b/g, "border-slate-800"],
+    [/\bborder-neutral-100\b/g, "border-slate-800"],
+    [/\bborder-neutral-200\b/g, "border-slate-800"],
+    [/\bborder-stone-100\b/g, "border-slate-800"],
+    [/\bborder-stone-200\b/g, "border-slate-800"],
+    [/\bdivide-slate-200\b/g, "divide-slate-800"],
+    [/\bdivide-gray-200\b/g, "divide-slate-800"],
+    [/\bshadow-sm\b/g, "shadow-lg shadow-black/20"],
+  ];
+
+  return replacements.reduce(
+    (nextCode, [pattern, replacement]) =>
+      nextCode.replace(pattern, replacement),
+    code
+  );
+}
+
 function getStringValue(
   candidate: Record<string, unknown>,
   key: string
@@ -291,6 +338,8 @@ function buildPrompt({
           'Set "challengeKind" to "ui-react-tailwind" unless the selected topics make that impossible.',
           'For "ui-react-tailwind", set "language" to "tsx" and make both "starterCode" and "referenceSolution" a single-file React component with `export default function ChallengeSolution()`.',
           "Match the app shell with a dark-first UI: dark backgrounds, light text, and accessible contrast for inputs, buttons, and lists.",
+          "Do not use white, off-white, or pale gray page surfaces for the primary UI. Avoid light cards unless they are tiny accents.",
+          "Prefer slate, zinc, neutral, or blue dark surfaces and keep form controls readable against them.",
           "For UI solutions, use Tailwind utility classes only and avoid external component libraries or icon packages.",
           'For UI challenges, set "previewCode" to a working TSX component that renders the expected finished UI.',
         ].join("\n")
@@ -368,6 +417,18 @@ function normalizeGeneratedChallenge({
   const instructionsMarkdown =
     getStringValue(candidate, "instructionsMarkdown") ||
     "## Goal\nComplete the requested task for the selected study group.";
+  const normalizedStarterCode =
+    candidateKind === "ui-react-tailwind"
+      ? normalizeDarkUiCode(starterCode)
+      : starterCode;
+  const normalizedReferenceSolution =
+    candidateKind === "ui-react-tailwind"
+      ? normalizeDarkUiCode(referenceSolution)
+      : referenceSolution;
+  const normalizedPreviewCode =
+    candidateKind === "ui-react-tailwind" && previewCode
+      ? normalizeDarkUiCode(previewCode)
+      : previewCode;
 
   return {
     id: randomUUID(),
@@ -382,9 +443,9 @@ function normalizeGeneratedChallenge({
     challengeKind: candidateKind,
     language: candidateLanguage,
     instructionsMarkdown,
-    starterCode,
-    referenceSolution,
-    previewCode,
+    starterCode: normalizedStarterCode,
+    referenceSolution: normalizedReferenceSolution,
+    previewCode: normalizedPreviewCode,
     passCriteria:
       passCriteria.length > 0
         ? passCriteria
