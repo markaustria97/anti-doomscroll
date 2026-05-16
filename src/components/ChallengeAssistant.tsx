@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import type { ChallengeLanguage } from "@/lib/challenge-lab";
 import type { TopicChallenge } from "@/lib/content";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MarkdownRenderer } from "./MarkdownRenderer";
+import { MonacoCodeEditor } from "./MonacoCodeEditor";
 
 type AssistantMode = "review" | "hint";
 type LearnerLevel = "beginner" | "intermediate" | "advanced";
@@ -123,6 +125,52 @@ function splitBufferedMessages(buffer: string) {
   return {
     messages: segments.slice(0, -1),
     remainder: segments.at(-1) || "",
+  };
+}
+
+type ExtractedSolutionCode = {
+  code: string;
+  language: ChallengeLanguage;
+  leadingMarkdown: string;
+  trailingMarkdown: string;
+};
+
+function normalizeCodeFenceLanguage(
+  language: string | undefined
+): ChallengeLanguage | null {
+  switch ((language || "").trim().toLowerCase()) {
+    case "javascript":
+    case "js":
+      return "js";
+    case "jsx":
+      return "jsx";
+    case "typescript":
+    case "ts":
+      return "ts";
+    case "tsx":
+      return "tsx";
+    default:
+      return null;
+  }
+}
+
+function extractSolutionCode(markdown: string): ExtractedSolutionCode | null {
+  const match = /```([\w+-]*)\s*\n([\s\S]*?)```/i.exec(markdown);
+
+  if (!match) {
+    return null;
+  }
+
+  const language = normalizeCodeFenceLanguage(match[1]) || "ts";
+  const matchIndex = match.index ?? 0;
+  const leadingMarkdown = markdown.slice(0, matchIndex).trim();
+  const trailingMarkdown = markdown.slice(matchIndex + match[0].length).trim();
+
+  return {
+    code: match[2].trim(),
+    language,
+    leadingMarkdown,
+    trailingMarkdown,
   };
 }
 
@@ -331,6 +379,11 @@ export function ChallengeAssistant({
     () => `challenge-level:${dayId}:${topicId}`,
     [dayId, topicId]
   );
+  const extractedSolutionCode = useMemo(
+    () => extractSolutionCode(challenge.solutionMarkdown),
+    [challenge.solutionMarkdown]
+  );
+  const editorLanguage = extractedSolutionCode?.language || "ts";
   const [userCode, setUserCode] = useState("");
   const [assistantReply, setAssistantReply] =
     useState<ChallengeAssistantResponse | null>(null);
@@ -501,19 +554,15 @@ export function ChallengeAssistant({
         </div>
       </div>
 
-      <label
-        className="mt-6 block text-sm font-medium text-white"
-        htmlFor="challenge-code"
-      >
+      <label className="mt-6 block text-sm font-medium text-white">
         Your code
       </label>
-      <textarea
-        id="challenge-code"
+      <MonacoCodeEditor
+        height="20rem"
+        language={editorLanguage}
+        path={`assistant-${dayId}-${topicId}-draft.${editorLanguage}`}
         value={userCode}
-        onChange={(event) => setUserCode(event.target.value)}
-        placeholder="Write your JavaScript or TypeScript solution here..."
-        spellCheck={false}
-        className="mt-3 min-h-64 w-full rounded-xl border border-[var(--border)] bg-black/30 px-4 py-3 font-mono text-sm leading-6 text-[var(--text)] outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent-dim)]"
+        onChange={setUserCode}
       />
 
       <div className="mt-4 rounded-xl border border-[var(--border)] bg-black/20 p-4">
@@ -600,9 +649,38 @@ export function ChallengeAssistant({
             </svg>
           </summary>
 
-          <div className="markdown-body mt-3 max-h-72 overflow-auto p-0 [&_pre]:mb-0 [&_hr]:hidden">
-            <MarkdownRenderer content={challenge.solutionMarkdown} />
-          </div>
+          {extractedSolutionCode ? (
+            <div className="mt-3 space-y-3">
+              {extractedSolutionCode.leadingMarkdown ? (
+                <div className="markdown-body [&_pre]:mb-0 [&_hr]:hidden">
+                  <MarkdownRenderer
+                    content={extractedSolutionCode.leadingMarkdown}
+                  />
+                </div>
+              ) : null}
+
+              <MonacoCodeEditor
+                className=""
+                height="20rem"
+                language={extractedSolutionCode.language}
+                path={`assistant-${dayId}-${topicId}-reference.${extractedSolutionCode.language}`}
+                readOnly
+                value={extractedSolutionCode.code}
+              />
+
+              {extractedSolutionCode.trailingMarkdown ? (
+                <div className="markdown-body [&_pre]:mb-0 [&_hr]:hidden">
+                  <MarkdownRenderer
+                    content={extractedSolutionCode.trailingMarkdown}
+                  />
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <div className="markdown-body mt-3 max-h-72 overflow-auto p-0 [&_pre]:mb-0 [&_hr]:hidden">
+              <MarkdownRenderer content={challenge.solutionMarkdown} />
+            </div>
+          )}
         </details>
       </div>
 

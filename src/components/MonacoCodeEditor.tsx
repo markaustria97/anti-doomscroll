@@ -44,7 +44,11 @@ const Editor = dynamic(() => import("@monaco-editor/react"), {
 type MonacoCodeEditorProps = Readonly<{
   language: ChallengeLanguage;
   value: string;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
+  readOnly?: boolean;
+  height?: string;
+  className?: string;
+  path?: string;
 }>;
 
 function getEditorModel(language: ChallengeLanguage): {
@@ -127,21 +131,30 @@ export function MonacoCodeEditor({
   language,
   value,
   onChange,
+  readOnly = false,
+  height = "32rem",
+  className,
+  path,
 }: MonacoCodeEditorProps) {
   const model = getEditorModel(language);
+  const editorPath = path || model.path;
+  const containerClassName = className
+    ? `${className} overflow-hidden rounded-2xl border border-(--border) bg-[#111317]`
+    : "mt-3 overflow-hidden rounded-2xl border border-(--border) bg-[#111317]";
 
   return (
-    <div className="mt-3 overflow-hidden rounded-2xl border border-(--border) bg-[#111317]">
+    <div className={containerClassName}>
       <Editor
         beforeMount={configureMonaco}
-        height="32rem"
+        height={height}
         language={model.language}
-        path={model.path}
+        path={editorPath}
         theme="vs-dark"
         value={value}
-        onChange={(nextValue) => onChange(nextValue ?? "")}
+        onChange={(nextValue) => onChange?.(nextValue ?? "")}
         options={{
           automaticLayout: true,
+          cursorBlinking: readOnly ? "solid" : "blink",
           fontSize: 14,
           formatOnPaste: true,
           insertSpaces: true,
@@ -153,6 +166,9 @@ export function MonacoCodeEditor({
             top: 16,
             bottom: 16,
           },
+          readOnly,
+          domReadOnly: readOnly,
+          renderLineHighlight: readOnly ? "none" : "line",
           scrollBeyondLastLine: false,
           tabSize: 2,
           wordWrap: "on",

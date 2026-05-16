@@ -198,10 +198,6 @@ function updatePassedHistory({
   return nextHistory;
 }
 
-function buildCodeBlock(code: string, language: string): string {
-  return `\`\`\`${language}\n${code}\n\`\`\``;
-}
-
 function toAuthErrorMessage(payload: { error?: string; authUrl?: string }) {
   return payload.error || "Copilot is unavailable right now.";
 }
@@ -428,7 +424,8 @@ function ScopeSidebar({
             {generatedChallengeCount}
           </div>
           <p className="mt-2 text-sm leading-6 text-(--text-muted)">
-            Unique challenges already generated for the selected group.
+            Stored to help the AI avoid regenerating the same challenge. This
+            does not advance progression by itself.
           </p>
         </div>
 
@@ -630,16 +627,14 @@ function ChallengeEditorCard({
         </div>
       </div>
 
-      <label
-        className="mt-6 block text-sm font-medium text-white"
-        htmlFor="challenge-lab-editor"
-      >
+      <label className="mt-6 block text-sm font-medium text-white">
         Your code
       </label>
       <MonacoCodeEditor
         language={challenge.language}
         value={userCode}
         onChange={onUserCodeChange}
+        path={`${challenge.id}-answer.${challenge.language}`}
       />
 
       <div className="mt-4 flex flex-wrap gap-3">
@@ -665,14 +660,14 @@ function ChallengeEditorCard({
         <summary className="cursor-pointer select-none text-sm font-medium text-(--text-muted)">
           Reveal reference solution
         </summary>
-        <div className="markdown-body mt-4 max-h-96 overflow-auto">
-          <MarkdownRenderer
-            content={buildCodeBlock(
-              challenge.referenceSolution,
-              challenge.language
-            )}
-          />
-        </div>
+        <MonacoCodeEditor
+          className="mt-4"
+          height="24rem"
+          language={challenge.language}
+          path={`${challenge.id}-reference.${challenge.language}`}
+          readOnly
+          value={challenge.referenceSolution}
+        />
       </details>
     </section>
   );
@@ -945,9 +940,9 @@ export function ChallengeLab({
   const progression = useMemo(
     () =>
       getProgressionForChallengeCount(
-        currentHistoryEntry.createdChallenges.length
+        currentHistoryEntry.passedChallenges.length
       ),
-    [currentHistoryEntry.createdChallenges.length]
+    [currentHistoryEntry.passedChallenges.length]
   );
   const generatedChallengeCount = currentHistoryEntry.createdChallenges.length;
   const passedChallengeCount = currentHistoryEntry.passedChallenges.length;
@@ -983,6 +978,7 @@ export function ChallengeLab({
           groupId: selectedGroupId,
           learnerLevel: progression.learnerLevel,
           createdChallengeRefs: currentHistoryEntry.createdChallenges,
+          passedChallengeCount: currentHistoryEntry.passedChallenges.length,
         },
         onStatus: setStatusMessage,
       });

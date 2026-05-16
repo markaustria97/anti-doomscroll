@@ -42,9 +42,10 @@ function buildPreviewDocument({
       html, body {
         margin: 0;
         min-height: 100%;
-        background: #f8fafc;
-        color: #0f172a;
+        background: #040712;
+        color: #e5eefb;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color-scheme: dark;
       }
 
       #root {
@@ -61,12 +62,19 @@ function buildPreviewDocument({
       input,
       textarea,
       select {
-        color: #0f172a;
-        caret-color: #0f172a;
+        background: rgba(15, 23, 42, 0.92);
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        color: #e5eefb;
+        caret-color: #e5eefb;
+      }
+
+      button {
+        background: rgba(15, 23, 42, 0.88);
+        color: #e5eefb;
       }
 
       ::placeholder {
-        color: #64748b;
+        color: #8aa0bd;
         opacity: 1;
       }
 
@@ -273,14 +281,14 @@ export function ChallengePreview({
         ) : null}
       </div>
 
-      <div className="mt-4 overflow-hidden rounded-2xl border border-(--border) bg-[#09090b]">
+      <div className="mt-4 overflow-hidden rounded-2xl border border-(--border) bg-[#040712]">
         {compiledCode ? (
           <iframe
             key={`${title}-${frameVersion}`}
             title={title}
             sandbox="allow-scripts"
             srcDoc={buildPreviewDocument({ title, compiledCode })}
-            className="h-[30rem] w-full border-0 bg-[#f8fafc] lg:h-[34rem]"
+            className="h-[30rem] w-full border-0 bg-[#040712] lg:h-[34rem]"
           />
         ) : (
           <div className="flex h-[30rem] items-center justify-center px-6 text-center lg:h-[34rem]">

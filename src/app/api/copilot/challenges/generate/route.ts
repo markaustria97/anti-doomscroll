@@ -290,6 +290,7 @@ function buildPrompt({
       ? [
           'Set "challengeKind" to "ui-react-tailwind" unless the selected topics make that impossible.',
           'For "ui-react-tailwind", set "language" to "tsx" and make both "starterCode" and "referenceSolution" a single-file React component with `export default function ChallengeSolution()`.',
+          "Match the app shell with a dark-first UI: dark backgrounds, light text, and accessible contrast for inputs, buttons, and lists.",
           "For UI solutions, use Tailwind utility classes only and avoid external component libraries or icon packages.",
           'For UI challenges, set "previewCode" to a working TSX component that renders the expected finished UI.',
         ].join("\n")
@@ -414,6 +415,11 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as ChallengeGenerationRequest;
     const learnerLevel = body.learnerLevel;
     const groupId = typeof body.groupId === "string" ? body.groupId.trim() : "";
+    const passedChallengeCount =
+      typeof body.passedChallengeCount === "number" &&
+      Number.isFinite(body.passedChallengeCount)
+        ? Math.max(0, Math.floor(body.passedChallengeCount))
+        : 0;
     const createdChallengeRefs = Array.isArray(body.createdChallengeRefs)
       ? body.createdChallengeRefs
           .filter((item): item is string => typeof item === "string")
@@ -446,9 +452,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const progression = getProgressionForChallengeCount(
-      createdChallengeRefs.length
-    );
+    const progression = getProgressionForChallengeCount(passedChallengeCount);
     const representativeTopicKeys = selectRepresentativeTopicKeys({
       groupId,
       challengeCount: createdChallengeRefs.length,

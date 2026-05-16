@@ -64,6 +64,7 @@ export interface ChallengeGenerationRequest {
   groupId?: string;
   topicKeys?: string[];
   createdChallengeRefs?: string[];
+  passedChallengeCount?: number;
 }
 
 export interface ChallengeReviewRequest {
