@@ -46,8 +46,8 @@ function buildReviewPrompt({
   return [
     "Review this learner submission against the generated challenge.",
     "Return JSON only with no prose outside the object.",
-    "Pass only when the essential requirements are satisfied.",
-    "For UI challenges, allow stylistic differences but require the requested structure and behaviors.",
+    "Pass only when the essential solution is correct and complete.",
+    "For UI challenges, allow stylistic differences but require the requested structure, interactions, and behaviors.",
     "When the learner has not passed, explain the blockers first and then give the next smallest retry step.",
     "Do not paste the full reference solution.",
     "Use this JSON schema exactly:",
@@ -55,13 +55,15 @@ function buildReviewPrompt({
     `Learner level: ${learnerLevel}`,
     `Attempt number: ${attempt}`,
     `Challenge title: ${challenge.title}`,
+    `Challenge group: ${challenge.groupTitle || challenge.groupLabel || "Selected group"}`,
+    `Challenge progression: ${challenge.progressionLabel || "foundation"}`,
     `Challenge kind: ${challenge.challengeKind}`,
     "Challenge instructions:",
     challenge.instructionsMarkdown,
-    "Pass criteria:",
-    challenge.passCriteria.map((item) => `- ${item}`).join("\n"),
-    "Review focus:",
-    challenge.reviewFocus.map((item) => `- ${item}`).join("\n"),
+    "Challenge specs:",
+    challenge.passCriteria.length > 0
+      ? challenge.passCriteria.map((item) => `- ${item}`).join("\n")
+      : "- Satisfy the core requirements in the instructions.",
     "Reference solution:",
     challenge.referenceSolution,
     "Learner code:",
@@ -116,22 +118,25 @@ export async function POST(request: NextRequest) {
     }
 
     const body = (await request.json()) as ChallengeReviewRequest;
-    const learnerLevel = body.learnerLevel;
     const attempt = Number.isFinite(body.attempt)
       ? Math.max(1, body.attempt || 1)
       : 1;
     const userCode = truncate(body.userCode);
 
-    if (!isValidLearnerLevel(learnerLevel)) {
+    if (!isGeneratedChallenge(body.challenge)) {
       return NextResponse.json(
-        { error: "Invalid review level." },
+        { error: "Challenge context is invalid or missing." },
         { status: 400 }
       );
     }
 
-    if (!isGeneratedChallenge(body.challenge)) {
+    const challenge = body.challenge;
+
+    const learnerLevel = body.learnerLevel ?? challenge.learnerLevel;
+
+    if (!isValidLearnerLevel(learnerLevel)) {
       return NextResponse.json(
-        { error: "Challenge context is invalid or missing." },
+        { error: "Invalid review level." },
         { status: 400 }
       );
     }
@@ -146,24 +151,75 @@ export async function POST(request: NextRequest) {
     const prompt = buildReviewPrompt({
       learnerLevel,
       attempt,
-      challenge: body.challenge,
+      challenge,
       userCode,
     });
-    const rawResponse = await runCopilotPrompt({
-      githubToken,
-      prompt,
-      systemMessage: [
-        "You review learner coding challenge submissions.",
-        "Return strict JSON only.",
-        "Be decisive about pass versus retry.",
-        "Correctness comes before style advice.",
-      ].join("\n"),
-    });
-    const review = normalizeReviewResult(extractJsonPayload(rawResponse));
+    const encoder = new TextEncoder();
 
-    return NextResponse.json({
-      review,
-      model: DEFAULT_COPILOT_MODEL,
+    const stream = new ReadableStream<Uint8Array>({
+      async start(controller) {
+        const sendEvent = (event: Record<string, unknown>) => {
+          controller.enqueue(encoder.encode(`${JSON.stringify(event)}\n`));
+        };
+
+        sendEvent({
+          type: "status",
+          message: `Reviewing attempt ${attempt} for ${challenge.title}...`,
+        });
+
+        try {
+          const rawResponse = await runCopilotPrompt({
+            githubToken,
+            prompt,
+            systemMessage: [
+              "You review learner coding challenge submissions.",
+              "Return strict JSON only.",
+              "Be decisive about pass versus retry.",
+              "Correctness comes before style advice.",
+            ].join("\n"),
+            onDelta(delta) {
+              sendEvent({
+                type: "delta",
+                delta,
+              });
+            },
+          });
+          const review = normalizeReviewResult(extractJsonPayload(rawResponse));
+
+          sendEvent({
+            type: "complete",
+            review,
+            model: DEFAULT_COPILOT_MODEL,
+          });
+        } catch (error) {
+          const message =
+            error instanceof Error
+              ? error.message
+              : "Copilot challenge review failed.";
+          const stack = error instanceof Error ? error.stack : undefined;
+
+          console.error("[Copilot Challenge Review] Error caught:", message);
+          if (stack) {
+            console.error("[Copilot Challenge Review] Stack trace:", stack);
+          }
+
+          sendEvent({
+            type: "error",
+            error:
+              "Copilot challenge review is unavailable right now. Ensure GitHub Copilot authentication is available in this runtime. " +
+              message,
+          });
+        } finally {
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "application/x-ndjson; charset=utf-8",
+        "Cache-Control": "no-cache, no-transform",
+      },
     });
   } catch (error) {
     const message =

@@ -1,5 +1,6 @@
 import {
   clampEstimatedMinutes,
+  getProgressionForChallengeCount,
   isValidChallengeKind,
   isValidChallengeLanguage,
   isValidLearnerLevel,
@@ -7,7 +8,11 @@ import {
   type ChallengeSubtopic,
   type GeneratedChallenge,
 } from "@/lib/challenge-lab";
-import { getChallengeTopicContexts } from "@/lib/content";
+import {
+  getChallengeCatalog,
+  getChallengeTopicContexts,
+  getGroup,
+} from "@/lib/content";
 import {
   DEFAULT_COPILOT_MODEL,
   OAUTH_TOKEN_COOKIE,
@@ -21,6 +26,7 @@ export const runtime = "nodejs";
 const MAX_TOPIC_COUNT = 3;
 const MAX_LESSON_CONTEXT_CHARS = 900;
 const MAX_CHALLENGE_CONTEXT_CHARS = 350;
+const MAX_PREVIOUS_CHALLENGES = 12;
 const GENERATION_TIMEOUT_MS = 90000;
 
 function truncate(value: string, maxLength: number): string {
@@ -74,29 +80,64 @@ function toSelectedSubtopics(
   }));
 }
 
-function buildTopicContext(
-  contexts: ReturnType<typeof getChallengeTopicContexts>
-): string {
-  return contexts
-    .map((context, index) => {
-      const embeddedChallenge = context.embeddedChallenge
-        ? truncate(
-            context.embeddedChallenge.challengeMarkdown,
-            MAX_CHALLENGE_CONTEXT_CHARS
-          )
-        : "None";
+function selectRepresentativeTopicKeys({
+  groupId,
+  challengeCount,
+}: {
+  groupId: string;
+  challengeCount: number;
+}): string[] {
+  const groupCatalog = getChallengeCatalog([groupId]).sort((left, right) =>
+    left.key.localeCompare(right.key)
+  );
 
-      return [
-        `Subtopic ${index + 1}`,
-        `Key: ${context.key}`,
-        `Group: ${context.groupLabel} — ${context.groupTitle}`,
-        `Day: ${context.dayLabel} — ${context.dayTitle}`,
-        `Topic: ${context.topicTitle}`,
-        `Lesson excerpt: ${truncate(context.lessonContent, MAX_LESSON_CONTEXT_CHARS)}`,
-        `Existing embedded challenge: ${embeddedChallenge}`,
-      ].join("\n");
-    })
-    .join("\n\n");
+  if (groupCatalog.length <= MAX_TOPIC_COUNT) {
+    return groupCatalog.map((topic) => topic.key);
+  }
+
+  const startIndex = (challengeCount * MAX_TOPIC_COUNT) % groupCatalog.length;
+
+  return [...groupCatalog.slice(startIndex), ...groupCatalog.slice(0, startIndex)]
+    .slice(0, MAX_TOPIC_COUNT)
+    .map((topic) => topic.key);
+}
+
+function buildTopicContext(
+  {
+    groupLabel,
+    groupTitle,
+    groupDescription,
+    contexts,
+  }: {
+    groupLabel: string;
+    groupTitle: string;
+    groupDescription: string;
+    contexts: ReturnType<typeof getChallengeTopicContexts>;
+  }
+): string {
+  return [
+    `Group: ${groupLabel} — ${groupTitle}`,
+    `Description: ${groupDescription}`,
+    "Representative study context:",
+    contexts
+      .map((context, index) => {
+        const embeddedChallenge = context.embeddedChallenge
+          ? truncate(
+              context.embeddedChallenge.challengeMarkdown,
+              MAX_CHALLENGE_CONTEXT_CHARS
+            )
+          : "None";
+
+        return [
+          `Topic ${index + 1}`,
+          `Day: ${context.dayLabel} — ${context.dayTitle}`,
+          `Topic title: ${context.topicTitle}`,
+          `Lesson excerpt: ${truncate(context.lessonContent, MAX_LESSON_CONTEXT_CHARS)}`,
+          `Existing embedded challenge: ${embeddedChallenge}`,
+        ].join("\n");
+      })
+      .join("\n\n"),
+  ].join("\n\n");
 }
 
 function buildStarterCode(kind: GeneratedChallenge["challengeKind"]): string {
@@ -203,15 +244,46 @@ function buildPrompt({
   learnerLevel,
   topicContext,
   uiPreferred,
+  groupLabel,
+  groupTitle,
+  createdChallengeRefs,
+  progressionLabel,
 }: {
   learnerLevel: NonNullable<ChallengeGenerationRequest["learnerLevel"]>;
   topicContext: string;
   uiPreferred: boolean;
+  groupLabel: string;
+  groupTitle: string;
+  createdChallengeRefs: string[];
+  progressionLabel: ReturnType<
+    typeof getProgressionForChallengeCount
+  >["progressionLabel"];
 }) {
+  const progressionInstructions: Record<
+    NonNullable<ChallengeGenerationRequest["learnerLevel"]>,
+    string
+  > = {
+    beginner:
+      "Start with a basic version of a common frontend interview problem. Keep the surface area small and the required behavior focused.",
+    intermediate:
+      "Move to a more complete interview challenge with a few meaningful behaviors, clearer state transitions, and at least one realistic edge case.",
+    advanced:
+      "Use a tougher interview variant that still fits in one file, but expect broader behavior, stronger edge-case handling, or cleaner abstractions.",
+  };
+
   return [
-    "Create one fresh coding challenge for a study app.",
+    "Create one fresh frontend interview challenge for a study app.",
     "Return JSON only with no prose before or after the object.",
-    "The challenge must use every selected subtopic in a meaningful way.",
+    `Scope the challenge to this study group: ${groupLabel} — ${groupTitle}.`,
+    "The challenge should feel like a common frontend interview prompt rather than a niche course drill.",
+    "Use the representative study context below as background. Do not force every background topic into the solution if it would make the challenge artificial.",
+    progressionInstructions[learnerLevel],
+    createdChallengeRefs.length > 0
+      ? [
+          "Do not repeat or lightly rename any of these previously generated challenges:",
+          ...createdChallengeRefs.map((challengeRef) => `- ${challengeRef}`),
+        ].join("\n")
+      : "No previous challenges have been generated for this group yet.",
     "Do not ask for package installation, APIs, databases, images, file uploads, or multi-file setups.",
     uiPreferred
       ? [
@@ -227,10 +299,12 @@ function buildPrompt({
     "Keep the instructions concrete and testable.",
     "Provide a correct reference solution.",
     "Make the starter code incomplete but runnable after basic edits.",
+        "Use `passCriteria` as the challenge specs section: concise, verifiable implementation requirements.",
     "Use this JSON schema exactly:",
     '{"title":"string","summary":"string","challengeKind":"logic|ui-react-tailwind","language":"js|jsx|ts|tsx","instructionsMarkdown":"string","starterCode":"string","referenceSolution":"string","previewCode":"string|null","passCriteria":["string"],"reviewFocus":["string"],"estimatedMinutes":25}',
+        `Automatic progression stage: ${progressionLabel}`,
     `Learner level: ${learnerLevel}`,
-    "Selected subtopics:",
+        "Group context:",
     topicContext,
   ].join("\n\n");
 }
@@ -240,11 +314,23 @@ function normalizeGeneratedChallenge({
   learnerLevel,
   selectedSubtopics,
   uiPreferred,
+  group,
+  progressionStep,
+  progressionLabel,
 }: {
   value: unknown;
   learnerLevel: NonNullable<ChallengeGenerationRequest["learnerLevel"]>;
   selectedSubtopics: ChallengeSubtopic[];
   uiPreferred: boolean;
+  group: {
+    id: string;
+    label: string;
+    title: string;
+  };
+  progressionStep: number;
+  progressionLabel: ReturnType<
+    typeof getProgressionForChallengeCount
+  >["progressionLabel"];
 }): GeneratedChallenge {
   if (!value || typeof value !== "object") {
     throw new Error("Copilot returned an invalid challenge payload.");
@@ -276,16 +362,21 @@ function normalizeGeneratedChallenge({
   const title = getStringValue(candidate, "title") || "Generated challenge";
   const summary =
     getStringValue(candidate, "summary") ||
-    "A fresh challenge generated from your selected subtopics.";
+    "A fresh challenge generated from your selected group.";
   const instructionsMarkdown =
     getStringValue(candidate, "instructionsMarkdown") ||
-    "## Goal\nComplete the requested task using the selected subtopics.";
+    "## Goal\nComplete the requested task for the selected study group.";
 
   return {
     id: randomUUID(),
     title,
     summary,
     learnerLevel,
+    groupId: group.id,
+    groupLabel: group.label,
+    groupTitle: group.title,
+    progressionStep,
+    progressionLabel,
     challengeKind: candidateKind,
     language: candidateLanguage,
     instructionsMarkdown,
@@ -321,7 +412,14 @@ export async function POST(request: NextRequest) {
 
     const body = (await request.json()) as ChallengeGenerationRequest;
     const learnerLevel = body.learnerLevel;
-    const topicKeys = Array.isArray(body.topicKeys) ? body.topicKeys : [];
+    const groupId = typeof body.groupId === "string" ? body.groupId.trim() : "";
+    const createdChallengeRefs = Array.isArray(body.createdChallengeRefs)
+      ? body.createdChallengeRefs
+          .filter((item): item is string => typeof item === "string")
+          .map((item) => item.trim())
+          .filter(Boolean)
+          .slice(0, MAX_PREVIOUS_CHALLENGES)
+      : [];
 
     if (!isValidLearnerLevel(learnerLevel)) {
       return NextResponse.json(
@@ -330,24 +428,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (topicKeys.length === 0) {
+    if (!groupId) {
       return NextResponse.json(
         {
-          error: "Choose at least one subtopic before generating a challenge.",
+          error: "Choose one group before generating a challenge.",
         },
         { status: 400 }
       );
     }
 
-    const uniqueTopicKeys = Array.from(new Set(topicKeys)).slice(
-      0,
-      MAX_TOPIC_COUNT
-    );
-    const contexts = getChallengeTopicContexts(uniqueTopicKeys);
-
-    if (contexts.length !== uniqueTopicKeys.length) {
+    const group = getGroup(groupId);
+    if (!group) {
       return NextResponse.json(
-        { error: "One or more selected subtopics could not be resolved." },
+        { error: "The selected group could not be resolved." },
+        { status: 400 }
+      );
+    }
+
+    const progression = getProgressionForChallengeCount(
+      createdChallengeRefs.length
+    );
+    const representativeTopicKeys = selectRepresentativeTopicKeys({
+      groupId,
+      challengeCount: createdChallengeRefs.length,
+    });
+
+    if (representativeTopicKeys.length === 0) {
+      return NextResponse.json(
+        { error: "The selected group does not have any challenge context yet." },
+        { status: 400 }
+      );
+    }
+
+    const contexts = getChallengeTopicContexts(representativeTopicKeys);
+
+    if (contexts.length !== representativeTopicKeys.length) {
+      return NextResponse.json(
+        { error: "The selected group context could not be resolved." },
         { status: 400 }
       );
     }
@@ -359,30 +476,92 @@ export async function POST(request: NextRequest) {
     );
     const prompt = buildPrompt({
       learnerLevel,
-      topicContext: buildTopicContext(contexts),
+      topicContext: buildTopicContext({
+        groupLabel: group.label,
+        groupTitle: group.title,
+        groupDescription: group.description,
+        contexts,
+      }),
       uiPreferred,
+      groupLabel: group.label,
+      groupTitle: group.title,
+      createdChallengeRefs,
+      progressionLabel: progression.progressionLabel,
     });
-    const rawResponse = await runCopilotPrompt({
-      githubToken,
-      prompt,
-      timeoutMs: GENERATION_TIMEOUT_MS,
-      systemMessage: [
-        "You design coding challenges for a focused learning app.",
-        "Return strict JSON only.",
-        "Never ask the learner to install packages or create additional files.",
-        "Reference solutions must be correct and concise.",
-      ].join("\n"),
-    });
-    const challenge = normalizeGeneratedChallenge({
-      value: extractJsonPayload(rawResponse),
-      learnerLevel,
-      selectedSubtopics: toSelectedSubtopics(contexts),
-      uiPreferred,
+    const encoder = new TextEncoder();
+
+    const stream = new ReadableStream<Uint8Array>({
+      async start(controller) {
+        const sendEvent = (event: Record<string, unknown>) => {
+          controller.enqueue(encoder.encode(`${JSON.stringify(event)}\n`));
+        };
+
+        sendEvent({
+          type: "status",
+          message: `Scoping challenge #${createdChallengeRefs.length + 1} for ${group.title}...`,
+        });
+
+        try {
+          const rawResponse = await runCopilotPrompt({
+            githubToken,
+            prompt,
+            timeoutMs: GENERATION_TIMEOUT_MS,
+            systemMessage: [
+              "You design coding challenges for a focused learning app.",
+              "Return strict JSON only.",
+              "Prefer common frontend interview prompts over niche exercises.",
+              "Never ask the learner to install packages or create additional files.",
+              "Reference solutions must be correct and concise.",
+            ].join("\n"),
+            onDelta(delta) {
+              sendEvent({
+                type: "delta",
+                delta,
+              });
+            },
+          });
+          const challenge = normalizeGeneratedChallenge({
+            value: extractJsonPayload(rawResponse),
+            learnerLevel,
+            selectedSubtopics: toSelectedSubtopics(contexts),
+            uiPreferred,
+            group,
+            progressionStep: createdChallengeRefs.length + 1,
+            progressionLabel: progression.progressionLabel,
+          });
+
+          sendEvent({
+            type: "complete",
+            challenge,
+            model: DEFAULT_COPILOT_MODEL,
+          });
+        } catch (error) {
+          const message =
+            error instanceof Error
+              ? error.message
+              : "Copilot challenge generation failed.";
+          const stack = error instanceof Error ? error.stack : undefined;
+
+          console.error("[Copilot Challenge Generate] Error caught:", message);
+          if (stack) {
+            console.error("[Copilot Challenge Generate] Stack trace:", stack);
+          }
+
+          sendEvent({
+            type: "error",
+            error: toGenerateErrorMessage(message),
+          });
+        } finally {
+          controller.close();
+        }
+      },
     });
 
-    return NextResponse.json({
-      challenge,
-      model: DEFAULT_COPILOT_MODEL,
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "application/x-ndjson; charset=utf-8",
+        "Cache-Control": "no-cache, no-transform",
+      },
     });
   } catch (error) {
     const message =

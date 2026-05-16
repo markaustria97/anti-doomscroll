@@ -101,12 +101,14 @@ export async function runCopilotPrompt({
   prompt,
   systemMessage,
   timeoutMs = 45000,
+  onDelta,
 }: {
   githubToken: string;
   model?: string;
   prompt: string;
   systemMessage: string;
   timeoutMs?: number;
+  onDelta?: (delta: string) => void;
 }): Promise<string> {
   const client = createCopilotClient(githubToken);
   let session: Awaited<ReturnType<CopilotClient["createSession"]>> | null =
@@ -127,6 +129,7 @@ export async function runCopilotPrompt({
 
     session.on("assistant.message_delta", (event) => {
       streamedMessage += event.data.deltaContent;
+      onDelta?.(event.data.deltaContent);
     });
 
     session.on("assistant.message", (event) => {

@@ -1,11 +1,11 @@
 import { ChallengeLab } from "@/components/ChallengeLab";
-import { getAllGroups, getChallengeCatalog } from "@/lib/content";
+import { getAllGroups } from "@/lib/content";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Challenge Lab | Anti-Doom Scroll",
   description:
-    "Generate fresh Copilot-backed coding challenges from your study tracks and review your solutions in-browser.",
+    "Generate group-scoped frontend interview challenges and review your solutions in-browser.",
 };
 
 interface PageProps {
@@ -48,7 +48,6 @@ export default async function ChallengesPage({
           0
         ),
       }))}
-      catalog={getChallengeCatalog()}
       initialSelectedGroupIds={initialSelectedGroupIds}
     />
   );

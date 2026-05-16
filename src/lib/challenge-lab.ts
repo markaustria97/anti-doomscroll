@@ -3,6 +3,7 @@ import type { ChallengeCatalogTopic } from "./content";
 export type LearnerLevel = "beginner" | "intermediate" | "advanced";
 export type ChallengeKind = "logic" | "ui-react-tailwind";
 export type ChallengeLanguage = "js" | "jsx" | "ts" | "tsx";
+export type ChallengeProgression = "foundation" | "core" | "stretch";
 
 export type ChallengeSubtopic = Pick<
   ChallengeCatalogTopic,
@@ -23,6 +24,11 @@ export interface GeneratedChallenge {
   title: string;
   summary: string;
   learnerLevel: LearnerLevel;
+  groupId?: string;
+  groupLabel?: string;
+  groupTitle?: string;
+  progressionStep?: number;
+  progressionLabel?: ChallengeProgression;
   challengeKind: ChallengeKind;
   language: ChallengeLanguage;
   instructionsMarkdown: string;
@@ -47,7 +53,9 @@ export interface ChallengeReviewResult {
 
 export interface ChallengeGenerationRequest {
   learnerLevel?: LearnerLevel;
+  groupId?: string;
   topicKeys?: string[];
+  createdChallengeRefs?: string[];
 }
 
 export interface ChallengeReviewRequest {
@@ -75,6 +83,12 @@ export function isValidChallengeKind(
   value: string | undefined
 ): value is ChallengeKind {
   return value === "logic" || value === "ui-react-tailwind";
+}
+
+export function isValidChallengeProgression(
+  value: string | undefined
+): value is ChallengeProgression {
+  return value === "foundation" || value === "core" || value === "stretch";
 }
 
 export function isValidChallengeLanguage(
@@ -120,6 +134,15 @@ export function isGeneratedChallenge(
     typeof candidate.title === "string" &&
     typeof candidate.summary === "string" &&
     isValidLearnerLevel(candidate.learnerLevel) &&
+    (candidate.groupId === undefined || typeof candidate.groupId === "string") &&
+    (candidate.groupLabel === undefined ||
+      typeof candidate.groupLabel === "string") &&
+    (candidate.groupTitle === undefined ||
+      typeof candidate.groupTitle === "string") &&
+    (candidate.progressionStep === undefined ||
+      typeof candidate.progressionStep === "number") &&
+    (candidate.progressionLabel === undefined ||
+      isValidChallengeProgression(candidate.progressionLabel)) &&
     isValidChallengeKind(candidate.challengeKind) &&
     isValidChallengeLanguage(candidate.language) &&
     typeof candidate.instructionsMarkdown === "string" &&
@@ -161,4 +184,35 @@ export function clampEstimatedMinutes(value: number): number {
   }
 
   return Math.min(90, Math.max(10, Math.round(value)));
+}
+
+export function getProgressionForChallengeCount(count: number): {
+  learnerLevel: LearnerLevel;
+  progressionLabel: ChallengeProgression;
+} {
+  if (count < 2) {
+    return {
+      learnerLevel: "beginner",
+      progressionLabel: "foundation",
+    };
+  }
+
+  if (count < 5) {
+    return {
+      learnerLevel: "intermediate",
+      progressionLabel: "core",
+    };
+  }
+
+  return {
+    learnerLevel: "advanced",
+    progressionLabel: "stretch",
+  };
+}
+
+export function createChallengeReference({
+  title,
+  summary,
+}: Pick<GeneratedChallenge, "title" | "summary">): string {
+  return [title.trim(), summary.trim()].filter(Boolean).join(" :: ").slice(0, 240);
 }

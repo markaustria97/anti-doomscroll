@@ -15,8 +15,10 @@
   "dependencies": {
     "@github/copilot": "^1.0.34",
     "@github/copilot-sdk": "^0.2.2",
+    "@monaco-editor/react": "^4.7.0",
     "@serwist/turbopack": "^9.5.7",
     "esbuild": "^0.25.11",
+    "monaco-editor": "^0.54.0",
     "next": "^16.2.4",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",

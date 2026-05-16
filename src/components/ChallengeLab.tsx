@@ -1,27 +1,31 @@
 "use client";
 
 import {
+  createChallengeReference,
+  getProgressionForChallengeCount,
   isChallengeReviewResult,
   isGeneratedChallenge,
-  isValidLearnerLevel,
+  type ChallengeProgression,
   type ChallengeReviewResult,
   type GeneratedChallenge,
-  type LearnerLevel,
 } from "@/lib/challenge-lab";
-import type { ChallengeCatalogTopic } from "@/lib/content";
+import {
+  getAuthUrlFromError,
+  readGeneratedChallengeStream,
+  readReviewStream,
+} from "@/lib/challenge-lab-stream";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { ChallengePreview } from "./ChallengePreview";
 import { MarkdownRenderer } from "./MarkdownRenderer";
+import { MonacoCodeEditor } from "./MonacoCodeEditor";
 
+const LEGACY_GROUP_IDS_STORAGE_KEY = "challenge-lab:selected-groups";
 const STORAGE_KEYS = {
-  groupIds: "challenge-lab:selected-groups",
+  groupId: "challenge-lab:selected-group",
   history: "challenge-lab:history",
-  learnerLevel: "challenge-lab:learner-level",
   session: "challenge-lab:session",
 } as const;
-
-const DEFAULT_LEVEL: LearnerLevel = "intermediate";
 
 type GroupSummary = {
   id: string;
@@ -34,18 +38,17 @@ type GroupSummary = {
 
 type ChallengeLabProps = Readonly<{
   groups: GroupSummary[];
-  catalog: ChallengeCatalogTopic[];
   initialSelectedGroupIds: string[];
 }>;
 
-type ChallengeHistory = Record<
-  string,
-  {
-    count: number;
-    lastGeneratedAt: string;
-    lastPassedAt?: string;
-  }
->;
+type GroupChallengeHistory = {
+  createdChallenges: string[];
+  passedChallenges: string[];
+  lastGeneratedAt?: string;
+  lastPassedAt?: string;
+};
+
+type ChallengeHistory = Record<string, GroupChallengeHistory>;
 
 type PersistedSession = {
   challenge: GeneratedChallenge;
@@ -55,25 +58,39 @@ type PersistedSession = {
   copilotModel: string | null;
 };
 
-const learnerLevelCopy: Record<
-  LearnerLevel,
+const progressionCopy: Record<
+  ChallengeProgression,
   { label: string; description: string }
 > = {
-  beginner: {
-    label: "Beginner",
-    description: "One subtopic, smaller scope, and more explicit requirements.",
-  },
-  intermediate: {
-    label: "Intermediate",
+  foundation: {
+    label: "Foundation",
     description:
-      "Blend two subtopics and expect cleaner code and edge-case handling.",
+      "Start with the common warm-up tasks and smaller UI or logic exercises for this group.",
   },
-  advanced: {
-    label: "Advanced",
+  core: {
+    label: "Core round",
     description:
-      "Blend three subtopics and hold the solution to a stricter standard.",
+      "Step up to multi-part interview prompts with broader state or edge-case handling.",
+  },
+  stretch: {
+    label: "Stretch round",
+    description:
+      "Push into the tougher variants once the basics and core patterns have already shown up.",
   },
 };
+
+function createEmptyHistoryEntry(): GroupChallengeHistory {
+  return {
+    createdChallenges: [],
+    passedChallenges: [],
+  };
+}
+
+function dedupeStrings(values: string[]): string[] {
+  return Array.from(
+    new Set(values.map((value) => value.trim()).filter(Boolean))
+  );
+}
 
 function isChallengeHistory(value: unknown): value is ChallengeHistory {
   if (!value || typeof value !== "object") {
@@ -87,8 +104,16 @@ function isChallengeHistory(value: unknown): value is ChallengeHistory {
 
     const candidate = entry as Partial<ChallengeHistory[string]>;
     return (
-      typeof candidate.count === "number" &&
-      typeof candidate.lastGeneratedAt === "string" &&
+      Array.isArray(candidate.createdChallenges) &&
+      candidate.createdChallenges.every(
+        (item) => typeof item === "string" && item.trim().length > 0
+      ) &&
+      Array.isArray(candidate.passedChallenges) &&
+      candidate.passedChallenges.every(
+        (item) => typeof item === "string" && item.trim().length > 0
+      ) &&
+      (candidate.lastGeneratedAt === undefined ||
+        typeof candidate.lastGeneratedAt === "string") &&
       (candidate.lastPassedAt === undefined ||
         typeof candidate.lastPassedAt === "string")
     );
@@ -115,107 +140,50 @@ function isPersistedSession(value: unknown): value is PersistedSession {
   );
 }
 
-function getTopicCountForLevel(learnerLevel: LearnerLevel): number {
-  if (learnerLevel === "beginner") {
-    return 1;
-  }
-
-  if (learnerLevel === "advanced") {
-    return 3;
-  }
-
-  return 2;
-}
-
-function shuffleTopics<T>(items: T[]): T[] {
-  const nextItems = [...items];
-
-  for (let index = nextItems.length - 1; index > 0; index -= 1) {
-    const swapIndex = Math.floor(Math.random() * (index + 1));
-    [nextItems[index], nextItems[swapIndex]] = [
-      nextItems[swapIndex],
-      nextItems[index],
-    ];
-  }
-
-  return nextItems;
-}
-
-function pickChallengeTopics({
-  catalog,
-  history,
-  learnerLevel,
-}: {
-  catalog: ChallengeCatalogTopic[];
-  history: ChallengeHistory;
-  learnerLevel: LearnerLevel;
-}): ChallengeCatalogTopic[] {
-  const desiredCount = Math.min(
-    getTopicCountForLevel(learnerLevel),
-    catalog.length
-  );
-
-  if (desiredCount === 0) {
-    return [];
-  }
-
-  const untouched = shuffleTopics(
-    catalog.filter((topic) => (history[topic.key]?.count || 0) <= 0)
-  );
-  const revisits = shuffleTopics(
-    catalog.filter((topic) => history[topic.key]?.count > 0)
-  ).sort((left, right) => {
-    const leftCount = history[left.key]?.count || 0;
-    const rightCount = history[right.key]?.count || 0;
-    return leftCount - rightCount;
-  });
-
-  return [...untouched, ...revisits].slice(0, desiredCount);
-}
-
 function updateGeneratedHistory({
   history,
+  groupId,
   challenge,
 }: {
   history: ChallengeHistory;
+  groupId: string;
   challenge: GeneratedChallenge;
 }): ChallengeHistory {
+  const currentEntry = history[groupId] ?? createEmptyHistoryEntry();
   const nextHistory = { ...history };
-
-  for (const subtopic of challenge.selectedSubtopics) {
-    const currentEntry = nextHistory[subtopic.key];
-    nextHistory[subtopic.key] = {
-      count: (currentEntry?.count || 0) + 1,
-      lastGeneratedAt: challenge.generatedAt,
-      lastPassedAt: currentEntry?.lastPassedAt,
-    };
-  }
+  nextHistory[groupId] = {
+    ...currentEntry,
+    createdChallenges: dedupeStrings([
+      ...currentEntry.createdChallenges,
+      createChallengeReference(challenge),
+    ]),
+    lastGeneratedAt: challenge.generatedAt,
+  };
 
   return nextHistory;
 }
 
 function updatePassedHistory({
   history,
+  groupId,
   challenge,
   reviewedAt,
 }: {
   history: ChallengeHistory;
+  groupId: string;
   challenge: GeneratedChallenge;
   reviewedAt: string;
 }): ChallengeHistory {
+  const currentEntry = history[groupId] ?? createEmptyHistoryEntry();
   const nextHistory = { ...history };
-
-  for (const subtopic of challenge.selectedSubtopics) {
-    const currentEntry = nextHistory[subtopic.key];
-    if (!currentEntry) {
-      continue;
-    }
-
-    nextHistory[subtopic.key] = {
-      ...currentEntry,
-      lastPassedAt: reviewedAt,
-    };
-  }
+  nextHistory[groupId] = {
+    ...currentEntry,
+    passedChallenges: dedupeStrings([
+      ...currentEntry.passedChallenges,
+      createChallengeReference(challenge),
+    ]),
+    lastPassedAt: reviewedAt,
+  };
 
   return nextHistory;
 }
@@ -228,35 +196,33 @@ function toAuthErrorMessage(payload: { error?: string; authUrl?: string }) {
   return payload.error || "Copilot is unavailable right now.";
 }
 
-function readStoredGroupIds(allowedGroupIds: Set<string>): string[] | null {
-  const savedGroupIds = localStorage.getItem(STORAGE_KEYS.groupIds);
-  if (!savedGroupIds) {
+function readStoredGroupId(allowedGroupIds: Set<string>): string | null {
+  const savedGroupId = localStorage.getItem(STORAGE_KEYS.groupId)?.trim();
+  if (savedGroupId && allowedGroupIds.has(savedGroupId)) {
+    return savedGroupId;
+  }
+
+  const legacyGroupIds = localStorage.getItem(LEGACY_GROUP_IDS_STORAGE_KEY);
+  if (!legacyGroupIds) {
     return null;
   }
 
   try {
-    const parsedGroupIds = JSON.parse(savedGroupIds) as unknown;
+    const parsedGroupIds = JSON.parse(legacyGroupIds) as unknown;
     if (!Array.isArray(parsedGroupIds)) {
       return null;
     }
 
-    return parsedGroupIds.filter(
-      (value): value is string =>
-        typeof value === "string" && allowedGroupIds.has(value)
+    return (
+      parsedGroupIds.find(
+        (value): value is string =>
+          typeof value === "string" && allowedGroupIds.has(value)
+      ) || null
     );
   } catch {
-    localStorage.removeItem(STORAGE_KEYS.groupIds);
+    localStorage.removeItem(LEGACY_GROUP_IDS_STORAGE_KEY);
     return null;
   }
-}
-
-function readStoredLearnerLevel(): LearnerLevel | null {
-  const savedLearnerLevel = localStorage.getItem(STORAGE_KEYS.learnerLevel);
-  if (!isValidLearnerLevel(savedLearnerLevel || undefined)) {
-    return null;
-  }
-
-  return savedLearnerLevel as LearnerLevel;
 }
 
 function readStoredHistory(): ChallengeHistory | null {
@@ -297,33 +263,46 @@ function readStoredSession(): PersistedSession | null {
   }
 }
 
+function getHistoryEntry(
+  history: ChallengeHistory,
+  groupId: string | null
+): GroupChallengeHistory {
+  if (!groupId) {
+    return createEmptyHistoryEntry();
+  }
+
+  return history[groupId] ?? createEmptyHistoryEntry();
+}
+
 type ScopeSidebarProps = Readonly<{
   groups: GroupSummary[];
-  selectedGroupIds: string[];
-  learnerLevel: LearnerLevel;
-  nextTopicCount: number;
-  totalCoveredSubtopics: number;
-  untouchedInScope: number;
-  filteredTopicCount: number;
+  selectedGroupId: string | null;
+  progressionLabel: ChallengeProgression;
+  nextChallengeNumber: number;
+  generatedChallengeCount: number;
+  passedChallengeCount: number;
+  selectedGroupTopicCount: number;
   isGenerating: boolean;
-  onLearnerLevelChange: (learnerLevel: LearnerLevel) => void;
-  onToggleGroup: (groupId: string) => void;
+  onSelectGroup: (groupId: string) => void;
   onGenerateChallenge: () => void;
 }>;
 
 function ScopeSidebar({
   groups,
-  selectedGroupIds,
-  learnerLevel,
-  nextTopicCount,
-  totalCoveredSubtopics,
-  untouchedInScope,
-  filteredTopicCount,
+  selectedGroupId,
+  progressionLabel,
+  nextChallengeNumber,
+  generatedChallengeCount,
+  passedChallengeCount,
+  selectedGroupTopicCount,
   isGenerating,
-  onLearnerLevelChange,
-  onToggleGroup,
+  onSelectGroup,
   onGenerateChallenge,
 }: ScopeSidebarProps) {
+  const activeGroup =
+    groups.find((group) => group.id === selectedGroupId) ?? null;
+  const progression = progressionCopy[progressionLabel];
+
   return (
     <aside className="space-y-6">
       <section className="rounded-2xl border border-(--border) bg-(--bg-card) p-5">
@@ -333,48 +312,50 @@ function ScopeSidebar({
               Challenge Scope
             </p>
             <h2 className="mt-2 text-xl font-semibold text-white">
-              Build the next set
+              Interview sequence
             </h2>
           </div>
           <span className="rounded-full border border-(--border) px-3 py-1 text-xs text-(--text-muted)">
-            {nextTopicCount} subtopic{nextTopicCount === 1 ? "" : "s"}
+            Challenge #{nextChallengeNumber}
           </span>
         </div>
 
-        <div className="mt-5 space-y-3">
-          {(
-            Object.entries(learnerLevelCopy) as Array<
-              [LearnerLevel, (typeof learnerLevelCopy)[LearnerLevel]]
-            >
-          ).map(([value, copy]) => {
-            const isActive = learnerLevel === value;
+        <div className="mt-5 rounded-2xl border border-(--border) bg-black/20 p-4">
+          <div className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
+            Current progression
+          </div>
+          <div className="mt-2 text-lg font-semibold text-white">
+            {progression.label}
+          </div>
+          <div className="mt-2 text-sm leading-6 text-(--text-muted)">
+            {progression.description}
+          </div>
+        </div>
 
-            return (
-              <button
-                key={value}
-                type="button"
-                onClick={() => onLearnerLevelChange(value)}
-                className={`w-full rounded-2xl border px-4 py-4 text-left transition-colors ${
-                  isActive
-                    ? "border-(--accent-dim) bg-(--accent-dim)/10"
-                    : "border-(--border) hover:border-(--accent-dim)"
-                }`}
-              >
-                <div className="text-sm font-semibold text-white">
-                  {copy.label}
-                </div>
-                <div className="mt-2 text-sm leading-6 text-(--text-muted)">
-                  {copy.description}
-                </div>
-              </button>
-            );
-          })}
+        <div className="mt-4 rounded-2xl border border-(--border) bg-black/20 p-4">
+          <div className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
+            Selected group
+          </div>
+          {activeGroup ? (
+            <>
+              <div className="mt-2 text-sm font-semibold text-white">
+                {activeGroup.title}
+              </div>
+              <div className="mt-2 text-sm leading-6 text-(--text-muted)">
+                {activeGroup.description}
+              </div>
+            </>
+          ) : (
+            <div className="mt-2 text-sm leading-6 text-(--text-muted)">
+              Pick one group to scope the next challenge.
+            </div>
+          )}
         </div>
 
         <button
           type="button"
           onClick={onGenerateChallenge}
-          disabled={isGenerating}
+          disabled={isGenerating || !activeGroup}
           className="mt-5 w-full rounded-xl bg-(--accent-dim) px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isGenerating ? "Generating challenge..." : "Generate challenge"}
@@ -386,92 +367,82 @@ function ScopeSidebar({
           Tech Groups
         </p>
         <h2 className="mt-2 text-xl font-semibold text-white">
-          Filter subtopics
+          Pick one focus
         </h2>
         <p className="mt-2 text-sm leading-6 text-(--text-muted)">
-          Leave everything unselected to let the generator pull from the full
-          catalog.
+          Each generated challenge stays inside one group and moves from
+          foundational interview prompts into harder variants as you keep
+          generating new sets.
         </p>
 
-        <div className="mt-5 flex flex-wrap gap-3">
+        <div className="mt-5 space-y-3">
           {groups.map((group) => {
-            const isActive = selectedGroupIds.includes(group.id);
+            const isActive = selectedGroupId === group.id;
 
             return (
               <button
                 key={group.id}
                 type="button"
-                onClick={() => onToggleGroup(group.id)}
-                className={`rounded-full border px-4 py-2 text-sm transition-colors ${
+                onClick={() => onSelectGroup(group.id)}
+                className={`w-full rounded-2xl border px-4 py-4 text-left transition-colors ${
                   isActive
-                    ? "border-(--accent-dim) bg-(--accent-dim)/10 text-white"
-                    : "border-(--border) text-(--text-muted) hover:border-(--accent-dim) hover:text-white"
+                    ? "border-(--accent-dim) bg-(--accent-dim)/10"
+                    : "border-(--border) hover:border-(--accent-dim)"
                 }`}
               >
-                {group.label}
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="text-sm font-semibold text-white">
+                      {group.title}
+                    </div>
+                    <div className="mt-2 text-sm leading-6 text-(--text-muted)">
+                      {group.description}
+                    </div>
+                  </div>
+                  <span className="shrink-0 text-xs text-(--text-muted)">
+                    {group.topicCount} topics
+                  </span>
+                </div>
               </button>
             );
           })}
-        </div>
-
-        <div className="mt-5 space-y-3">
-          {groups.map((group) => (
-            <div
-              key={group.id}
-              className="rounded-2xl border border-(--border) bg-black/20 p-4"
-            >
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <div className="text-sm font-semibold text-white">
-                    {group.title}
-                  </div>
-                  <div className="mt-1 text-sm leading-6 text-(--text-muted)">
-                    {group.description}
-                  </div>
-                </div>
-                <span className="shrink-0 text-xs text-(--text-muted)">
-                  {group.topicCount} topics
-                </span>
-              </div>
-            </div>
-          ))}
         </div>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
         <div className="rounded-2xl border border-(--border) bg-(--bg-card) p-5">
           <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
-            Covered
+            Created
           </p>
           <div className="mt-3 text-3xl font-semibold text-white">
-            {totalCoveredSubtopics}
+            {generatedChallengeCount}
           </div>
           <p className="mt-2 text-sm leading-6 text-(--text-muted)">
-            Subtopics that have already appeared in generated challenges.
+            Unique challenges already generated for the selected group.
           </p>
         </div>
 
         <div className="rounded-2xl border border-(--border) bg-(--bg-card) p-5">
           <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
-            Untouched
+            Passed
           </p>
           <div className="mt-3 text-3xl font-semibold text-white">
-            {untouchedInScope}
+            {passedChallengeCount}
           </div>
           <p className="mt-2 text-sm leading-6 text-(--text-muted)">
-            Subtopics in the current filter that have not been used yet.
+            Challenge sets that already cleared review in this group.
           </p>
         </div>
 
         <div className="rounded-2xl border border-(--border) bg-(--bg-card) p-5">
           <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
-            In Scope
+            In Group
           </p>
           <div className="mt-3 text-3xl font-semibold text-white">
-            {filteredTopicCount}
+            {selectedGroupTopicCount}
           </div>
           <p className="mt-2 text-sm leading-6 text-(--text-muted)">
-            Available subtopics after applying the current filters.
+            Topics available in the currently selected study group.
           </p>
         </div>
       </section>
@@ -492,6 +463,13 @@ function ChallengeSummaryCard({
   const challengeKindLabel = isUiChallenge
     ? "React + Tailwind"
     : "Logic challenge";
+  const groupLabel =
+    challenge.groupLabel || challenge.selectedSubtopics[0]?.groupLabel;
+  const groupTitle =
+    challenge.groupTitle || challenge.selectedSubtopics[0]?.groupTitle;
+  const progressionTitle = challenge.progressionLabel
+    ? progressionCopy[challenge.progressionLabel].label
+    : null;
 
   return (
     <>
@@ -518,14 +496,16 @@ function ChallengeSummaryCard({
         </div>
 
         <div className="mt-5 flex flex-wrap gap-3">
-          {challenge.selectedSubtopics.map((subtopic) => (
-            <span
-              key={subtopic.key}
-              className="rounded-full border border-(--border) bg-black/20 px-4 py-2 text-xs text-(--text-muted)"
-            >
-              {subtopic.groupLabel} • {subtopic.topicTitle}
+          {groupLabel ? (
+            <span className="rounded-full border border-(--border) bg-black/20 px-4 py-2 text-xs text-(--text-muted)">
+              {groupLabel} • {groupTitle || "Selected group"}
             </span>
-          ))}
+          ) : null}
+          {progressionTitle ? (
+            <span className="rounded-full border border-(--border) bg-black/20 px-4 py-2 text-xs text-(--text-muted)">
+              {progressionTitle}
+            </span>
+          ) : null}
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
@@ -540,7 +520,7 @@ function ChallengeSummaryCard({
 
           <section className="rounded-2xl border border-(--border) bg-black/20 p-5">
             <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
-              Pass criteria
+              Challenge specs
             </p>
             <ul className="mt-4 space-y-3 text-sm leading-6 text-(--text-muted)">
               {challenge.passCriteria.map((criterion) => (
@@ -612,8 +592,8 @@ function ChallengeEditorCard({
             Write your answer
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-7 text-(--text-muted)">
-            Copilot reviews the current code against the generated instructions,
-            reference solution, and pass criteria. If it does not pass, keep
+            Copilot checks the current code against the generated instructions,
+            challenge specs, and reference solution. If it does not pass, keep
             iterating and retry.
           </p>
         </div>
@@ -632,13 +612,10 @@ function ChallengeEditorCard({
       >
         Your code
       </label>
-      <textarea
-        id="challenge-lab-editor"
+      <MonacoCodeEditor
+        language={challenge.language}
         value={userCode}
-        onChange={(event) => onUserCodeChange(event.target.value)}
-        spellCheck={false}
-        placeholder="Write your solution here..."
-        className="mt-3 min-h-96 w-full rounded-2xl border border-(--border) bg-black/30 px-4 py-4 font-mono text-sm leading-7 text-(--text) outline-none transition-colors placeholder:text-(--text-muted) focus:border-(--accent-dim)"
+        onChange={onUserCodeChange}
       />
 
       <div className="mt-4 flex flex-wrap gap-3">
@@ -678,18 +655,26 @@ function ChallengeEditorCard({
 }
 
 function ChallengeNoticeStack({
+  statusMessage,
   error,
   authUrl,
 }: Readonly<{
+  statusMessage: string | null;
   error: string | null;
   authUrl: string | null;
 }>) {
-  if (!error && !authUrl) {
+  if (!statusMessage && !error && !authUrl) {
     return null;
   }
 
   return (
     <>
+      {statusMessage ? (
+        <div className="rounded-2xl border border-sky-500/30 bg-sky-500/10 px-5 py-4 text-sm text-sky-100">
+          {statusMessage}
+        </div>
+      ) : null}
+
       {error ? (
         <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-5 py-4 text-sm text-red-100">
           {error}
@@ -761,11 +746,13 @@ function ChallengeReviewCard({
 }
 
 function EmptyChallengeState({
+  statusMessage,
   error,
   authUrl,
   isGenerating,
   onGenerateChallenge,
 }: Readonly<{
+  statusMessage: string | null;
   error: string | null;
   authUrl: string | null;
   isGenerating: boolean;
@@ -777,13 +764,19 @@ function EmptyChallengeState({
         No active challenge
       </p>
       <h2 className="mt-3 text-3xl font-semibold text-white">
-        Generate a challenge set to start
+        Generate the next interview challenge
       </h2>
       <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-(--text-muted) sm:text-base">
-        The generator picks subtopics from the current filter, favors the ones
-        that have not been used yet, and still falls back to prior topics when
-        it needs to fill the set.
+        Pick a single group, then generate common frontend interview-style
+        challenges that begin with the basics and get tougher as more challenge
+        sets are created for that group.
       </p>
+
+      {statusMessage ? (
+        <div className="mx-auto mt-6 max-w-2xl rounded-2xl border border-sky-500/30 bg-sky-500/10 px-5 py-4 text-left text-sm text-sky-100">
+          {statusMessage}
+        </div>
+      ) : null}
 
       {error ? (
         <div className="mx-auto mt-6 max-w-2xl rounded-2xl border border-red-500/30 bg-red-500/10 px-5 py-4 text-left text-sm text-red-100">
@@ -814,13 +807,12 @@ function EmptyChallengeState({
 
 export function ChallengeLab({
   groups,
-  catalog,
   initialSelectedGroupIds,
 }: ChallengeLabProps) {
-  const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>(
-    initialSelectedGroupIds
+  const defaultGroupId = initialSelectedGroupIds[0] || groups[0]?.id || null;
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(
+    defaultGroupId
   );
-  const [learnerLevel, setLearnerLevel] = useState<LearnerLevel>(DEFAULT_LEVEL);
   const [history, setHistory] = useState<ChallengeHistory>({});
   const [currentChallenge, setCurrentChallenge] =
     useState<GeneratedChallenge | null>(null);
@@ -830,6 +822,7 @@ export function ChallengeLab({
   const [copilotModel, setCopilotModel] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isReviewing, setIsReviewing] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
@@ -837,16 +830,11 @@ export function ChallengeLab({
   useEffect(() => {
     const allowedGroupIds = new Set(groups.map((group) => group.id));
 
-    if (initialSelectedGroupIds.length === 0) {
-      const storedGroupIds = readStoredGroupIds(allowedGroupIds);
-      if (storedGroupIds) {
-        setSelectedGroupIds(storedGroupIds);
-      }
-    }
-
-    const storedLearnerLevel = readStoredLearnerLevel();
-    if (storedLearnerLevel) {
-      setLearnerLevel(storedLearnerLevel);
+    const storedGroupId = readStoredGroupId(allowedGroupIds);
+    if (storedGroupId) {
+      setSelectedGroupId(storedGroupId);
+    } else if (defaultGroupId) {
+      setSelectedGroupId(defaultGroupId);
     }
 
     const storedHistory = readStoredHistory();
@@ -864,26 +852,20 @@ export function ChallengeLab({
     }
 
     setIsHydrated(true);
-  }, [groups, initialSelectedGroupIds]);
+  }, [defaultGroupId, groups]);
 
   useEffect(() => {
     if (!isHydrated) {
       return;
     }
 
-    localStorage.setItem(
-      STORAGE_KEYS.groupIds,
-      JSON.stringify(selectedGroupIds)
-    );
-  }, [isHydrated, selectedGroupIds]);
-
-  useEffect(() => {
-    if (!isHydrated) {
+    if (!selectedGroupId) {
+      localStorage.removeItem(STORAGE_KEYS.groupId);
       return;
     }
 
-    localStorage.setItem(STORAGE_KEYS.learnerLevel, learnerLevel);
-  }, [isHydrated, learnerLevel]);
+    localStorage.setItem(STORAGE_KEYS.groupId, selectedGroupId);
+  }, [isHydrated, selectedGroupId]);
 
   useEffect(() => {
     if (!isHydrated) {
@@ -921,47 +903,31 @@ export function ChallengeLab({
     userCode,
   ]);
 
-  const filteredCatalog = useMemo(() => {
-    if (selectedGroupIds.length === 0) {
-      return catalog;
-    }
-
-    const selectedGroups = new Set(selectedGroupIds);
-    return catalog.filter((topic) => selectedGroups.has(topic.groupId));
-  }, [catalog, selectedGroupIds]);
-
-  const totalCoveredSubtopics = useMemo(
-    () => catalog.filter((topic) => history[topic.key]?.count > 0).length,
-    [catalog, history]
+  const selectedGroup = useMemo(
+    () => groups.find((group) => group.id === selectedGroupId) ?? null,
+    [groups, selectedGroupId]
   );
 
-  const untouchedInScope = useMemo(
-    () =>
-      filteredCatalog.filter((topic) => (history[topic.key]?.count || 0) <= 0)
-        .length,
-    [filteredCatalog, history]
+  const currentHistoryEntry = useMemo(
+    () => getHistoryEntry(history, selectedGroupId),
+    [history, selectedGroupId]
   );
 
-  const nextTopicCount = Math.min(
-    getTopicCountForLevel(learnerLevel),
-    filteredCatalog.length
+  const progression = useMemo(
+    () => getProgressionForChallengeCount(currentHistoryEntry.createdChallenges.length),
+    [currentHistoryEntry.createdChallenges.length]
   );
+  const generatedChallengeCount = currentHistoryEntry.createdChallenges.length;
+  const passedChallengeCount = currentHistoryEntry.passedChallenges.length;
+  const selectedGroupTopicCount = selectedGroup?.topicCount ?? 0;
+  const nextChallengeNumber = generatedChallengeCount + 1;
   let reviewStatusLabel = "Awaiting review";
   if (review) {
     reviewStatusLabel = review.passed ? "Passed" : "Retry open";
   }
 
-  const toggleGroup = (groupId: string) => {
-    setSelectedGroupIds((currentGroupIds) => {
-      if (currentGroupIds.includes(groupId)) {
-        return currentGroupIds.filter((value) => value !== groupId);
-      }
-
-      return [...currentGroupIds, groupId];
-    });
-  };
-
   const resetFeedback = () => {
+    setStatusMessage(null);
     setError(null);
     setAuthUrl(null);
   };
@@ -969,70 +935,48 @@ export function ChallengeLab({
   const generateChallenge = async () => {
     resetFeedback();
 
-    if (filteredCatalog.length === 0) {
-      setError("No subtopics match the current group filter.");
-      return;
-    }
-
-    const selectedTopics = pickChallengeTopics({
-      catalog: filteredCatalog,
-      history,
-      learnerLevel,
-    });
-
-    if (selectedTopics.length === 0) {
-      setError("Could not find a valid set of subtopics for a new challenge.");
+    if (!selectedGroupId || !selectedGroup) {
+      setError("Select one group before generating a challenge.");
       return;
     }
 
     setIsGenerating(true);
+    setStatusMessage(
+      `Generating the next ${progressionCopy[progression.progressionLabel].label.toLowerCase()} challenge...`
+    );
 
     try {
-      const response = await fetch("/api/copilot/challenges/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const payload = await readGeneratedChallengeStream({
+        body: {
+          groupId: selectedGroupId,
+          learnerLevel: progression.learnerLevel,
+          createdChallengeRefs: currentHistoryEntry.createdChallenges,
         },
-        body: JSON.stringify({
-          learnerLevel,
-          topicKeys: selectedTopics.map((topic) => topic.key),
-        }),
+        onStatus: setStatusMessage,
       });
-
-      const payload = (await response
-        .json()
-        .catch(() => ({ error: undefined }))) as {
-        challenge?: unknown;
-        model?: string;
-        error?: string;
-        authUrl?: string;
-      };
       const generatedChallenge = payload.challenge;
-
-      if (!response.ok || !isGeneratedChallenge(generatedChallenge)) {
-        setAuthUrl(payload.authUrl || null);
-        setError(toAuthErrorMessage(payload));
-        return;
-      }
 
       setCurrentChallenge(generatedChallenge);
       setUserCode(generatedChallenge.starterCode);
       setReview(null);
       setAttemptCount(0);
-      setCopilotModel(typeof payload.model === "string" ? payload.model : null);
+      setCopilotModel(payload.model ?? copilotModel);
       setHistory((currentHistory) =>
         updateGeneratedHistory({
           history: currentHistory,
+          groupId: selectedGroupId,
           challenge: generatedChallenge,
         })
       );
     } catch (requestError) {
+      setAuthUrl(getAuthUrlFromError(requestError));
       setError(
         requestError instanceof Error
           ? requestError.message
           : "Challenge generation failed."
       );
     } finally {
+      setStatusMessage(null);
       setIsGenerating(false);
     }
   };
@@ -1052,59 +996,44 @@ export function ChallengeLab({
 
     const nextAttempt = attemptCount + 1;
     setIsReviewing(true);
+    setStatusMessage("Checking the current solution...");
 
     try {
-      const response = await fetch("/api/copilot/challenges/review", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          learnerLevel,
+      const payload = await readReviewStream({
+        body: {
+          learnerLevel: currentChallenge.learnerLevel,
           attempt: nextAttempt,
           challenge: currentChallenge,
           userCode,
-        }),
+        },
+        onStatus: setStatusMessage,
       });
-
-      const payload = (await response
-        .json()
-        .catch(() => ({ error: undefined }))) as {
-        review?: unknown;
-        model?: string;
-        error?: string;
-        authUrl?: string;
-      };
       const reviewResult = payload.review;
-
-      if (!response.ok || !isChallengeReviewResult(reviewResult)) {
-        setAuthUrl(payload.authUrl || null);
-        setError(toAuthErrorMessage(payload));
-        return;
-      }
 
       setAttemptCount(nextAttempt);
       setReview(reviewResult);
-      setCopilotModel(
-        typeof payload.model === "string" ? payload.model : copilotModel
-      );
+      setCopilotModel(payload.model ?? copilotModel);
 
-      if (reviewResult.passed) {
+      const historyGroupId = currentChallenge.groupId || selectedGroupId;
+      if (reviewResult.passed && historyGroupId) {
         setHistory((currentHistory) =>
           updatePassedHistory({
             history: currentHistory,
+            groupId: historyGroupId,
             challenge: currentChallenge,
             reviewedAt: reviewResult.reviewedAt,
           })
         );
       }
     } catch (requestError) {
+      setAuthUrl(getAuthUrlFromError(requestError));
       setError(
         requestError instanceof Error
           ? requestError.message
           : "Challenge review failed."
       );
     } finally {
+      setStatusMessage(null);
       setIsReviewing(false);
     }
   };
@@ -1121,9 +1050,10 @@ export function ChallengeLab({
           </Link>
           <h1 className="mt-4 text-4xl font-bold sm:text-5xl">Challenge Lab</h1>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-(--text-muted) sm:text-base">
-            Generate a fresh Copilot-backed challenge from your study subtopics,
-            solve it in-browser, preview UI work live when it is a React and
-            Tailwind task, and keep retrying until the review passes.
+            Generate Copilot-backed frontend interview challenges from one
+            selected group, solve them in-browser, preview UI work live when it
+            is a React and Tailwind task, and keep retrying until the review
+            passes.
           </p>
         </div>
 
@@ -1138,15 +1068,14 @@ export function ChallengeLab({
       <div className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
         <ScopeSidebar
           groups={groups}
-          selectedGroupIds={selectedGroupIds}
-          learnerLevel={learnerLevel}
-          nextTopicCount={nextTopicCount}
-          totalCoveredSubtopics={totalCoveredSubtopics}
-          untouchedInScope={untouchedInScope}
-          filteredTopicCount={filteredCatalog.length}
+          selectedGroupId={selectedGroupId}
+          progressionLabel={progression.progressionLabel}
+          nextChallengeNumber={nextChallengeNumber}
+          generatedChallengeCount={generatedChallengeCount}
+          passedChallengeCount={passedChallengeCount}
+          selectedGroupTopicCount={selectedGroupTopicCount}
           isGenerating={isGenerating}
-          onLearnerLevelChange={setLearnerLevel}
-          onToggleGroup={toggleGroup}
+          onSelectGroup={setSelectedGroupId}
           onGenerateChallenge={() => void generateChallenge()}
         />
 
@@ -1168,11 +1097,16 @@ export function ChallengeLab({
                 onReview={() => void reviewSolution()}
                 onGenerateAnother={() => void generateChallenge()}
               />
-              <ChallengeNoticeStack error={error} authUrl={authUrl} />
+              <ChallengeNoticeStack
+                statusMessage={statusMessage}
+                error={error}
+                authUrl={authUrl}
+              />
               {review ? <ChallengeReviewCard review={review} /> : null}
             </>
           ) : (
             <EmptyChallengeState
+              statusMessage={statusMessage}
               error={error}
               authUrl={authUrl}
               isGenerating={isGenerating}
