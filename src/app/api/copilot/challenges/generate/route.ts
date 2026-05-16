@@ -1,11 +1,14 @@
 import {
   clampEstimatedMinutes,
+  createChallengeGenerationPlan,
   getProgressionForChallengeCount,
   isValidChallengeKind,
   isValidChallengeLanguage,
   isValidLearnerLevel,
+  type ChallengeGenerationPlan,
   type ChallengeGenerationRequest,
   type ChallengeSubtopic,
+  type ChallengeTrack,
   type GeneratedChallenge,
 } from "@/lib/challenge-lab";
 import {
@@ -141,8 +144,20 @@ function buildTopicContext({
   ].join("\n\n");
 }
 
-function buildStarterCode(kind: GeneratedChallenge["challengeKind"]): string {
-  if (kind === "ui-react-tailwind") {
+function buildStarterCode(plan: ChallengeGenerationPlan): string {
+  if (plan.starterMode === "scratch") {
+    return "";
+  }
+
+  if (plan.track === "ui") {
+    if (plan.starterMode === "shell") {
+      return [
+        "export default function ChallengeSolution() {",
+        '  return <div className="min-h-screen bg-neutral-950 text-white" />;',
+        "}",
+      ].join("\n");
+    }
+
     return [
       "export default function ChallengeSolution() {",
       "  return (",
@@ -156,58 +171,15 @@ function buildStarterCode(kind: GeneratedChallenge["challengeKind"]): string {
     ].join("\n");
   }
 
+  if (plan.starterMode === "shell") {
+    return ["export function solveChallenge() {}"].join("\n");
+  }
+
   return [
     "export function solveChallenge() {",
     '  throw new Error("TODO: implement the challenge solution.");',
     "}",
   ].join("\n");
-}
-
-function normalizeDarkUiCode(code: string): string {
-  const replacements: Array<[RegExp, string]> = [
-    [/\bbg-white\b/g, "bg-slate-950"],
-    [/\bbg-slate-50\b/g, "bg-slate-950"],
-    [/\bbg-slate-100\b/g, "bg-slate-900"],
-    [/\bbg-gray-50\b/g, "bg-slate-950"],
-    [/\bbg-gray-100\b/g, "bg-slate-900"],
-    [/\bbg-zinc-50\b/g, "bg-slate-950"],
-    [/\bbg-zinc-100\b/g, "bg-slate-900"],
-    [/\bbg-neutral-50\b/g, "bg-slate-950"],
-    [/\bbg-neutral-100\b/g, "bg-slate-900"],
-    [/\bbg-stone-50\b/g, "bg-slate-950"],
-    [/\bbg-stone-100\b/g, "bg-slate-900"],
-    [/\bbg-blue-50\b/g, "bg-blue-500/15"],
-    [/\bbg-sky-50\b/g, "bg-sky-500/15"],
-    [/\bbg-indigo-50\b/g, "bg-indigo-500/15"],
-    [/\btext-black\b/g, "text-slate-100"],
-    [/\btext-slate-900\b/g, "text-slate-100"],
-    [/\btext-slate-800\b/g, "text-slate-100"],
-    [/\btext-gray-900\b/g, "text-slate-100"],
-    [/\btext-gray-800\b/g, "text-slate-100"],
-    [/\btext-zinc-900\b/g, "text-slate-100"],
-    [/\btext-zinc-800\b/g, "text-slate-100"],
-    [/\btext-neutral-900\b/g, "text-slate-100"],
-    [/\btext-neutral-800\b/g, "text-slate-100"],
-    [/\bborder-slate-100\b/g, "border-slate-800"],
-    [/\bborder-slate-200\b/g, "border-slate-800"],
-    [/\bborder-gray-100\b/g, "border-slate-800"],
-    [/\bborder-gray-200\b/g, "border-slate-800"],
-    [/\bborder-zinc-100\b/g, "border-slate-800"],
-    [/\bborder-zinc-200\b/g, "border-slate-800"],
-    [/\bborder-neutral-100\b/g, "border-slate-800"],
-    [/\bborder-neutral-200\b/g, "border-slate-800"],
-    [/\bborder-stone-100\b/g, "border-slate-800"],
-    [/\bborder-stone-200\b/g, "border-slate-800"],
-    [/\bdivide-slate-200\b/g, "divide-slate-800"],
-    [/\bdivide-gray-200\b/g, "divide-slate-800"],
-    [/\bshadow-sm\b/g, "shadow-lg shadow-black/20"],
-  ];
-
-  return replacements.reduce(
-    (nextCode, [pattern, replacement]) =>
-      nextCode.replace(pattern, replacement),
-    code
-  );
 }
 
 function getStringValue(
@@ -234,23 +206,26 @@ function getStringArrayValue(
 }
 
 function resolveChallengeKind(
-  candidate: Record<string, unknown>,
-  uiPreferred: boolean
+  track: ChallengeTrack
 ): GeneratedChallenge["challengeKind"] {
-  const value = candidate.challengeKind;
-  if (typeof value === "string" && isValidChallengeKind(value)) {
-    return value;
-  }
-
-  return uiPreferred ? "ui-react-tailwind" : "logic";
+  return track === "ui" ? "ui-react-tailwind" : "logic";
 }
 
 function resolveChallengeLanguage(
   candidate: Record<string, unknown>,
-  challengeKind: GeneratedChallenge["challengeKind"]
+  challengeKind: GeneratedChallenge["challengeKind"],
+  track: ChallengeTrack
 ): GeneratedChallenge["language"] {
+  if (track === "ui") {
+    return "tsx";
+  }
+
   const value = candidate.language;
-  if (typeof value === "string" && isValidChallengeLanguage(value)) {
+  if (
+    typeof value === "string" &&
+    isValidChallengeLanguage(value) &&
+    (value === "js" || value === "ts")
+  ) {
     return value;
   }
 
@@ -288,24 +263,99 @@ function defaultEstimatedMinutes(
   return 40;
 }
 
+function buildTrackInstructions({
+  plan,
+  progressionLabel,
+}: {
+  plan: ChallengeGenerationPlan;
+  progressionLabel: ReturnType<
+    typeof getProgressionForChallengeCount
+  >["progressionLabel"];
+}): string {
+  if (plan.track === "javascript") {
+    const difficulty =
+      progressionLabel === "foundation"
+        ? "Focus on simple JavaScript or TypeScript logic common in frontend interviews: syntax fluency, closures, arrays, strings, objects, parsing, validation, or small utility helpers."
+        : progressionLabel === "core"
+          ? "Use a broader JavaScript or TypeScript logic problem common in frontend interviews: async control flow, caching, event helpers, state transforms, or data normalization."
+          : "Use an advanced JavaScript or TypeScript logic problem common in frontend interviews with sharper edge cases, cleaner abstractions, or more careful async or state handling.";
+
+    return [
+      "Required track: JavaScript coding.",
+      'Set "challengeKind" to "logic" and set "previewCode" to null.',
+      difficulty,
+      "Do not turn this into a LeetCode-style algorithm puzzle or a UI build.",
+    ].join("\n");
+  }
+
+  if (plan.track === "algorithmic") {
+    const difficulty =
+      progressionLabel === "foundation"
+        ? "Make this a LeetCode-style easy problem using arrays, strings, maps, sets, counters, or simple iteration."
+        : progressionLabel === "core"
+          ? "Make this a LeetCode-style medium problem using patterns such as two-pointers, stacks, queues, intervals, hash maps, or binary search."
+          : "Make this a harder interview algorithm problem that is still realistic for one file, with careful invariants and edge-case handling.";
+
+    return [
+      "Required track: Algorithmic coding.",
+      'Set "challengeKind" to "logic" and set "previewCode" to null.',
+      difficulty,
+      "Use clear inputs, outputs, and edge cases. Keep it implementation-focused.",
+    ].join("\n");
+  }
+
+  const uiScopeInstruction =
+    plan.uiScope === "single-component"
+      ? "The UI scope must stay centered on one component with a small set of states and interactions."
+      : "The UI scope must combine multiple coordinated UI pieces or sections with shared state or interactions.";
+
+  return [
+    "Required track: UI coding.",
+    'Set "challengeKind" to "ui-react-tailwind" and set "language" to "tsx".',
+    uiScopeInstruction,
+    "Generate dark theme Tailwind classes directly in the returned code.",
+    "The UI itself must already be dark-themed with dark surfaces, light text, muted borders, and accessible contrast for controls.",
+    'Set "previewCode" to a working TSX component that renders the expected finished UI.',
+  ].join("\n");
+}
+
+function buildStarterModeInstructions(plan: ChallengeGenerationPlan): string {
+  if (plan.starterMode === "scratch") {
+    return 'Set "starterCode" to an empty string so the learner starts from scratch.';
+  }
+
+  if (plan.starterMode === "shell") {
+    return [
+      "Use a minimal starter shell.",
+      "For logic challenges, keep only the exported function signature or the smallest valid shell.",
+      "For UI challenges, keep only the smallest valid exported component shell with almost no implementation.",
+    ].join("\n");
+  }
+
+  return [
+    "Use a scaffolded starter.",
+    "Include a helpful starter structure, TODOs, or placeholders, but do not include the finished implementation.",
+  ].join("\n");
+}
+
 function buildPrompt({
   learnerLevel,
   topicContext,
-  uiPreferred,
   groupLabel,
   groupTitle,
   createdChallengeRefs,
   progressionLabel,
+  plan,
 }: {
   learnerLevel: NonNullable<ChallengeGenerationRequest["learnerLevel"]>;
   topicContext: string;
-  uiPreferred: boolean;
   groupLabel: string;
   groupTitle: string;
   createdChallengeRefs: string[];
   progressionLabel: ReturnType<
     typeof getProgressionForChallengeCount
   >["progressionLabel"];
+  plan: ChallengeGenerationPlan;
 }) {
   const progressionInstructions: Record<
     NonNullable<ChallengeGenerationRequest["learnerLevel"]>,
@@ -326,6 +376,11 @@ function buildPrompt({
     "The challenge should feel like a common frontend interview prompt rather than a niche course drill.",
     "Use the representative study context below as background. Do not force every background topic into the solution if it would make the challenge artificial.",
     progressionInstructions[learnerLevel],
+    buildTrackInstructions({
+      plan,
+      progressionLabel,
+    }),
+    buildStarterModeInstructions(plan),
     createdChallengeRefs.length > 0
       ? [
           "Do not repeat or lightly rename any of these previously generated challenges:",
@@ -333,15 +388,10 @@ function buildPrompt({
         ].join("\n")
       : "No previous challenges have been generated for this group yet.",
     "Do not ask for package installation, APIs, databases, images, file uploads, or multi-file setups.",
-    uiPreferred
+    plan.track === "ui"
       ? [
-          'Set "challengeKind" to "ui-react-tailwind" unless the selected topics make that impossible.',
           'For "ui-react-tailwind", set "language" to "tsx" and make both "starterCode" and "referenceSolution" a single-file React component with `export default function ChallengeSolution()`.',
-          "Match the app shell with a dark-first UI: dark backgrounds, light text, and accessible contrast for inputs, buttons, and lists.",
-          "Do not use white, off-white, or pale gray page surfaces for the primary UI. Avoid light cards unless they are tiny accents.",
-          "Prefer slate, zinc, neutral, or blue dark surfaces and keep form controls readable against them.",
           "For UI solutions, use Tailwind utility classes only and avoid external component libraries or icon packages.",
-          'For UI challenges, set "previewCode" to a working TSX component that renders the expected finished UI.',
         ].join("\n")
       : [
           'Set "challengeKind" to "logic".',
@@ -364,15 +414,14 @@ function normalizeGeneratedChallenge({
   value,
   learnerLevel,
   selectedSubtopics,
-  uiPreferred,
   group,
   progressionStep,
   progressionLabel,
+  plan,
 }: {
   value: unknown;
   learnerLevel: NonNullable<ChallengeGenerationRequest["learnerLevel"]>;
   selectedSubtopics: ChallengeSubtopic[];
-  uiPreferred: boolean;
   group: {
     id: string;
     label: string;
@@ -382,14 +431,19 @@ function normalizeGeneratedChallenge({
   progressionLabel: ReturnType<
     typeof getProgressionForChallengeCount
   >["progressionLabel"];
+  plan: ChallengeGenerationPlan;
 }): GeneratedChallenge {
   if (!value || typeof value !== "object") {
     throw new Error("Copilot returned an invalid challenge payload.");
   }
 
   const candidate = value as Record<string, unknown>;
-  const candidateKind = resolveChallengeKind(candidate, uiPreferred);
-  const candidateLanguage = resolveChallengeLanguage(candidate, candidateKind);
+  const candidateKind = resolveChallengeKind(plan.track);
+  const candidateLanguage = resolveChallengeLanguage(
+    candidate,
+    candidateKind,
+    plan.track
+  );
   const referenceSolution = getStringValue(candidate, "referenceSolution");
 
   if (!referenceSolution) {
@@ -397,7 +451,9 @@ function normalizeGeneratedChallenge({
   }
 
   const starterCode =
-    getStringValue(candidate, "starterCode") || buildStarterCode(candidateKind);
+    plan.starterMode === "scratch"
+      ? ""
+      : getStringValue(candidate, "starterCode") || buildStarterCode(plan);
   const previewCode = resolvePreviewCode({
     candidate,
     challengeKind: candidateKind,
@@ -417,18 +473,6 @@ function normalizeGeneratedChallenge({
   const instructionsMarkdown =
     getStringValue(candidate, "instructionsMarkdown") ||
     "## Goal\nComplete the requested task for the selected study group.";
-  const normalizedStarterCode =
-    candidateKind === "ui-react-tailwind"
-      ? normalizeDarkUiCode(starterCode)
-      : starterCode;
-  const normalizedReferenceSolution =
-    candidateKind === "ui-react-tailwind"
-      ? normalizeDarkUiCode(referenceSolution)
-      : referenceSolution;
-  const normalizedPreviewCode =
-    candidateKind === "ui-react-tailwind" && previewCode
-      ? normalizeDarkUiCode(previewCode)
-      : previewCode;
 
   return {
     id: randomUUID(),
@@ -440,12 +484,15 @@ function normalizeGeneratedChallenge({
     groupTitle: group.title,
     progressionStep,
     progressionLabel,
+    challengeTrack: plan.track,
+    starterMode: plan.starterMode,
+    uiScope: plan.uiScope,
     challengeKind: candidateKind,
     language: candidateLanguage,
     instructionsMarkdown,
-    starterCode: normalizedStarterCode,
-    referenceSolution: normalizedReferenceSolution,
-    previewCode: normalizedPreviewCode,
+    starterCode,
+    referenceSolution,
+    previewCode,
     passCriteria:
       passCriteria.length > 0
         ? passCriteria
@@ -453,7 +500,11 @@ function normalizeGeneratedChallenge({
     reviewFocus:
       reviewFocus.length > 0
         ? reviewFocus
-        : ["Correctness", "Completeness", "Clarity"],
+        : plan.track === "ui"
+          ? ["Correctness", "Interactions", "State handling"]
+          : plan.track === "algorithmic"
+            ? ["Correctness", "Edge cases", "Complexity"]
+            : ["Correctness", "Edge cases", "Clarity"],
     estimatedMinutes: clampEstimatedMinutes(estimatedMinutes),
     selectedSubtopics,
     generatedAt: new Date().toISOString(),
@@ -537,11 +588,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const uiPreferred = contexts.some((context) =>
+    const uiTrackEnabled = contexts.some((context) =>
       isUiCapableTopic(
         `${context.groupTitle} ${context.topicTitle} ${context.lessonContent}`
       )
     );
+    const plan = createChallengeGenerationPlan({
+      createdChallengeCount: createdChallengeRefs.length,
+      progressionLabel: progression.progressionLabel,
+      uiTrackEnabled,
+    });
     const prompt = buildPrompt({
       learnerLevel,
       topicContext: buildTopicContext({
@@ -550,11 +606,11 @@ export async function POST(request: NextRequest) {
         groupDescription: group.description,
         contexts,
       }),
-      uiPreferred,
       groupLabel: group.label,
       groupTitle: group.title,
       createdChallengeRefs,
       progressionLabel: progression.progressionLabel,
+      plan,
     });
     const encoder = new TextEncoder();
 
@@ -579,6 +635,8 @@ export async function POST(request: NextRequest) {
               "Return strict JSON only.",
               "Prefer common frontend interview prompts over niche exercises.",
               "Never ask the learner to install packages or create additional files.",
+              "Follow the required track and starter mode exactly.",
+              "If the challenge is a UI build, the returned code must already be dark themed with its own Tailwind classes.",
               "Reference solutions must be correct and concise.",
             ].join("\n"),
             onDelta(delta) {
@@ -592,10 +650,10 @@ export async function POST(request: NextRequest) {
             value: extractJsonPayload(copilotResult.message),
             learnerLevel,
             selectedSubtopics: toSelectedSubtopics(contexts),
-            uiPreferred,
             group,
             progressionStep: createdChallengeRefs.length + 1,
             progressionLabel: progression.progressionLabel,
+            plan,
           });
 
           sendEvent({

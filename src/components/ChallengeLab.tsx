@@ -10,6 +10,9 @@ import {
 import {
   createChallengeReference,
   getProgressionForChallengeCount,
+  getChallengeStarterModeLabel,
+  getChallengeTrackLabel,
+  getChallengeUiScopeLabel,
   isChallengeAiUsage,
   isChallengeReviewResult,
   isGeneratedChallenge,
@@ -78,18 +81,15 @@ const progressionCopy: Record<
 > = {
   foundation: {
     label: "Foundation",
-    description:
-      "Start with the common warm-up tasks and smaller UI or logic exercises for this group.",
+    description: "Core interview patterns for this group.",
   },
   core: {
     label: "Core round",
-    description:
-      "Step up to multi-part interview prompts with broader state or edge-case handling.",
+    description: "Broader prompts with state and edge cases.",
   },
   stretch: {
     label: "Stretch round",
-    description:
-      "Push into the tougher variants once the basics and core patterns have already shown up.",
+    description: "Harder variants after the core patterns are covered.",
   },
 };
 
@@ -329,6 +329,23 @@ function ScopeSidebar({
   const activeGroup =
     groups.find((group) => group.id === selectedGroupId) ?? null;
   const progression = progressionCopy[progressionLabel];
+  const stats = [
+    {
+      label: "Created",
+      value: generatedChallengeCount.toLocaleString(),
+      description: "Saved to prevent duplicate prompts.",
+    },
+    {
+      label: "Passed",
+      value: passedChallengeCount.toLocaleString(),
+      description: "Passed reviews in this group.",
+    },
+    {
+      label: "Context Pool",
+      value: selectedGroupTopicCount.toLocaleString(),
+      description: "Topics available for generation context.",
+    },
+  ];
 
   return (
     <aside className="space-y-6">
@@ -394,12 +411,10 @@ function ScopeSidebar({
           Tech Groups
         </p>
         <h2 className="mt-2 text-xl font-semibold text-white">
-          Pick one focus
+          Choose one group
         </h2>
         <p className="mt-2 text-sm leading-6 text-(--text-muted)">
-          Each generated challenge stays inside one group and moves from
-          foundational interview prompts into harder variants as you keep
-          generating new sets.
+          Generate interview-style challenges for one track at a time.
         </p>
 
         <div className="mt-5 space-y-3">
@@ -436,44 +451,23 @@ function ScopeSidebar({
         </div>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-3 min-[1500px]:grid-cols-1">
-        <div className="rounded-2xl border border-(--border) bg-(--bg-card) p-5">
-          <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
-            Created
-          </p>
-          <div className="mt-3 text-3xl font-semibold text-white">
-            {generatedChallengeCount}
+      <section className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            className="rounded-2xl border border-(--border) bg-(--bg-card) p-5"
+          >
+            <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
+              {stat.label}
+            </p>
+            <div className="mt-3 text-3xl font-semibold text-white">
+              {stat.value}
+            </div>
+            <p className="mt-2 text-sm leading-6 text-(--text-muted)">
+              {stat.description}
+            </p>
           </div>
-          <p className="mt-2 text-sm leading-6 text-(--text-muted)">
-            Stored to help the AI avoid regenerating the same challenge. This
-            does not advance progression by itself.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-(--border) bg-(--bg-card) p-5">
-          <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
-            Passed
-          </p>
-          <div className="mt-3 text-3xl font-semibold text-white">
-            {passedChallengeCount}
-          </div>
-          <p className="mt-2 text-sm leading-6 text-(--text-muted)">
-            Challenge sets that already cleared review in this group.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-(--border) bg-(--bg-card) p-5">
-          <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
-            Context Pool
-          </p>
-          <div className="mt-3 text-3xl font-semibold text-white">
-            {selectedGroupTopicCount}
-          </div>
-          <p className="mt-2 text-sm leading-6 text-(--text-muted)">
-            Informational only. The generator samples context from this group,
-            but this count does not directly change challenge size.
-          </p>
-        </div>
+        ))}
       </section>
     </aside>
   );
@@ -491,9 +485,10 @@ function ChallengeSummaryCard({
   userCode,
 }: ChallengeSummaryCardProps) {
   const isUiChallenge = challenge.challengeKind === "ui-react-tailwind";
-  const challengeKindLabel = isUiChallenge
-    ? "React + Tailwind"
-    : "Logic challenge";
+  const challengeKindLabel = getChallengeTrackLabel(
+    challenge.challengeTrack,
+    challenge.challengeKind
+  );
   const groupLabel =
     challenge.groupLabel || challenge.selectedSubtopics[0]?.groupLabel;
   const groupTitle =
@@ -501,6 +496,8 @@ function ChallengeSummaryCard({
   const progressionTitle = challenge.progressionLabel
     ? progressionCopy[challenge.progressionLabel].label
     : null;
+  const starterModeLabel = getChallengeStarterModeLabel(challenge.starterMode);
+  const uiScopeLabel = getChallengeUiScopeLabel(challenge.uiScope);
   const totalTokens = formatCount(generationUsage?.totalTokens);
   const inputTokens = formatCount(generationUsage?.inputTokens);
   const outputTokens = formatCount(generationUsage?.outputTokens);
@@ -548,6 +545,16 @@ function ChallengeSummaryCard({
               {progressionTitle}
             </span>
           ) : null}
+          {starterModeLabel ? (
+            <span className="rounded-full border border-(--border) bg-black/20 px-4 py-2 text-xs text-(--text-muted)">
+              {starterModeLabel}
+            </span>
+          ) : null}
+          {uiScopeLabel ? (
+            <span className="rounded-full border border-(--border) bg-black/20 px-4 py-2 text-xs text-(--text-muted)">
+              {uiScopeLabel}
+            </span>
+          ) : null}
         </div>
 
         <div className="mt-6 grid gap-6 min-[1600px]:grid-cols-2">
@@ -581,18 +588,16 @@ function ChallengeSummaryCard({
       {isUiChallenge ? (
         <div className="grid gap-6 min-[1750px]:grid-cols-2">
           <ChallengePreview
-            title="Target Preview"
-            subtitle="This renders the generated reference output so the UI target is visible without revealing the code immediately."
+            title="Reference Preview"
             source={challenge.previewCode || challenge.referenceSolution}
             language={challenge.language}
-            emptyMessage="The generated challenge did not include a previewable UI target."
+            emptyMessage="Reference preview unavailable."
           />
           <ChallengePreview
-            title="Your Preview"
-            subtitle="This recompiles your current solution live. Keep the default export in place so the preview can mount."
+            title="Solution Preview"
             source={userCode}
             language={challenge.language}
-            emptyMessage="Start editing the solution to see your version render here."
+            emptyMessage="Start coding to preview your solution."
           />
         </div>
       ) : null}
@@ -634,9 +639,7 @@ function ChallengeEditorCard({
             Write your answer
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-7 text-(--text-muted)">
-            Copilot checks the current code against the generated instructions,
-            challenge specs, and reference solution. If it does not pass, keep
-            iterating and retry.
+            Solve the prompt, run review, and iterate until it passes.
           </p>
         </div>
 
@@ -807,9 +810,8 @@ function EmptyChallengeState({
         Generate the next interview challenge
       </h2>
       <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-(--text-muted) sm:text-base">
-        Pick a single group, then generate common frontend interview-style
-        challenges that begin with the basics and get tougher as more challenge
-        sets are created for that group.
+        Choose one group to generate the next challenge. Passed reviews move the
+        sequence forward.
       </p>
 
       {statusMessage ? (
@@ -1217,15 +1219,13 @@ export function ChallengeLab({
           </Link>
           <h1 className="mt-4 text-4xl font-bold sm:text-5xl">Challenge Lab</h1>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-(--text-muted) sm:text-base">
-            Generate Copilot-backed frontend interview challenges from one
-            selected group, solve them in-browser, preview UI work live when it
-            is a React and Tailwind task, and keep retrying until the review
-            passes.
+            Generate interview-style challenges for one group, solve them in the
+            browser, and keep iterating until review passes.
           </p>
         </div>
 
         <div className="rounded-2xl border border-(--border) bg-(--bg-card) px-4 py-3 text-sm text-(--text-muted)">
-          <div>Coverage is stored locally in this browser.</div>
+          <div>Progress syncs when you are signed in.</div>
           <div className="mt-1 text-xs uppercase tracking-[0.16em] text-(--accent)">
             Model: {copilotModel || "gpt-5-mini"}
           </div>

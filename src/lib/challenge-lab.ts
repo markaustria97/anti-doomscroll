@@ -4,6 +4,15 @@ export type LearnerLevel = "beginner" | "intermediate" | "advanced";
 export type ChallengeKind = "logic" | "ui-react-tailwind";
 export type ChallengeLanguage = "js" | "jsx" | "ts" | "tsx";
 export type ChallengeProgression = "foundation" | "core" | "stretch";
+export type ChallengeTrack = "javascript" | "algorithmic" | "ui";
+export type ChallengeStarterMode = "scaffolded" | "shell" | "scratch";
+export type ChallengeUiScope = "single-component" | "multi-component";
+
+export interface ChallengeGenerationPlan {
+  track: ChallengeTrack;
+  starterMode: ChallengeStarterMode;
+  uiScope: ChallengeUiScope | null;
+}
 
 export interface ChallengeAiUsage {
   inputTokens?: number;
@@ -37,6 +46,9 @@ export interface GeneratedChallenge {
   groupTitle?: string;
   progressionStep?: number;
   progressionLabel?: ChallengeProgression;
+  challengeTrack?: ChallengeTrack;
+  starterMode?: ChallengeStarterMode;
+  uiScope?: ChallengeUiScope | null;
   challengeKind: ChallengeKind;
   language: ChallengeLanguage;
   instructionsMarkdown: string;
@@ -120,6 +132,24 @@ export function isValidChallengeProgression(
   return value === "foundation" || value === "core" || value === "stretch";
 }
 
+export function isValidChallengeTrack(
+  value: string | undefined
+): value is ChallengeTrack {
+  return value === "javascript" || value === "algorithmic" || value === "ui";
+}
+
+export function isValidChallengeStarterMode(
+  value: string | undefined
+): value is ChallengeStarterMode {
+  return value === "scaffolded" || value === "shell" || value === "scratch";
+}
+
+export function isValidChallengeUiScope(
+  value: string | undefined
+): value is ChallengeUiScope {
+  return value === "single-component" || value === "multi-component";
+}
+
 export function isValidChallengeLanguage(
   value: string | undefined
 ): value is ChallengeLanguage {
@@ -173,6 +203,13 @@ export function isGeneratedChallenge(
       typeof candidate.progressionStep === "number") &&
     (candidate.progressionLabel === undefined ||
       isValidChallengeProgression(candidate.progressionLabel)) &&
+    (candidate.challengeTrack === undefined ||
+      isValidChallengeTrack(candidate.challengeTrack)) &&
+    (candidate.starterMode === undefined ||
+      isValidChallengeStarterMode(candidate.starterMode)) &&
+    (candidate.uiScope === undefined ||
+      candidate.uiScope === null ||
+      isValidChallengeUiScope(candidate.uiScope)) &&
     isValidChallengeKind(candidate.challengeKind) &&
     isValidChallengeLanguage(candidate.language) &&
     typeof candidate.instructionsMarkdown === "string" &&
@@ -238,6 +275,94 @@ export function getProgressionForChallengeCount(count: number): {
     learnerLevel: "advanced",
     progressionLabel: "stretch",
   };
+}
+
+export function createChallengeGenerationPlan({
+  createdChallengeCount,
+  progressionLabel,
+  uiTrackEnabled,
+}: {
+  createdChallengeCount: number;
+  progressionLabel: ChallengeProgression;
+  uiTrackEnabled: boolean;
+}): ChallengeGenerationPlan {
+  const trackSequence: ChallengeTrack[] = uiTrackEnabled
+    ? ["javascript", "ui", "algorithmic"]
+    : ["javascript", "algorithmic"];
+  const track = trackSequence[createdChallengeCount % trackSequence.length];
+
+  if (progressionLabel === "foundation") {
+    return {
+      track,
+      starterMode: "scaffolded",
+      uiScope: track === "ui" ? "single-component" : null,
+    };
+  }
+
+  if (progressionLabel === "core") {
+    return {
+      track,
+      starterMode: track === "algorithmic" ? "scratch" : "shell",
+      uiScope: track === "ui" ? "multi-component" : null,
+    };
+  }
+
+  return {
+    track,
+    starterMode: "scratch",
+    uiScope: track === "ui" ? "multi-component" : null,
+  };
+}
+
+export function getChallengeTrackLabel(
+  track: ChallengeTrack | undefined,
+  challengeKind?: ChallengeKind
+): string {
+  if (track === "javascript") {
+    return "JavaScript";
+  }
+
+  if (track === "algorithmic") {
+    return "Algorithmic";
+  }
+
+  if (track === "ui") {
+    return "UI Build";
+  }
+
+  return challengeKind === "ui-react-tailwind" ? "UI Build" : "Logic";
+}
+
+export function getChallengeStarterModeLabel(
+  starterMode: ChallengeStarterMode | undefined
+): string | null {
+  if (starterMode === "scaffolded") {
+    return "Scaffolded start";
+  }
+
+  if (starterMode === "shell") {
+    return "Minimal shell";
+  }
+
+  if (starterMode === "scratch") {
+    return "Start from scratch";
+  }
+
+  return null;
+}
+
+export function getChallengeUiScopeLabel(
+  uiScope: ChallengeUiScope | null | undefined
+): string | null {
+  if (uiScope === "single-component") {
+    return "Single component";
+  }
+
+  if (uiScope === "multi-component") {
+    return "Multi-component";
+  }
+
+  return null;
 }
 
 export function createChallengeReference({

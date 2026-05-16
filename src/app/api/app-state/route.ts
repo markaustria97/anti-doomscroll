@@ -1,8 +1,8 @@
 import { Prisma } from "@prisma/client";
 import { normalizeAppStateKeys, type AppStateEntry } from "@/lib/app-state";
 import {
-  applyAppStateSessionCookie,
-  resolveAppStateSession,
+  applyAppStateScopeCookies,
+  resolveAppStateScope,
 } from "@/lib/app-state-server";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
@@ -50,16 +50,66 @@ function normalizeEntries(entries: unknown): AppStateEntry[] {
 }
 
 function respondWithSession(
-  request: NextRequest,
+  resolvedScope: Awaited<ReturnType<typeof resolveAppStateScope>>,
   response: NextResponse
 ): NextResponse {
-  const { sessionId, shouldSetCookie } = resolveAppStateSession(request);
+  return applyAppStateScopeCookies(response, resolvedScope);
+}
 
-  if (!shouldSetCookie) {
-    return response;
+async function promoteSessionEntries({
+  scopeId,
+  sessionId,
+  keys,
+}: {
+  scopeId: string;
+  sessionId: string | null;
+  keys: string[];
+}) {
+  if (!sessionId || sessionId === scopeId || keys.length === 0) {
+    return;
   }
 
-  return applyAppStateSessionCookie(response, sessionId);
+  const sessionRows = await prisma.appState.findMany({
+    where: {
+      sessionId,
+      key: {
+        in: keys,
+      },
+    },
+  });
+
+  if (sessionRows.length === 0) {
+    return;
+  }
+
+  await prisma.$transaction([
+    ...sessionRows.map((row) =>
+      prisma.appState.upsert({
+        where: {
+          sessionId_key: {
+            sessionId: scopeId,
+            key: row.key,
+          },
+        },
+        create: {
+          sessionId: scopeId,
+          key: row.key,
+          value: toPrismaJsonValue(row.value),
+        },
+        update: {
+          value: toPrismaJsonValue(row.value),
+        },
+      })
+    ),
+    prisma.appState.deleteMany({
+      where: {
+        sessionId,
+        key: {
+          in: keys,
+        },
+      },
+    }),
+  ]);
 }
 
 export async function GET(request: NextRequest) {
@@ -67,15 +117,24 @@ export async function GET(request: NextRequest) {
     const keys = normalizeAppStateKeys(
       request.nextUrl.searchParams.getAll("key")
     ).slice(0, MAX_KEYS_PER_REQUEST);
-    const { sessionId } = resolveAppStateSession(request);
+    const resolvedScope = await resolveAppStateScope(request);
 
     if (keys.length === 0) {
-      return respondWithSession(request, NextResponse.json({ values: {} }));
+      return respondWithSession(
+        resolvedScope,
+        NextResponse.json({ values: {} })
+      );
     }
+
+    await promoteSessionEntries({
+      scopeId: resolvedScope.scopeId,
+      sessionId: resolvedScope.sessionId,
+      keys,
+    });
 
     const rows = await prisma.appState.findMany({
       where: {
-        sessionId,
+        sessionId: resolvedScope.scopeId,
         key: {
           in: keys,
         },
@@ -83,7 +142,7 @@ export async function GET(request: NextRequest) {
     });
 
     return respondWithSession(
-      request,
+      resolvedScope,
       NextResponse.json({
         values: Object.fromEntries(rows.map((row) => [row.key, row.value])),
       })
@@ -101,13 +160,14 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const { sessionId } = resolveAppStateSession(request);
+    const resolvedScope = await resolveAppStateScope(request);
     const body = (await request.json()) as { entries?: unknown };
     const entries = normalizeEntries(body.entries);
+    const keys = entries.map((entry) => entry.key);
 
     if (entries.length === 0) {
       return respondWithSession(
-        request,
+        resolvedScope,
         NextResponse.json(
           { error: "No valid app state entries were provided." },
           { status: 400 }
@@ -115,17 +175,23 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    await promoteSessionEntries({
+      scopeId: resolvedScope.scopeId,
+      sessionId: resolvedScope.sessionId,
+      keys,
+    });
+
     await prisma.$transaction(
       entries.map((entry) =>
         prisma.appState.upsert({
           where: {
             sessionId_key: {
-              sessionId,
+              sessionId: resolvedScope.scopeId,
               key: entry.key,
             },
           },
           create: {
-            sessionId,
+            sessionId: resolvedScope.scopeId,
             key: entry.key,
             value: toPrismaJsonValue(entry.value),
           },
@@ -136,7 +202,10 @@ export async function PUT(request: NextRequest) {
       )
     );
 
-    return respondWithSession(request, NextResponse.json({ success: true }));
+    return respondWithSession(
+      resolvedScope,
+      NextResponse.json({ success: true })
+    );
   } catch (error) {
     return NextResponse.json(
       {
@@ -150,7 +219,7 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const { sessionId } = resolveAppStateSession(request);
+    const resolvedScope = await resolveAppStateScope(request);
     const body = (await request.json()) as { keys?: unknown };
     const keys = normalizeAppStateKeys(
       Array.isArray(body.keys)
@@ -160,7 +229,7 @@ export async function DELETE(request: NextRequest) {
 
     if (keys.length === 0) {
       return respondWithSession(
-        request,
+        resolvedScope,
         NextResponse.json(
           { error: "No valid app state keys were provided." },
           { status: 400 }
@@ -168,16 +237,31 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    await promoteSessionEntries({
+      scopeId: resolvedScope.scopeId,
+      sessionId: resolvedScope.sessionId,
+      keys,
+    });
+
     await prisma.appState.deleteMany({
       where: {
-        sessionId,
+        sessionId: {
+          in:
+            resolvedScope.sessionId &&
+            resolvedScope.sessionId !== resolvedScope.scopeId
+              ? [resolvedScope.scopeId, resolvedScope.sessionId]
+              : [resolvedScope.scopeId],
+        },
         key: {
           in: keys,
         },
       },
     });
 
-    return respondWithSession(request, NextResponse.json({ success: true }));
+    return respondWithSession(
+      resolvedScope,
+      NextResponse.json({ success: true })
+    );
   } catch (error) {
     return NextResponse.json(
       {
