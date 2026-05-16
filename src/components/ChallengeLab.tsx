@@ -470,7 +470,7 @@ function ScopeSidebar({
           </div>
           <div className="mt-3 text-sm leading-6 text-(--text-muted)">
             {activeGroup
-              ? `${progression.description} ${activeGroup.description}`
+              ? `${progression.description}`
               : "Pick one group to scope the next challenge."}
           </div>
         </div>
