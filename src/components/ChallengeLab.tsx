@@ -37,7 +37,10 @@ const STORAGE_KEYS = {
   groupId: "challenge-lab:selected-group",
   history: "challenge-lab:history",
   session: "challenge-lab:session",
+  archive: "challenge-lab:archive",
 } as const;
+
+const MAX_SAVED_SESSIONS_PER_GROUP = 12;
 
 type GroupSummary = {
   id: string;
@@ -70,6 +73,12 @@ type PersistedSession = {
   copilotModel: string | null;
   generationUsage: ChallengeAiUsage | null;
 };
+
+type SavedChallengeSession = PersistedSession & {
+  updatedAt: string;
+};
+
+type ChallengeArchive = Record<string, SavedChallengeSession[]>;
 
 function formatCount(value: number | undefined): string | null {
   return typeof value === "number" ? value.toLocaleString() : null;
@@ -155,6 +164,59 @@ function isPersistedSession(value: unknown): value is PersistedSession {
       candidate.generationUsage === undefined ||
       isChallengeAiUsage(candidate.generationUsage))
   );
+}
+
+function isSavedChallengeSession(
+  value: unknown
+): value is SavedChallengeSession {
+  if (!isPersistedSession(value)) {
+    return false;
+  }
+
+  const candidate = value as Partial<SavedChallengeSession>;
+  return typeof candidate.updatedAt === "string";
+}
+
+function isChallengeArchive(value: unknown): value is ChallengeArchive {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  return Object.values(value as Record<string, unknown>).every(
+    (entry) => Array.isArray(entry) && entry.every(isSavedChallengeSession)
+  );
+}
+
+function createSavedChallengeSession(
+  session: PersistedSession
+): SavedChallengeSession {
+  return {
+    ...session,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function upsertSavedSession({
+  archive,
+  groupId,
+  session,
+}: {
+  archive: ChallengeArchive;
+  groupId: string;
+  session: PersistedSession;
+}): ChallengeArchive {
+  const currentSessions = archive[groupId] ?? [];
+  const nextSessions = [
+    createSavedChallengeSession(session),
+    ...currentSessions.filter(
+      (entry) => entry.challenge.id !== session.challenge.id
+    ),
+  ].slice(0, MAX_SAVED_SESSIONS_PER_GROUP);
+
+  return {
+    ...archive,
+    [groupId]: nextSessions,
+  };
 }
 
 function updateGeneratedHistory({
@@ -301,6 +363,50 @@ function getHistoryEntry(
   return history[groupId] ?? createEmptyHistoryEntry();
 }
 
+function getSavedSessions(
+  archive: ChallengeArchive,
+  groupId: string | null
+): SavedChallengeSession[] {
+  if (!groupId) {
+    return [];
+  }
+
+  return archive[groupId] ?? [];
+}
+
+function getSavedSessionStatus(session: SavedChallengeSession): string {
+  if (session.review?.passed) {
+    return "Passed";
+  }
+
+  if (session.review) {
+    return "Retry open";
+  }
+
+  if (
+    session.userCode.trim() &&
+    session.userCode.trim() !== session.challenge.starterCode.trim()
+  ) {
+    return "Draft saved";
+  }
+
+  return "Generated";
+}
+
+function formatSavedSessionTime(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return "Saved previously";
+  }
+
+  return date.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 type ScopeSidebarProps = Readonly<{
   groups: GroupSummary[];
   selectedGroupId: string | null;
@@ -309,9 +415,12 @@ type ScopeSidebarProps = Readonly<{
   generatedChallengeCount: number;
   passedChallengeCount: number;
   selectedGroupTopicCount: number;
+  savedSessions: SavedChallengeSession[];
+  activeChallengeId: string | null;
   isGenerating: boolean;
   onSelectGroup: (groupId: string) => void;
   onGenerateChallenge: () => void;
+  onRestoreSession: (session: SavedChallengeSession) => void;
 }>;
 
 function ScopeSidebar({
@@ -322,9 +431,12 @@ function ScopeSidebar({
   generatedChallengeCount,
   passedChallengeCount,
   selectedGroupTopicCount,
+  savedSessions,
+  activeChallengeId,
   isGenerating,
   onSelectGroup,
   onGenerateChallenge,
+  onRestoreSession,
 }: ScopeSidebarProps) {
   const activeGroup =
     groups.find((group) => group.id === selectedGroupId) ?? null;
@@ -468,6 +580,61 @@ function ScopeSidebar({
             </p>
           </div>
         ))}
+      </section>
+
+      <section className="rounded-2xl border border-(--border) bg-(--bg-card) p-5">
+        <p className="text-xs font-mono uppercase tracking-[0.18em] text-(--accent)">
+          Saved Challenges
+        </p>
+        <h2 className="mt-2 text-xl font-semibold text-white">Return later</h2>
+        <p className="mt-2 text-sm leading-6 text-(--text-muted)">
+          Restore a previous generated challenge together with the latest saved
+          draft solution.
+        </p>
+
+        <div className="mt-5 space-y-3">
+          {savedSessions.length > 0 ? (
+            savedSessions.map((session) => {
+              const isCurrent = session.challenge.id === activeChallengeId;
+
+              return (
+                <button
+                  key={session.challenge.id}
+                  type="button"
+                  onClick={() => onRestoreSession(session)}
+                  disabled={isCurrent}
+                  className={`w-full rounded-2xl border px-4 py-4 text-left transition-colors ${
+                    isCurrent
+                      ? "border-(--accent-dim) bg-(--accent-dim)/10"
+                      : "border-(--border) hover:border-(--accent-dim)"
+                  } disabled:cursor-default disabled:opacity-100`}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <div className="text-sm font-semibold text-white">
+                        {session.challenge.title}
+                      </div>
+                      <div className="mt-2 text-sm leading-6 text-(--text-muted)">
+                        {session.challenge.summary}
+                      </div>
+                    </div>
+                    <span className="shrink-0 rounded-full border border-(--border) px-3 py-1 text-[11px] uppercase tracking-[0.14em] text-(--text-muted)">
+                      {isCurrent ? "Current" : getSavedSessionStatus(session)}
+                    </span>
+                  </div>
+                  <div className="mt-3 text-xs uppercase tracking-[0.14em] text-(--accent)">
+                    {formatSavedSessionTime(session.updatedAt)}
+                  </div>
+                </button>
+              );
+            })
+          ) : (
+            <div className="rounded-2xl border border-(--border) bg-black/20 px-4 py-4 text-sm leading-6 text-(--text-muted)">
+              Generated challenges for this group will appear here after you
+              start a session.
+            </div>
+          )}
+        </div>
       </section>
     </aside>
   );
@@ -856,6 +1023,7 @@ export function ChallengeLab({
     defaultGroupId
   );
   const [history, setHistory] = useState<ChallengeHistory>({});
+  const [archive, setArchive] = useState<ChallengeArchive>({});
   const [currentChallenge, setCurrentChallenge] =
     useState<GeneratedChallenge | null>(null);
   const [userCode, setUserCode] = useState("");
@@ -881,6 +1049,7 @@ export function ChallengeLab({
           STORAGE_KEYS.groupId,
           STORAGE_KEYS.history,
           STORAGE_KEYS.session,
+          STORAGE_KEYS.archive,
         ]);
 
         if (isCancelled) {
@@ -908,6 +1077,14 @@ export function ChallengeLab({
         const initialHistory = storedHistory || legacyHistory;
         if (initialHistory) {
           setHistory(initialHistory);
+        }
+
+        const storedArchiveValue = storedValues[STORAGE_KEYS.archive];
+        const storedArchive = isChallengeArchive(storedArchiveValue)
+          ? storedArchiveValue
+          : null;
+        if (storedArchive) {
+          setArchive(storedArchive);
         }
 
         const storedSessionValue = storedValues[STORAGE_KEYS.session];
@@ -1026,6 +1203,43 @@ export function ChallengeLab({
     );
   }, [history, isHydrated]);
 
+  useEffect(() => {
+    if (!isHydrated) {
+      return;
+    }
+
+    ignorePersistenceError(
+      writeAppState([
+        {
+          key: STORAGE_KEYS.archive,
+          value: archive,
+        },
+      ])
+    );
+  }, [archive, isHydrated]);
+
+  const saveSessionSnapshot = (
+    session: PersistedSession | null,
+    fallbackGroupId?: string | null
+  ) => {
+    if (!session) {
+      return;
+    }
+
+    const archiveGroupId = session.challenge.groupId || fallbackGroupId;
+    if (!archiveGroupId) {
+      return;
+    }
+
+    setArchive((currentArchive) =>
+      upsertSavedSession({
+        archive: currentArchive,
+        groupId: archiveGroupId,
+        session,
+      })
+    );
+  };
+
   useDebouncedEffect(
     () => {
       if (!isHydrated) {
@@ -1046,6 +1260,8 @@ export function ChallengeLab({
         generationUsage,
       };
 
+      saveSessionSnapshot(session, currentChallenge.groupId || selectedGroupId);
+
       ignorePersistenceError(
         writeAppState([
           {
@@ -1061,6 +1277,7 @@ export function ChallengeLab({
       currentChallenge,
       isHydrated,
       review,
+      selectedGroupId,
       userCode,
       generationUsage,
     ],
@@ -1075,6 +1292,10 @@ export function ChallengeLab({
   const currentHistoryEntry = useMemo(
     () => getHistoryEntry(history, selectedGroupId),
     [history, selectedGroupId]
+  );
+  const currentSavedSessions = useMemo(
+    () => getSavedSessions(archive, selectedGroupId),
+    [archive, selectedGroupId]
   );
 
   const progression = useMemo(
@@ -1099,6 +1320,40 @@ export function ChallengeLab({
     setAuthUrl(null);
   };
 
+  const buildCurrentSession = (): PersistedSession | null => {
+    if (!currentChallenge) {
+      return null;
+    }
+
+    return {
+      challenge: currentChallenge,
+      userCode,
+      review,
+      attemptCount,
+      copilotModel,
+      generationUsage,
+    };
+  };
+
+  const restoreSavedSession = (session: SavedChallengeSession) => {
+    saveSessionSnapshot(
+      buildCurrentSession(),
+      currentChallenge?.groupId || selectedGroupId
+    );
+    resetFeedback();
+
+    if (session.challenge.groupId) {
+      setSelectedGroupId(session.challenge.groupId);
+    }
+
+    setCurrentChallenge(session.challenge);
+    setUserCode(session.userCode);
+    setReview(session.review ?? null);
+    setAttemptCount(session.attemptCount);
+    setCopilotModel(session.copilotModel ?? null);
+    setGenerationUsage(session.generationUsage ?? null);
+  };
+
   const generateChallenge = async () => {
     resetFeedback();
 
@@ -1113,6 +1368,11 @@ export function ChallengeLab({
     );
 
     try {
+      saveSessionSnapshot(
+        buildCurrentSession(),
+        currentChallenge?.groupId || selectedGroupId
+      );
+
       const payload = await readGeneratedChallengeStream({
         body: {
           groupId: selectedGroupId,
@@ -1123,12 +1383,23 @@ export function ChallengeLab({
         onStatus: setStatusMessage,
       });
       const generatedChallenge = payload.challenge;
+      const nextCopilotModel = payload.model ?? copilotModel;
+      const nextSession: PersistedSession = {
+        challenge: generatedChallenge,
+        userCode: generatedChallenge.starterCode,
+        review: null,
+        attemptCount: 0,
+        copilotModel: nextCopilotModel,
+        generationUsage: payload.usage,
+      };
+
+      saveSessionSnapshot(nextSession, selectedGroupId);
 
       setCurrentChallenge(generatedChallenge);
       setUserCode(generatedChallenge.starterCode);
       setReview(null);
       setAttemptCount(0);
-      setCopilotModel(payload.model ?? copilotModel);
+      setCopilotModel(nextCopilotModel);
       setGenerationUsage(payload.usage);
       setHistory((currentHistory) =>
         updateGeneratedHistory({
@@ -1178,10 +1449,23 @@ export function ChallengeLab({
         onStatus: setStatusMessage,
       });
       const reviewResult = payload.review;
+      const nextCopilotModel = payload.model ?? copilotModel;
 
       setAttemptCount(nextAttempt);
       setReview(reviewResult);
-      setCopilotModel(payload.model ?? copilotModel);
+      setCopilotModel(nextCopilotModel);
+
+      saveSessionSnapshot(
+        {
+          challenge: currentChallenge,
+          userCode,
+          review: reviewResult,
+          attemptCount: nextAttempt,
+          copilotModel: nextCopilotModel,
+          generationUsage,
+        },
+        currentChallenge.groupId || selectedGroupId
+      );
 
       const historyGroupId = currentChallenge.groupId || selectedGroupId;
       if (reviewResult.passed && historyGroupId) {
@@ -1246,9 +1530,12 @@ export function ChallengeLab({
           generatedChallengeCount={generatedChallengeCount}
           passedChallengeCount={passedChallengeCount}
           selectedGroupTopicCount={selectedGroupTopicCount}
+          savedSessions={currentSavedSessions}
+          activeChallengeId={currentChallenge?.id ?? null}
           isGenerating={isGenerating}
           onSelectGroup={setSelectedGroupId}
           onGenerateChallenge={() => void generateChallenge()}
+          onRestoreSession={restoreSavedSession}
         />
 
         <div className="space-y-6">

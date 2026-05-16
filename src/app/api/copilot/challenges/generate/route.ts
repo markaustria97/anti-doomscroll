@@ -10,11 +10,7 @@ import {
   type ChallengeTrack,
   type GeneratedChallenge,
 } from "@/lib/challenge-lab";
-import {
-  getChallengeCatalog,
-  getChallengeTopicContexts,
-  getGroup,
-} from "@/lib/content";
+import { getGroup } from "@/lib/content";
 import {
   DEFAULT_COPILOT_MODEL,
   OAUTH_TOKEN_COOKIE,
@@ -25,15 +21,8 @@ import { randomUUID } from "node:crypto";
 
 export const runtime = "nodejs";
 
-const MAX_TOPIC_COUNT = 3;
-const MAX_LESSON_CONTEXT_CHARS = 900;
-const MAX_CHALLENGE_CONTEXT_CHARS = 350;
 const MAX_PREVIOUS_CHALLENGES = 12;
 const GENERATION_TIMEOUT_MS = 90000;
-
-function truncate(value: string, maxLength: number): string {
-  return value.trim().slice(0, maxLength);
-}
 
 function extractJsonPayload(value: string): unknown {
   const fencedMatch = /```json\s*([\s\S]*?)```/i.exec(value);
@@ -59,87 +48,31 @@ function toGenerateErrorMessage(message: string): string {
   );
 }
 
-function isUiCapableTopic(value: string): boolean {
+function isUiCapableGroup(value: string): boolean {
   return /(react|tailwind|next\.js|next js|base ui|component|tsx|jsx|ui)/i.test(
     value
   );
 }
-
-function toSelectedSubtopics(
-  contexts: ReturnType<typeof getChallengeTopicContexts>
-): ChallengeSubtopic[] {
-  return contexts.map((context) => ({
-    key: context.key,
-    groupId: context.groupId,
-    groupLabel: context.groupLabel,
-    groupTitle: context.groupTitle,
-    dayId: context.dayId,
-    dayLabel: context.dayLabel,
-    dayTitle: context.dayTitle,
-    topicId: context.topicId,
-    topicTitle: context.topicTitle,
-    hasEmbeddedChallenge: context.hasEmbeddedChallenge,
-  }));
-}
-
-function selectRepresentativeTopicKeys({
-  groupId,
-  challengeCount,
-}: {
-  groupId: string;
-  challengeCount: number;
-}): string[] {
-  const groupCatalog = getChallengeCatalog([groupId]).sort((left, right) =>
-    left.key.localeCompare(right.key)
-  );
-
-  if (groupCatalog.length <= MAX_TOPIC_COUNT) {
-    return groupCatalog.map((topic) => topic.key);
-  }
-
-  const startIndex = (challengeCount * MAX_TOPIC_COUNT) % groupCatalog.length;
-
-  return [
-    ...groupCatalog.slice(startIndex),
-    ...groupCatalog.slice(0, startIndex),
-  ]
-    .slice(0, MAX_TOPIC_COUNT)
-    .map((topic) => topic.key);
-}
-
-function buildTopicContext({
+function buildGroupContext({
   groupLabel,
   groupTitle,
   groupDescription,
-  contexts,
+  dayCount,
+  topicCount,
 }: {
   groupLabel: string;
   groupTitle: string;
   groupDescription: string;
-  contexts: ReturnType<typeof getChallengeTopicContexts>;
+  dayCount: number;
+  topicCount: number;
 }): string {
   return [
     `Group: ${groupLabel} — ${groupTitle}`,
     `Description: ${groupDescription}`,
-    "Representative study context:",
-    contexts
-      .map((context, index) => {
-        const embeddedChallenge = context.embeddedChallenge
-          ? truncate(
-              context.embeddedChallenge.challengeMarkdown,
-              MAX_CHALLENGE_CONTEXT_CHARS
-            )
-          : "None";
-
-        return [
-          `Topic ${index + 1}`,
-          `Day: ${context.dayLabel} — ${context.dayTitle}`,
-          `Topic title: ${context.topicTitle}`,
-          `Lesson excerpt: ${truncate(context.lessonContent, MAX_LESSON_CONTEXT_CHARS)}`,
-          `Existing embedded challenge: ${embeddedChallenge}`,
-        ].join("\n");
-      })
-      .join("\n\n"),
+    `Curriculum size: ${dayCount} days, ${topicCount} topics.`,
+    "Treat this as a broad tech-group brief, not a list of lesson subtopics.",
+    "Generate from the most common interview questions and coding challenges associated with this tech group in general.",
+    "Do not anchor the challenge to specific day titles, lesson excerpts, or embedded curriculum exercises.",
   ].join("\n\n");
 }
 
@@ -339,7 +272,7 @@ function buildStarterModeInstructions(plan: ChallengeGenerationPlan): string {
 
 function buildPrompt({
   learnerLevel,
-  topicContext,
+  groupContext,
   groupLabel,
   groupTitle,
   createdChallengeRefs,
@@ -347,7 +280,7 @@ function buildPrompt({
   plan,
 }: {
   learnerLevel: NonNullable<ChallengeGenerationRequest["learnerLevel"]>;
-  topicContext: string;
+  groupContext: string;
   groupLabel: string;
   groupTitle: string;
   createdChallengeRefs: string[];
@@ -373,7 +306,9 @@ function buildPrompt({
     "Return JSON only with no prose before or after the object.",
     `Scope the challenge to this study group: ${groupLabel} — ${groupTitle}.`,
     "The challenge should feel like a common frontend interview prompt rather than a niche course drill.",
-    "Use the representative study context below as background. Do not force every background topic into the solution if it would make the challenge artificial.",
+    "Use the group context below only as a broad domain anchor.",
+    "Prefer the most common interview questions and coding challenges for this tech group in general.",
+    "Do not target specific lesson subtopics, day-level drills, or embedded curriculum exercises.",
     progressionInstructions[learnerLevel],
     buildTrackInstructions({
       plan,
@@ -405,7 +340,7 @@ function buildPrompt({
     `Automatic progression stage: ${progressionLabel}`,
     `Learner level: ${learnerLevel}`,
     "Group context:",
-    topicContext,
+    groupContext,
   ].join("\n\n");
 }
 
@@ -564,12 +499,12 @@ export async function POST(request: NextRequest) {
     }
 
     const progression = getProgressionForChallengeCount(passedChallengeCount);
-    const representativeTopicKeys = selectRepresentativeTopicKeys({
-      groupId,
-      challengeCount: createdChallengeRefs.length,
-    });
+    const topicCount = group.days.reduce(
+      (total, day) => total + day.topics.length,
+      0
+    );
 
-    if (representativeTopicKeys.length === 0) {
+    if (topicCount === 0) {
       return NextResponse.json(
         {
           error: "The selected group does not have any challenge context yet.",
@@ -578,19 +513,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const contexts = getChallengeTopicContexts(representativeTopicKeys);
-
-    if (contexts.length !== representativeTopicKeys.length) {
-      return NextResponse.json(
-        { error: "The selected group context could not be resolved." },
-        { status: 400 }
-      );
-    }
-
-    const uiTrackEnabled = contexts.some((context) =>
-      isUiCapableTopic(
-        `${context.groupTitle} ${context.topicTitle} ${context.lessonContent}`
-      )
+    const uiTrackEnabled = isUiCapableGroup(
+      `${group.title} ${group.description}`
     );
     const plan = createChallengeGenerationPlan({
       createdChallengeCount: createdChallengeRefs.length,
@@ -599,11 +523,12 @@ export async function POST(request: NextRequest) {
     });
     const prompt = buildPrompt({
       learnerLevel,
-      topicContext: buildTopicContext({
+      groupContext: buildGroupContext({
         groupLabel: group.label,
         groupTitle: group.title,
         groupDescription: group.description,
-        contexts,
+        dayCount: group.days.length,
+        topicCount,
       }),
       groupLabel: group.label,
       groupTitle: group.title,
@@ -648,7 +573,7 @@ export async function POST(request: NextRequest) {
           const challenge = normalizeGeneratedChallenge({
             value: extractJsonPayload(copilotResult.message),
             learnerLevel,
-            selectedSubtopics: toSelectedSubtopics(contexts),
+            selectedSubtopics: [] satisfies ChallengeSubtopic[],
             group,
             progressionStep: createdChallengeRefs.length + 1,
             progressionLabel: progression.progressionLabel,
